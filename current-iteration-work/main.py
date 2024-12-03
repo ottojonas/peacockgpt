@@ -88,6 +88,7 @@ def get_embeddings():
     with open(EXTRACTED_JSON_FILE_PATH, "r") as file:
         embedding_json = json.load(file)
 
+    ic(embedding_json)
     return embedding_json["embeddings"], embedding_json["snippets"]
 
 
@@ -95,6 +96,7 @@ def get_embeddings():
 def user_question_embedding_creator(question):
     client = OpenAI()
     response = client.embeddings.create(input=question, model=EMBEDDING_MODEL)
+    ic(response.data[0].embedding)
     return response.data[0].embedding
 
 
@@ -102,21 +104,26 @@ def user_question_embedding_creator(question):
 def answer_user_questions(user_question):
     try:
         user_question_embedding = user_question_embedding_creator(user_question)
+        ic(user_question_embedding)
     except Exception as e:
         ic(f"an error occurred while creating embedding: {str(e)}")
+        return
 
     cosine_similarities = []
     for embedding in embeddings:
         cosine_similarities.append(dot(user_question_embedding, embedding))
+    ic(cosine_similarities)
 
     # Score and sort the snippets based on similarity to the user's question
     scored_snippets = zip(snippets, cosine_similarities)
     sorted_snippets = sorted(scored_snippets, key=lambda x: x[1], reverse=True)
+    ic(sorted_snippets)
 
     # Filter the top results based on confidence score
     formatted_top_results = [
         snipps for snipps, _score in sorted_snippets if _score > CONFIDENCE_SCORE
     ]
+    ic(formatted_top_results)
     if len(formatted_top_results) > 5:
         formatted_top_results = formatted_top_results[:5]
 
@@ -143,7 +150,9 @@ def answer_user_questions(user_question):
 
 
 # Main script execution
-pdf_file_path = "testpdf/lorenipsum.pdf"  # Path to the PDF file
+pdf_file_path = (
+    "training-documents/how-to-open-a-new-account-nav.pdf"  # Path to the PDF file
+)
 extract_text_from_pdf(pdf_file_path)  # Extract text from the PDF
 create_embeddings(EXTRACTED_TEXT_FILE_PATH)  # Create embeddings from the extracted text
 embeddings, snippets = (
