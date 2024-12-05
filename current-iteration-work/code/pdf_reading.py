@@ -8,7 +8,6 @@ from PyPDF2 import PdfReader
 
 
 class PDFReading:
-
     def __init__(self):
         self.api_key = self.load_environment()
         ic(self.api_key)
@@ -32,9 +31,18 @@ class PDFReading:
 
         ic(f"{output_path} file saved successfully")
 
+    def extract_text_from_all_pdfs(self, input_folder, output_folder):
+        for filename in os.listdir(input_folder):
+            if filename.endswith(".pdf"):
+                pdf_path = os.path.join(input_folder, filename)
+                output_path = os.path.join(output_folder, f"extracted_{filename}.txt")
+                self.extract_text_from_pdf(pdf_path, output_path)
 
-pdf_reader = PDFReading()
-pdf_reader.extract_text_from_pdf(
-    "current-iteration-work/training-documents/how-to-open-a-new-account-nav.pdf",
-    "current-iteration-work/extracted-files/extracted_text_pdf.txt",
-)
+
+if __name__ == "__main__":
+    pdf_reader = PDFReading()
+    input_folder = "current-iteration-work/training-documents"
+    output_folder = "current-iteration-work/extracted-files"
+    pdf_reader.extract_text_from_all_pdfs(input_folder, output_folder)
+    pdf_reader.extract_text_from_all_pdfs(input_folder, output_folder)
+    pdf_reader.extract_text_from_all_pdfs(input_folder, output_folder)
