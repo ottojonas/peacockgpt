@@ -25,7 +25,7 @@ class PDFReading:
         for page in reader.pages:
             text += page.extract_text()
 
-        text = re.sub(f"[^a-zA-Z0-9\s\.,;:!?'\@-]", "", text)
+        text = re.sub(f"[^a-zA-Z0-9\s\.,;:!?'\@-]", "", text)  # noqa: F541
 
         with open(output_path, "w", encoding="latin-1") as file:
             file.write(text)

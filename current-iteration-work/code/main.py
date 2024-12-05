@@ -1,9 +1,8 @@
-import json
 import os
 
 from assistant import Assistant
 from dotenv import load_dotenv
-from icecream import ic
+from icecream import ic  # noqa: F401
 from openai import OpenAI
 from pdf_reading import PDFReading
 from text_to_speech import TextToSpeech

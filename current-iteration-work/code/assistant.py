@@ -13,3 +13,15 @@ class Assistant:
     def load_environment(self):
         load_dotenv()
         return os.getenv("OPENAI_API_KEY")
+
+    def create_assistant(self):
+        client = OpenAI()
+        self.peacockgpt = client.beta.assistants.create(
+            instructions="You are a chatbot that helps new employees understand and learn the training documents by just providing the relevant information to their questions. The information is stored in pdf files",
+            name="PeacockGPT",
+            tools=[{"type": "file_search"}],
+            tool_resources={"file_search": {"vector_store_ids": ["vs_123"]}},
+            model="gpt-4o",
+            temperature=0.2,
+        )
+        ic(self.peacockgpt)
