@@ -5,7 +5,7 @@ from app import create_app, db
 from app.services.document_service import (
     add_document_to_db,
     delete_document,
-    get_content_by_id,
+    get_document_by_id,
 )
 
 
@@ -21,26 +21,26 @@ class DocumentServiceTestCase(unittest.TestCase):
 
     def tearDown(self):
         with self.app.app_context():
-            db.session_remove()
+            db.session.remove()
             db.drop_all()
 
     def test_add_document_to_db(self):
         with self.app.app_context():
             document = add_document_to_db("test doc", "this is a test")
-            self.assertIsNone(document.id)
-            self.assertEqual(document.title, "test document")
+            self.assertIsNotNone(document.id)
+            self.assertEqual(document.title, "test doc")
 
     def test_get_document_by_id(self):
         with self.app.app_context():
             document = add_document_to_db("test doc", "this is a test")
-            fetched_document = get_content_by_id(document.id)
-            self.assertEqual(fetched_document.title, "test document")
+            fetched_document = get_document_by_id(db.session, document.id)
+            self.assertEqual(fetched_document.title, "test doc")
 
     def test_delete_document(self):
         with self.app.app_context():
             document = add_document_to_db("test doc", "this is a test")
             delete_document(document.id)
-            fetched_document = get_content_by_id(document.id)
+            fetched_document = get_document_by_id(db.session, document.id)
             self.assertIsNone(fetched_document)
 
 

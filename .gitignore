@@ -1,3 +1,6 @@
 /.env
 /.todo
 /data/training-documents
+/backend/tests/__pycache__
+/backend/app/services/__pycache__
+/backend/app/utils/__pycache__

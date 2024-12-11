@@ -3,9 +3,9 @@ import os
 
 from app import db
 from app.models import TrainingDocument
-from werkzeug.utils import secure_filename
+from sqlalchemy.orm import Session
 
-UPLOAD_FOLDER = "/data/training-documents"
+UPLOAD_FOLDER = "backend/app/services/document_service.py"
 ALLOWED_EXTENSIONS = {"pdf", "docx", "txt"}
 
 
@@ -14,13 +14,12 @@ def allowed_file(filename):
 
 
 def save_document(file):
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        file_path = os.path.join(UPLOAD_FOLDER, filename)
-        file.save(file_path)
-        return file_path
-    else:
-        raise ValueError("file type not allowed")
+    directory = "backend/app/services/document_services.py"
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    file_path = os.path.join(directory, file.filename)
+    file.save(file_path)
+    return file_path
 
 
 def add_document_to_db(title, content):
@@ -30,8 +29,8 @@ def add_document_to_db(title, content):
     return document
 
 
-def get_content_by_id(doc_id):
-    return TrainingDocument.query.get(doc_id)
+def get_document_by_id(session: Session, doc_id):
+    return session.get(TrainingDocument, doc_id)
 
 
 def get_all_documents():
@@ -43,5 +42,3 @@ def delete_document(doc_id):
     if document:
         db.session.delete(document)
         db.session.commit()
-        return True
-    return False

@@ -1,5 +1,6 @@
 # * Tests for API routes.
 
+import os
 import unittest
 
 from app import create_app, db
@@ -23,10 +24,16 @@ class RoutesTestCase(unittest.TestCase):
 
     def test_upload_document(self):
         with self.app.app_context():
+            os.makedirs("tests", exist_ok=True)
+            with open("tests/test_document.txt", "wb") as test_file:
+                test_file.write(b"test document content")
             response = self.client.post(
                 "/upload",
                 data={
-                    "file": (open("tests/test_document.txt", "rb"), "test_document.txt")
+                    "file": (
+                        open("tests/test_document.txt", "rb"),
+                        "test_document.txt",
+                    )
                 },
             )
             self.assertEqual(response.status_code, 201)
@@ -63,9 +70,8 @@ class RoutesTestCase(unittest.TestCase):
             db.session.commit()
             response = self.client.delete(f"/documents/{document.id}")
             self.assertEqual(response.status_code, 200)
-            self.assertIn(
-                "Document deleted successfully", response.get_data(as_text=True)
-            )
+            response = self.client.get(f"/documents/{document.id}")
+            self.assertEqual(response.status_code, 404)
 
 
 if __name__ == "__main__":
