@@ -1,6 +1,8 @@
 # * Tests for API routes.
-
 import os
+import sys
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 import unittest
 
 from app import create_app, db
@@ -25,13 +27,13 @@ class RoutesTestCase(unittest.TestCase):
     def test_upload_document(self):
         with self.app.app_context():
             os.makedirs("tests", exist_ok=True)
-            with open("tests/test_document.txt", "wb") as test_file:
+            with open("backend/tests/test_document.txt", "wb") as test_file:
                 test_file.write(b"test document content")
             response = self.client.post(
                 "/upload",
                 data={
                     "file": (
-                        open("tests/test_document.txt", "rb"),
+                        open("backend/tests/test_document.txt", "rb"),
                         "test_document.txt",
                     )
                 },
