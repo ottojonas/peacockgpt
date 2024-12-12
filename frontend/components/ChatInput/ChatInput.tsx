@@ -1,9 +1,39 @@
+import React, { useState } from "react";
 import Send from "@/components/icons/Send";
 import Mic from "@/components/icons/Mic";
 import Refresh from "@/components/icons/Refresh";
-type Props = {};
 
-export default function ChatInput() {
+type Props = {
+  onSendMessage?: (message: string) => void;
+};
+
+export default function ChatInput({ onSendMessage }: Props) {
+  console.log("onSendMesage prop:", onSendMessage);
+  const [message, setMessage] = useState("");
+
+  const handleSendMessage = () => {
+    console.log("handleSendMessage called");
+    if (message.trim() && onSendMessage) {
+      console.log("calling onSendMessage with message:", message);
+      onSendMessage(message);
+      setMessage("");
+    } else {
+      console.log("onSendMessage is undefined or message is empty");
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
+  console.log(
+    "ChatInput component rendered with onSendMessage:",
+    onSendMessage
+  );
+
   return (
     <div className="fixed inset-x-0 bottom-0 pt-8 bg-input">
       <div style={{ marginLeft: "384px", marginRight: "320px" }}>
@@ -21,6 +51,9 @@ export default function ChatInput() {
             <textarea
               rows={2}
               className="w-full px-4 py-2 rounded-md resize-none bg-card"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              onKeyPress={handleKeyPress}
             />
 
             <div
@@ -36,8 +69,8 @@ export default function ChatInput() {
                 <Mic className="w-5 h-5" />
               </button>
               <button
-                className="grid w-10 h-10 text-black rounded-md  place-items-center bg-brandWhite"
-                onClick={() => {}}>
+                className="grid w-10 h-10 text-black rounded-md place-items-center bg-brandWhite"
+                onClick={handleSendMessage}>
                 <Send className="w-5 h-5" />
               </button>
             </div>
