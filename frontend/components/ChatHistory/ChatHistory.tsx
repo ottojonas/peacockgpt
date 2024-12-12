@@ -10,10 +10,10 @@ type Props = {};
 
 export default function ChatHistory({}: Props) {
   return (
-    <div className="fixed left-16 top-0 h-screen w-80 border-r-2 border-r-line bg-body z-10 flex flex-col px-2">
-      <div className="shrink-0 px-3 flex items-center py-3">
-        <h2 className="shrink-0 text-lg font-semibold ">Chats</h2>
-        <div className="shrink-0 w-8 h-8 rounded-full bg-brandBlue ml-2 grid place-items-center text-sm font-semibold">
+    <div className="fixed top-0 z-10 flex flex-col h-screen px-2 border-r-2 left-16 w-80 border-r-line bg-body">
+      <div className="flex items-center px-3 py-3 shrink-0">
+        <h2 className="text-lg font-semibold shrink-0 ">Chats</h2>
+        <div className="grid w-8 h-8 ml-2 text-sm font-semibold rounded-full shrink-0 bg-brandBlue place-items-center">
           24
         </div>
         <div className="grow"> </div>
@@ -21,18 +21,18 @@ export default function ChatHistory({}: Props) {
           <Options className="w-7 h-7" />
         </button>
       </div>
-      <div className="shrink-0 flex px-3 space-x-2">
-        <div className="h-10 grow rounded-md bg-card relative">
-          <input className="h-10 w-full rounded-md bg-card pl-4 pr-10" />
-          <div className="absolute right-0 w-10 inset-y-0 grid place-items-center">
+      <div className="flex px-3 space-x-2 shrink-0">
+        <div className="relative h-10 rounded-md grow bg-card">
+          <input className="w-full h-10 pl-4 pr-10 rounded-md bg-card" />
+          <div className="absolute inset-y-0 right-0 grid w-10 place-items-center">
             <SearchIcon className="w-5 h-5 text-brandGray" />
           </div>
         </div>
-        <div className="h-10 w-10 rounded-md bg-brandOrange grid  place-items-center shrink-0">
+        <div className="grid w-10 h-10 rounded-md bg-brandWhite place-items-center shrink-0">
           <PencilSquareIcon className="w-5 h-5 text-brandBlue" />
         </div>
       </div>
-      <div className="shrink-0 uppercase px-3 mt-4 mb-1 flex items-center">
+      <div className="flex items-center px-3 mt-4 mb-1 uppercase shrink-0">
         <PinnedIcon className="w-5 h-5" />
         <span className="ml-2 text-sm font-semibold">pinned</span>
       </div>
@@ -41,7 +41,7 @@ export default function ChatHistory({}: Props) {
           <Item item={item} key={item.key} />
         ))}
       </div>
-      <div className="shrink-0 uppercase px-3 mt-4 mb-1 flex items-center">
+      <div className="flex items-center px-3 mt-4 mb-1 uppercase shrink-0">
         <ListAllIcon className="w-5 h-5" />
         <span className="ml-2 text-sm font-semibold">all</span>
       </div>
@@ -50,11 +50,10 @@ export default function ChatHistory({}: Props) {
           <Item item={item} key={item.key} />
         ))}
       </div>
-      <div className="shrink-0 px-2 py-3">
+      <div className="px-2 py-3 shrink-0">
         <button
-          className="w-full py-2 text-sm rounded-md font-semibold bg-card flex justify-center items-center"
-          onClick={() => {}}
-        >
+          className="flex items-center justify-center w-full py-2 text-sm font-semibold rounded-md bg-card"
+          onClick={() => {}}>
           <Times className="w-5 h-5" />
           <span className="ml-2">Clear All Chats</span>
         </button>
@@ -77,18 +76,16 @@ function Item({ item }: { item: ItemProps }) {
       <div
         className={`px-3 py-2 text-sm w-full rounded-md ${
           item.isSelected ? "bg-card" : ""
-        }`}
-      >
+        }`}>
         <div className="flex items-center justify-between">
-          <h3 className="grow font-semibold line-clamp-1">{item.title}</h3>
-          <span className="shrink-0 pl-2">{item.date}</span>
+          <h3 className="font-semibold grow line-clamp-1">{item.title}</h3>
+          <span className="pl-2 shrink-0">{item.date}</span>
         </div>
 
         <p
           className={`line-clamp-2 mt-1 ${
             item.isSelected ? "text-white" : "text-brandGray"
-          }`}
-        >
+          }`}>
           {item.desc}
         </p>
       </div>
