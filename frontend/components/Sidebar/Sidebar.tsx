@@ -5,6 +5,7 @@ import ChatIcon from "@/components/icons/ChatIcon";
 import UsersIcon from "@/components/icons/UsersIcon";
 import DashboardIcon from "@/components/icons/DashboardIcon";
 import SettingsIcon from "@/components/icons/SettingsIcon";
+
 type Props = {};
 
 export default function Sidebar({}: Props) {

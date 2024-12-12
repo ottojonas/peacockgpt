@@ -80,17 +80,16 @@ yarn build
 
 ```
 
-```
-
 ### 3. Usage Guide
 
-```markdown
 ## Usage
 
 ### Running the Application
+
 After starting the development server, open your browser and navigate to `http://localhost:3000` to view the application.
 
 ### Navigating the Sidebar
+
 - **Dashboard**: View overall usage statistics and application status.
 - **Chat**: Interact with GPT models in a chat interface.
 - **Users**: Manage user accounts and permissions.
@@ -99,13 +98,11 @@ After starting the development server, open your browser and navigate to `http:/
 - **Logout**: Sign out of the application.
 
 ### Customizing Themes
-To customize the theme, click on the theme icon in the sidebar and select your preferred theme from the available options.
 
-```
+To customize the theme, click on the theme icon in the sidebar and select your preferred theme from the available options.
 
 ### 4. Component Documentation
 
-```markdown
 ## Component Documentation
 
 ### Sidebar
@@ -113,9 +110,11 @@ To customize the theme, click on the theme icon in the sidebar and select your p
 The `Sidebar` component is a fixed navigation menu located on the left side of the application. It contains icons for navigating to different sections of the application.
 
 #### Props
+
 - `Props`: An empty object.
 
 #### Usage
+
 ```tsx
 import Sidebar from "@/components/Sidebar";
 
@@ -140,31 +139,34 @@ function App() {
 - **ThemeIcon**: Icon for the theme toggle.
 - **LogoutIcon**: Icon for logging out.
 
-```
-
 ### 5. API Documentation
 
-```markdown
 ## API Documentation
 
 ### Endpoints
 
 #### GET /api/chat
+
 Fetches chat history.
 
 #### POST /api/chat
+
 Sends a new message to the GPT model.
 
 #### GET /api/users
+
 Fetches a list of users.
 
 #### POST /api/users
+
 Creates a new user.
 
 ### Request and Response Examples
 
 #### GET /api/chat
+
 **Request:**
+
 ```http
 GET /api/chat HTTP/1.1
 Host: localhost:3000
@@ -182,13 +184,12 @@ Host: localhost:3000
   }
 ]
 
-```
 
 ### POST /api/chat
 
 **Request:**
 
-```
+
 POST /api/chat HTTP/1.1
 Host: localhost:3000
 Content-Type: application/json
@@ -196,8 +197,6 @@ Content-Type: application/json
 {
   "message": "What is the weather like today?"
 }
-
-```
 
 **Response:**
 
@@ -210,11 +209,8 @@ Content-Type: application/json
 
 ```
 
-```
-
 ### 6. Contributing Guidelines
 
-```markdown
 ## Contributing
 
 We welcome contributions to PeacockGPT! To contribute, follow these steps:
@@ -228,13 +224,8 @@ We welcome contributions to PeacockGPT! To contribute, follow these steps:
 
 Please ensure your code follows our coding standards and includes appropriate tests.
 
-```
-
 ### 7. License Information
 
-```markdown
 ## License
 
 PeacockGPT is licensed under the MIT License. See the [LICENSE](LICENSE) file for more information.
-
-```
