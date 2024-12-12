@@ -13,7 +13,7 @@ export default function ChatHistory({}: Props) {
     <div className="fixed top-0 z-10 flex flex-col h-screen px-2 border-r-2 left-16 w-80 border-r-line bg-body">
       <div className="flex items-center px-3 py-3 shrink-0">
         <h2 className="text-lg font-semibold shrink-0 ">Chats</h2>
-        <div className="grid w-8 h-8 ml-2 text-sm font-semibold rounded-full shrink-0 bg-brandBlue place-items-center">
+        <div className="grid w-8 h-8 ml-2 text-sm font-semibold text-black rounded-full shrink-0 bg-brandWhite place-items-center">
           24
         </div>
         <div className="grow"> </div>

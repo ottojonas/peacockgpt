@@ -10,3 +10,4 @@
 /frontend/package-lock.json
 /admin
 /frontend/.gitignore
+/data/peacockgpt.db

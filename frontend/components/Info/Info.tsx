@@ -8,21 +8,21 @@ type Props = {};
 
 export default function Info({}: Props) {
   return (
-    <div className="border-l-2 border-l-line fixed right-0 top-0 h-screen w-80 bg-body z-10 p-3">
+    <div className="fixed top-0 right-0 z-10 h-screen p-3 border-l-2 border-l-line w-80 bg-body">
       <div className="flex justify-end">
         <Times className="w-5 h-5" />
       </div>
       <Heading text="Capabilities" />
       <div className="flex space-x-2">
-        <div className="w-1/2 bg-card rounded-md p-2">
-          <div className="w-9 h-9 rounded-full bg-brandOrange grid place-items-center">
+        <div className="w-1/2 p-2 rounded-md bg-card">
+          <div className="grid rounded-full w-9 h-9 bg-brandWhite place-items-center">
             <StarIcon className="w-5 h-5 text-blue-900" />
           </div>
           <p className="mt-4 text-sm">
             Privus mater ita fidens stabulaus relaxo
           </p>
         </div>
-        <div className="w-1/2 bg-card rounded-md p-2">
+        <div className="w-1/2 p-2 rounded-md bg-card">
           <div className="w-9 h-9 rounded-full grid place-items-center bg-[#3a3a3c]">
             <StarIcon className="w-5 h-5 text-white" />
           </div>
@@ -33,15 +33,15 @@ export default function Info({}: Props) {
       </div>
       <Heading text="Limitations" />
       <div className="flex space-x-2">
-        <div className="w-1/2 bg-card rounded-md p-2">
-          <div className="w-9 h-9 rounded-full bg-brandOrange grid place-items-center">
+        <div className="w-1/2 p-2 rounded-md bg-card">
+          <div className="grid rounded-full w-9 h-9 bg-brandWhite place-items-center">
             <WarningIcon className="w-5 h-5 text-blue-900" />
           </div>
           <p className="mt-4 text-sm">
             Privus mater ita fidens stabulaus relaxo
           </p>
         </div>
-        <div className="w-1/2 bg-card rounded-md p-2">
+        <div className="w-1/2 p-2 rounded-md bg-card">
           <div className="w-9 h-9 rounded-full bg-[#3a3a3c] grid place-items-center">
             <WarningIcon className="w-5 h-5 text-white" />
           </div>
@@ -56,7 +56,6 @@ export default function Info({}: Props) {
           <TrendingItem item={i} key={i.key} />
         ))}
       </div>
-
     </div>
   );
 }
@@ -86,8 +85,7 @@ function TrendingItem({ item }: TrendingItemProps) {
       <div
         className={`rounded-md text-sm font-semibold py-1 px-2 flex items-center  ${
           item.isSelected ? "bg-brandWhite text-blue-900" : "bg-card"
-        }`}
-      >
+        }`}>
         {item.text}
         <TrendingIcon className="w-4 h-4 ml-1" />
       </div>
