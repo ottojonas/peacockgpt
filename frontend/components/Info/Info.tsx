@@ -18,17 +18,13 @@ export default function Info({}: Props) {
           <div className="grid rounded-full w-9 h-9 bg-brandWhite place-items-center">
             <StarIcon className="w-5 h-5 text-blue-900" />
           </div>
-          <p className="mt-4 text-sm">
-            Privus mater ita fidens stabulaus relaxo
-          </p>
+          <p className="mt-4 text-sm">Capability 1</p>
         </div>
         <div className="w-1/2 p-2 rounded-md bg-card">
           <div className="w-9 h-9 rounded-full grid place-items-center bg-[#3a3a3c]">
             <StarIcon className="w-5 h-5 text-white" />
           </div>
-          <p className="mt-4 text-sm">
-            Privus mater ita fidens stabulaus relaxo
-          </p>
+          <p className="mt-4 text-sm">Capability 2</p>
         </div>
       </div>
       <Heading text="Limitations" />
@@ -37,17 +33,13 @@ export default function Info({}: Props) {
           <div className="grid rounded-full w-9 h-9 bg-brandWhite place-items-center">
             <WarningIcon className="w-5 h-5 text-blue-900" />
           </div>
-          <p className="mt-4 text-sm">
-            Privus mater ita fidens stabulaus relaxo
-          </p>
+          <p className="mt-4 text-sm">Limitation 1</p>
         </div>
         <div className="w-1/2 p-2 rounded-md bg-card">
           <div className="w-9 h-9 rounded-full bg-[#3a3a3c] grid place-items-center">
             <WarningIcon className="w-5 h-5 text-white" />
           </div>
-          <p className="mt-4 text-sm">
-            Privus mater ita fidens stabulaus relaxo
-          </p>
+          <p className="mt-4 text-sm">Limitation 2</p>
         </div>
       </div>
       <Heading text="Trending Topics" />

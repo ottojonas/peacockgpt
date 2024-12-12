@@ -1,12 +1,12 @@
 [
   {
     "key": 0,
-    "text": "Infirmus scaphium namucense vilis induco lacus. Piger distulo putus. Insula demo multus laboro cupressus.",
+    "text": "placeholder text",
     "isUser": true
-  },
+  }, 
   {
-    "key": 1,
-    "text": "Infirmus scaphium namucense vilis induco lacus. Piger distulo putus. Insula demo multus laboro cupressus.",
+    "key": 1, 
+    "text": "placeholder text", 
     "isUser": false
   }
 ]
