@@ -183,12 +183,11 @@ Host: localhost:3000
     "timestamp": "2023-01-01T12:00:00Z"
   }
 ]
-
+```
 
 ### POST /api/chat
 
 **Request:**
-
 
 POST /api/chat HTTP/1.1
 Host: localhost:3000
