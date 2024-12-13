@@ -6,7 +6,11 @@ import ThumbsDown from "@/components/icons/ThumbsDown";
 import { MessageItem } from "../Chat";
 import ImageSet from "../ImageSet";
 
-export default function ChatItem({ item }: { item: MessageItem }) {
+interface ChatItemProps {
+  item: MessageItem;
+}
+
+const ChatItem: React.FC<ChatItemProps> = ({ item }) => {
   return (
     <div className="py-2" key={item.key} data-testid="chat-item">
       <div className="flex p-2 rounded-md bg-item">
@@ -56,4 +60,6 @@ export default function ChatItem({ item }: { item: MessageItem }) {
       </div>
     </div>
   );
-}
+};
+
+export default ChatItem;

@@ -2,39 +2,32 @@ import React, { useState, useEffect } from "react";
 import ChatItem from "./ChatItem";
 import ChatInput from "@/components/ChatInput";
 
-export type MessageItem =
-  | {
-      key: number;
-      text: string;
-      isUser: boolean;
-      images?: undefined;
-    }
-  | {
-      key: number;
-      text: string;
-      isUser: boolean;
-      images: {
-        key: number;
-        url: string;
-      }[];
-    };
-
+export interface MessageItem {
+  key: number;
+  text: string;
+  isUser: boolean;
+  images: { key: number; url: string }[];
+}
 interface ChatProps {
   initialMessages?: MessageItem[];
   sendMessage: (text: string) => void;
 }
 
-const Chat = ({ initialMessages = [], sendMessage }: ChatProps) => {
+const Chat: React.FC<ChatProps> = ({ initialMessages = [], sendMessage }) => {
   const [messages, setMessages] = useState<MessageItem[]>(initialMessages);
+  const [inputValue, setInputValue] = useState<string>("");
 
   const handleSendMessage = (text: string) => {
-    const newMessage: MessageItem = {
-      key: messages.length + 1,
-      text,
-      isUser: true,
-    };
-    setMessages([...messages, newMessage]);
-    handleSendMessage(text);
+    if (inputValue.trim()) {
+      const newMessage: MessageItem = {
+        key: Date.now(),
+        text: inputValue.trim(),
+        isUser: true,
+        images: [],
+      };
+      setMessages([...messages, newMessage]);
+      setInputValue("");
+    }
   };
 
   useEffect(() => {
