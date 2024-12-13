@@ -54,6 +54,31 @@ Using pip:
 pip install -r requirements.txt
 ```
 
+Using pip in a virtual environment 
+
+To avoid the `externally-managed-environment` error, you should create a virtual environment and install the dependencies within it. Here are the steps:
+
+1. Create a virtual environment:
+    
+    ```bash
+    python -m venv ../peacockgpt/backend/venv
+    ```
+    
+2. Activate the virtual environment:
+    
+    ```bash
+    source ../peacockgpt/backend/venv/bin/activate
+    ```
+    
+3. Install the dependencies using `pip`:
+    
+    ```bash
+    pip install -r ../peacockgpt/backend/requirements.txt
+    ```
+    
+
+This will install the dependencies in the virtual environment, avoiding conflicts with the system-wide Python installation.
+
 ### Start the Development Server
 
 Using npm:
