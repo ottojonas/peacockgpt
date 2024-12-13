@@ -21,11 +21,10 @@ export type MessageItem =
 
 const data: MessageItem[] = [];
 
-export default function Chat() {
+const Chat = () => {
   const [messages, setMessages] = useState<MessageItem[]>(data);
 
-  const addMessage = (text: string) => {
-    console.log("addMessage called with text:", text);
+  const sendMessage = (text: string) => {
     const newMessage: MessageItem = {
       key: messages.length,
       text,
@@ -41,16 +40,20 @@ export default function Chat() {
     };
   }, []);
 
-  console.log("chat component rendered correctly");
+  useEffect(() => {
+    console.log("sendMessage function updated:", sendMessage);
+  }, [sendMessage]);
 
   return (
     <div className="" style={{ marginLeft: "384px", marginRight: "320px" }}>
       <div className="max-w-3xl px-4 pt-16 pb-48 mx-auto">
-        {messages.map((i: MessageItem) => (
-          <ChatItem item={i} key={i.key} />
+        {messages.map((item: MessageItem) => (
+          <ChatItem item={item} key={item.key} />
         ))}
       </div>
-      <ChatInput onSendMessage={addMessage} />
+      <ChatInput onSendMessage={sendMessage} />
     </div>
   );
-}
+};
+
+export default Chat;

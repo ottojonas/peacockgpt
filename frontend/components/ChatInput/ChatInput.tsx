@@ -3,12 +3,11 @@ import Send from "@/components/icons/Send";
 import Mic from "@/components/icons/Mic";
 import Refresh from "@/components/icons/Refresh";
 
-type Props = {
-  onSendMessage?: (message: string) => void;
-};
+interface ChatInputProps {
+  onSendMessage: (message: string) => void;
+}
 
-export default function ChatInput({ onSendMessage }: Props) {
-  console.log("onSendMessage prop:", onSendMessage);
+const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
@@ -21,25 +20,34 @@ export default function ChatInput({ onSendMessage }: Props) {
   const handleSendMessage = () => {
     console.log("handleSendMessage called");
     if (message.trim() && onSendMessage) {
-      console.log("calling onSendMessage with message:", message);
       onSendMessage(message);
       setMessage("");
     } else {
-      console.log("onSendMessage is undefined or message is empty");
+      console.log("onSendMessage is undefined");
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    console.log("handleKeyDown called with key:", e.key);
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
     }
   };
 
-  console.log(
-    "ChatInput component rendered with onSendMessage:",
-    onSendMessage
-  );
+  useEffect(() => {
+    console.log("ChatInput component mounted");
+    return () => {
+      console.log("ChatInput component unmounted");
+    };
+  }, []);
+
+  useEffect(() => {
+    console.log(
+      "ChatInput component received new onSendMessage:",
+      onSendMessage
+    );
+  }, [onSendMessage]);
 
   return (
     <div className="fixed inset-x-0 bottom-0 pt-8 bg-input">
@@ -84,4 +92,6 @@ export default function ChatInput({ onSendMessage }: Props) {
       </div>
     </div>
   );
-}
+};
+
+export default ChatInput;

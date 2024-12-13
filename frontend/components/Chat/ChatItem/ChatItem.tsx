@@ -25,22 +25,22 @@ export default function ChatItem({ item }: { item: MessageItem }) {
             )}
           </div>
         </div>
-        <div className="w-full ">
-          <div className="flex items-center justify-between h-10 px-3 grow text-brandGray ">
+        <div className="w-full">
+          <div className="flex items-center justify-between h-10 px-3 grow text-brandGray">
             <div className="text-sm"> 12 dec </div>
             {item.isUser ? (
               <div className="inline-flex items-center">
                 <button className="grid rounded-md w-7 h-7 place-items-center">
-                  <Pencil className="w-5 h-5 " />
+                  <Pencil className="w-5 h-5" />
                 </button>
               </div>
             ) : (
               <div className="inline-flex items-center space-x-2">
                 <button className="grid rounded-md w-7 h-7 place-items-center">
-                  <ThumbsUp className="w-5 h-5 " />
+                  <ThumbsUp className="w-5 h-5" />
                 </button>
                 <button className="grid rounded-md w-7 h-7 place-items-center">
-                  <ThumbsDown className="w-5 h-5 " />
+                  <ThumbsDown className="w-5 h-5" />
                 </button>
               </div>
             )}
