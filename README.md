@@ -29,8 +29,8 @@ To get started with PeacockGPT, follow these steps:
 ```bash
 git clone <https://github.com/yourusername/peacockgpt.git>
 cd peacockgpt
-
 ```
+
 
 ### Install Dependencies
 
