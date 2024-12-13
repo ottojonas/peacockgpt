@@ -11,3 +11,4 @@
 /admin
 /frontend/.gitignore
 /data/peacockgpt.db
+/frontend/build
