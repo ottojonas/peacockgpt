@@ -3,7 +3,7 @@ import GPTLogo from "@/components/icons/GPTLogo";
 import Pencil from "@/components/icons/Pencil";
 import ThumbsUp from "@/components/icons/ThumbsUp";
 import ThumbsDown from "@/components/icons/ThumbsDown";
-import MessageItem from "../Chat";
+import { MessageItem } from "../Chat";
 import ImageSet from "../ImageSet";
 
 interface MessageItem {

@@ -7,7 +7,6 @@ import ChatHeader from "@/components/ChatHeader";
 import Chat from "@/components/Chat";
 import ChatInput from "@/components/ChatInput";
 import Info from "@/components/Info";
-import { clear } from "console";
 import fs from "fs";
 import path from "path";
 

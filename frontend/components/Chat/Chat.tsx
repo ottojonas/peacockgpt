@@ -6,10 +6,10 @@ import data from "./data.json";
 import fs from "fs";
 import path from "path";
 
-interface MessageItem {
+export interface MessageItem {
   key: string;
-  text: string;
   isUser: boolean;
+  text: string;
   images: { key: number; url: string }[];
 }
 interface ChatProps {
@@ -24,6 +24,10 @@ const saveMessagesToFile = async (
   await axios.post("/api/saveMessages", { messages, filename });
 };
 
+//! written by millie
+// const Chat = () => {
+//   in English
+// }
 const Chat: React.FC<ChatProps> = ({ initialMessages = [], sendMessage }) => {
   const [messages, setMessages] = useState<MessageItem[]>(initialMessages);
   const [inputValue, setInputValue] = useState<string>("");
@@ -75,5 +79,3 @@ const Chat: React.FC<ChatProps> = ({ initialMessages = [], sendMessage }) => {
     </div>
   );
 };
-
-export default Chat;
