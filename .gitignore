@@ -12,3 +12,4 @@
 /frontend/.gitignore
 /data/peacockgpt.db
 /frontend/build
+backend/venv
