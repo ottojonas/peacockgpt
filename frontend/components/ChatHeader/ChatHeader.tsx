@@ -1,6 +1,7 @@
 import ChatIcon from "@/components/icons/ChatIcon";
 import TrashIcon from "@/components/icons/TrashIcon";
 import SaveIcon from "@/components/icons/SaveIcon";
+import React from "react";
 
 export default function ChatHeader() {
   return (

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ChatItem from "./ChatItem";
 import ChatInput from "@/components/ChatInput";
 
@@ -34,7 +34,14 @@ export default function Chat() {
     setMessages([...messages, newMessage]);
   };
 
-  console.log("chat component rendered successfully");
+  useEffect(() => {
+    console.log("chat component mounted");
+    return () => {
+      console.log("chat component unmounted");
+    };
+  }, []);
+
+  console.log("chat component rendered correctly");
 
   return (
     <div className="" style={{ marginLeft: "384px", marginRight: "320px" }}>
@@ -43,9 +50,7 @@ export default function Chat() {
           <ChatItem item={i} key={i.key} />
         ))}
       </div>
-      {console.log("passing addMessage to ChatInput")}
       <ChatInput onSendMessage={addMessage} />
-      {console.log("addMessage successfully passed to ChatInput")}
     </div>
   );
 }

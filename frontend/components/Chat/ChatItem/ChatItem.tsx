@@ -1,3 +1,4 @@
+import React from "react";
 import GPTLogo from "@/components/icons/GPTLogo";
 import Pencil from "@/components/icons/Pencil";
 import ThumbsUp from "@/components/icons/ThumbsUp";

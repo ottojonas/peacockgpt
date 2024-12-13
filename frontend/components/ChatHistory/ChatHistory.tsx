@@ -6,6 +6,8 @@ import PencilSquareIcon from "@/components/icons/PencilSquareIcon";
 import SearchIcon from "@/components/icons/SearchIcon";
 import PinnedIcon from "@/components/icons/PinnedIcon";
 import ListAllIcon from "@/components/icons/ListAllIcon";
+import React from "react";
+
 type Props = {};
 
 export default function ChatHistory({}: Props) {
