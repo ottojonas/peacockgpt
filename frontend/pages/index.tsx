@@ -1,15 +1,18 @@
 import React, { useState } from "react";
 import axios from "axios";
 import Sidebar from "@/components/Sidebar";
-import DocumentList from "@/components/DocumentList/DocumentList";
 import CustomHead from "@/components/common/CustomHead";
 import ChatHistory from "@/components/ChatHistory";
 import ChatHeader from "@/components/ChatHeader";
 import Chat from "@/components/Chat";
 import ChatInput from "@/components/ChatInput";
 import Info from "@/components/Info";
+import { clear } from "console";
+import fs from "fs";
+import path from "path";
 
 export default function Home() {
+  const [inputValue, setInputValue] = useState<string>("");
   const [healthStatus, setHealthStatus] = useState("");
 
   const checkHealth = async () => {
@@ -32,7 +35,11 @@ export default function Home() {
       <ChatHistory />
       <ChatHeader />
       <Chat sendMessage={sendMessage} />
-      <ChatInput sendMessage={sendMessage} />
+      <ChatInput
+        sendMessage={sendMessage}
+        inputValue={inputValue}
+        setInputValue={setInputValue}
+      />
       <Info />
       <div className="fixed z-50 bottom-4 right-4">
         <button

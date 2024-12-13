@@ -5,46 +5,37 @@ import Refresh from "@/components/icons/Refresh";
 
 interface ChatInputProps {
   sendMessage: (text: string) => void;
+  inputValue: string;
+  setInputValue: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const ChatInput: React.FC<ChatInputProps> = ({ sendMessage }) => {
-  const [message, setMessage] = useState("");
+const ChatInput: React.FC<ChatInputProps> = ({
+  sendMessage,
+  inputValue,
+  setInputValue,
+}) => {
+  const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInputValue(event.target.value);
+  };
 
-  useEffect(() => {
-    console.log("ChatInput component mounted");
-    return () => {
-      console.log("ChatInput component unmounted");
-    };
-  }, []);
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    sendMessage(inputValue);
+  };
 
   const handleSendMessage = () => {
-    console.log("handleSendMessage called");
-    if (message.trim() && sendMessage) {
-      sendMessage(message);
-      setMessage("");
-    } else {
-      console.log("onSendMessage is undefined");
+    if (inputValue.trim()) {
+      sendMessage(inputValue);
+      setInputValue("");
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    console.log("handleKeyDown called with key:", e.key);
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
     }
   };
-
-  useEffect(() => {
-    console.log("ChatInput component mounted");
-    return () => {
-      console.log("ChatInput component unmounted");
-    };
-  }, []);
-
-  useEffect(() => {
-    console.log("ChatInput component received new onSendMessage:", sendMessage);
-  }, [sendMessage]);
 
   return (
     <div className="fixed inset-x-0 bottom-0 pt-8 bg-input">
@@ -62,8 +53,8 @@ const ChatInput: React.FC<ChatInputProps> = ({ sendMessage }) => {
             <textarea
               rows={2}
               className="w-full px-4 py-2 rounded-md resize-none bg-card"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
+              value={inputValue}
+              onChange={handleChange}
               onKeyDown={handleKeyDown}
               placeholder="Type a message..."
             />

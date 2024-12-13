@@ -1,16 +1,44 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import GPTLogo from "@/components/icons/GPTLogo";
 import Pencil from "@/components/icons/Pencil";
 import ThumbsUp from "@/components/icons/ThumbsUp";
 import ThumbsDown from "@/components/icons/ThumbsDown";
-import { MessageItem } from "../Chat";
+import MessageItem from "../Chat";
 import ImageSet from "../ImageSet";
+
+interface MessageItem {
+  key: string;
+  isUser: boolean;
+  text: string;
+  images?: Image[];
+}
+
+interface Image {
+  key: number;
+  url: string;
+}
 
 interface ChatItemProps {
   item: MessageItem;
+  sendMessage: (text: string) => void;
+  inputValue: string;
+  setInputValue: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const ChatItem: React.FC<ChatItemProps> = ({ item }) => {
+const ChatItem: React.FC<ChatItemProps> = ({
+  item,
+  sendMessage,
+  inputValue,
+  setInputValue,
+}) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(event.target.value);
+  };
+
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    sendMessage(inputValue);
+  };
   return (
     <div className="py-2" key={item.key} data-testid="chat-item">
       <div className="flex p-2 rounded-md bg-item">

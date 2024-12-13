@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react";
 import ChatItem from "./ChatItem";
 import ChatInput from "@/components/ChatInput";
+import axios from "axios";
+import data from "./data.json";
+import fs from "fs";
+import path from "path";
 
-export interface MessageItem {
-  key: number;
+interface MessageItem {
+  key: string;
   text: string;
   isUser: boolean;
   images: { key: number; url: string }[];
@@ -13,42 +17,61 @@ interface ChatProps {
   sendMessage: (text: string) => void;
 }
 
+const saveMessagesToFile = async (
+  messages: MessageItem[],
+  filename: string
+) => {
+  await axios.post("/api/saveMessages", { messages, filename });
+};
+
 const Chat: React.FC<ChatProps> = ({ initialMessages = [], sendMessage }) => {
   const [messages, setMessages] = useState<MessageItem[]>(initialMessages);
   const [inputValue, setInputValue] = useState<string>("");
 
+  useEffect(() => {
+    axios
+      .get("http://localhost:3001/loadMessages")
+      .then((response) => {
+        setMessages(response.data);
+      })
+      .catch((error) => {
+        console.error("Error loading messages:", error);
+      });
+  }, []);
+
   const handleSendMessage = (text: string) => {
-    if (inputValue.trim()) {
+    if (text.trim()) {
       const newMessage: MessageItem = {
-        key: Date.now(),
-        text: inputValue.trim(),
+        key: Date.now().toString(),
+        text: text.trim(),
         isUser: true,
         images: [],
       };
-      setMessages([...messages, newMessage]);
+      const updatedMessages = [...messages, newMessage];
+      setMessages(updatedMessages);
       setInputValue("");
+      saveMessagesToFile(updatedMessages, "conversation.json");
     }
   };
-
-  useEffect(() => {
-    console.log("chat component mounted");
-    return () => {
-      console.log("chat component unmounted");
-    };
-  }, []);
-
-  useEffect(() => {
-    console.log("sendMessage function updated:", handleSendMessage);
-  }, [handleSendMessage]);
 
   return (
     <div className="" style={{ marginLeft: "384px", marginRight: "320px" }}>
       <div className="max-w-3xl px-4 pt-16 pb-48 mx-auto">
-        {messages.map((item: MessageItem) => (
-          <ChatItem item={item} key={item.key} />
+        {messages.map((item) => (
+          <ChatItem
+            item={item}
+            key={item.key}
+            sendMessage={handleSendMessage}
+            inputValue={inputValue}
+            setInputValue={setInputValue}
+          />
         ))}
       </div>
-      <ChatInput sendMessage={handleSendMessage} />
+      <ChatInput
+        sendMessage={handleSendMessage}
+        inputValue={inputValue}
+        setInputValue={setInputValue}
+      />
     </div>
   );
 };
