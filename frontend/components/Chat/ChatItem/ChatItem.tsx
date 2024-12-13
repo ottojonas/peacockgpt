@@ -6,13 +6,6 @@ import ThumbsDown from "@/components/icons/ThumbsDown";
 import { MessageItem } from "../Chat";
 import ImageSet from "../ImageSet";
 
-interface MessageItem {
-  key: string;
-  isUser: boolean;
-  text: string;
-  images?: Image[];
-}
-
 interface Image {
   key: number;
   url: string;

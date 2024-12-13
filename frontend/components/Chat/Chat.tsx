@@ -28,13 +28,14 @@ const saveMessagesToFile = async (
 // const Chat = () => {
 //   in English
 // }
+
 const Chat: React.FC<ChatProps> = ({ initialMessages = [], sendMessage }) => {
   const [messages, setMessages] = useState<MessageItem[]>(initialMessages);
   const [inputValue, setInputValue] = useState<string>("");
 
   useEffect(() => {
     axios
-      .get("http://localhost:3001/loadMessages")
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/loadMessages`)
       .then((response) => {
         setMessages(response.data);
       })
@@ -79,3 +80,5 @@ const Chat: React.FC<ChatProps> = ({ initialMessages = [], sendMessage }) => {
     </div>
   );
 };
+
+export default Chat;
