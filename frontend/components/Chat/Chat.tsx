@@ -12,30 +12,19 @@ export interface MessageItem {
   text: string;
   images: { key: number; url: string }[];
 }
-interface ChatProps {
-  initialMessages?: MessageItem[];
-  sendMessage: (text: string) => void;
-}
-
-const saveMessagesToFile = async (
-  messages: MessageItem[],
-  filename: string
-) => {
-  await axios.post("/api/saveMessages", { messages, filename });
-};
 
 //! written by millie
 // const Chat = () => {
 //   in English
 // }
 
-const Chat: React.FC<ChatProps> = ({ initialMessages = [], sendMessage }) => {
-  const [messages, setMessages] = useState<MessageItem[]>(initialMessages);
+const Chat: React.FC = () => {
+  const [messages, setMessages] = useState<MessageItem[]>([]);
   const [inputValue, setInputValue] = useState<string>("");
 
   useEffect(() => {
     axios
-      .get(`${process.env.NEXT_PUBLIC_API_URL}/loadMessages`)
+      .get("/api/loadMessages")
       .then((response) => {
         setMessages(response.data);
       })
@@ -44,7 +33,17 @@ const Chat: React.FC<ChatProps> = ({ initialMessages = [], sendMessage }) => {
       });
   }, []);
 
+  const saveMessagesToFile = async (messages: MessageItem[]) => {
+    try {
+      console.log("saving message to file:", messages);
+      await axios.post("/api/loadMessages", { messages });
+    } catch (error) {
+      console.error("error saving messages:", error);
+    }
+  };
+
   const handleSendMessage = (text: string) => {
+    console.log("handleSendMessage called with text:", text);
     if (text.trim()) {
       const newMessage: MessageItem = {
         key: Date.now().toString(),
@@ -55,7 +54,7 @@ const Chat: React.FC<ChatProps> = ({ initialMessages = [], sendMessage }) => {
       const updatedMessages = [...messages, newMessage];
       setMessages(updatedMessages);
       setInputValue("");
-      saveMessagesToFile(updatedMessages, "conversation.json");
+      saveMessagesToFile(updatedMessages);
     }
   };
 

@@ -25,6 +25,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
 
   const handleSendMessage = () => {
     if (inputValue.trim()) {
+      console.log("sending message:", inputValue);
       sendMessage(inputValue);
       setInputValue("");
     }
