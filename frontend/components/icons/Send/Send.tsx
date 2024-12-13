@@ -1,3 +1,5 @@
+import React = require("react");
+
 type Props = {
   className: string;
 };
@@ -10,8 +12,7 @@ export default function Send({ className }: Props) {
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
-      className={className}
-    >
+      className={className}>
       <path
         strokeLinecap="round"
         strokeLinejoin="round"

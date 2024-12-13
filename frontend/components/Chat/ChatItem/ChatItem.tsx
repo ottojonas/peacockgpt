@@ -8,7 +8,7 @@ import ImageSet from "../ImageSet";
 
 export default function ChatItem({ item }: { item: MessageItem }) {
   return (
-    <div className="py-2" key={item.key}>
+    <div className="py-2" key={item.key} data-testid="chat-item">
       <div className="flex p-2 rounded-md bg-item">
         <div className="w-12 shrink-0">
           <div className="grid w-11 h-11 place-items-center">

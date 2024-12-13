@@ -19,14 +19,21 @@ export type MessageItem =
       }[];
     };
 
-const data: MessageItem[] = [];
+interface ChatProps {
+  initialMessages?: MessageItem[];
+  sendMessage: (text: string) => void;
+}
 
-const Chat = () => {
-  const [messages, setMessages] = useState<MessageItem[]>(data);
+const Chat = ({
+  initialMessages = [],
+}: {
+  initialMessages?: MessageItem[];
+}) => {
+  const [messages, setMessages] = useState<MessageItem[]>(initialMessages);
 
   const sendMessage = (text: string) => {
     const newMessage: MessageItem = {
-      key: messages.length,
+      key: messages.length + 1,
       text,
       isUser: true,
     };

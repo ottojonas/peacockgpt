@@ -3,11 +3,11 @@ import Send from "@/components/icons/Send";
 import Mic from "@/components/icons/Mic";
 import Refresh from "@/components/icons/Refresh";
 
-interface ChatInputProps {
-  onSendMessage: (message: string) => void;
-}
+type ChatInputProps = {
+  onSendMessage: (text: string) => void;
+};
 
-const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
+const ChatInput = ({ onSendMessage }: ChatInputProps) => {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
@@ -68,6 +68,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={handleKeyDown}
+              placeholder="Type a message..."
             />
             <div
               className="absolute flex items-center space-x-3"

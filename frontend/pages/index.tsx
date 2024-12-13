@@ -21,6 +21,10 @@ export default function Home() {
     }
   };
 
+  const sendMessage = (text: string) => {
+    console.log("message send:", text);
+  };
+
   return (
     <>
       <CustomHead title="PeacockGPT" />
@@ -28,7 +32,7 @@ export default function Home() {
       <ChatHistory />
       <ChatHeader />
       <Chat />
-      <ChatInput />
+      <ChatInput onSendMessage={sendMessage} />
       <Info />
       <div className="fixed z-50 bottom-4 right-4">
         <button
