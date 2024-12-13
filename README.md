@@ -48,6 +48,12 @@ yarn install
 
 ```
 
+Using pip: 
+
+```bash
+pip install -r requirements.txt
+```
+
 ### Start the Development Server
 
 Using npm:
