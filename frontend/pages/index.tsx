@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import Sidebar from "@/components/Sidebar";
 import DocumentList from "@/components/DocumentList/DocumentList";
@@ -31,8 +31,8 @@ export default function Home() {
       <Sidebar />
       <ChatHistory />
       <ChatHeader />
-      <Chat />
-      <ChatInput onSendMessage={sendMessage} />
+      <Chat sendMessage={sendMessage} />
+      <ChatInput sendMessage={sendMessage} />
       <Info />
       <div className="fixed z-50 bottom-4 right-4">
         <button

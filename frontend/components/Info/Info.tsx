@@ -1,3 +1,4 @@
+import React from "react";
 import Options from "@/components/icons/Options";
 import Times from "@/components/icons/Times";
 import trending from "./trending.json";

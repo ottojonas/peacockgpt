@@ -3,11 +3,11 @@ import Send from "@/components/icons/Send";
 import Mic from "@/components/icons/Mic";
 import Refresh from "@/components/icons/Refresh";
 
-type ChatInputProps = {
-  onSendMessage: (text: string) => void;
-};
+interface ChatInputProps {
+  sendMessage: (text: string) => void;
+}
 
-const ChatInput = ({ onSendMessage }: ChatInputProps) => {
+const ChatInput: React.FC<ChatInputProps> = ({ sendMessage }) => {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
@@ -19,8 +19,8 @@ const ChatInput = ({ onSendMessage }: ChatInputProps) => {
 
   const handleSendMessage = () => {
     console.log("handleSendMessage called");
-    if (message.trim() && onSendMessage) {
-      onSendMessage(message);
+    if (message.trim() && sendMessage) {
+      sendMessage(message);
       setMessage("");
     } else {
       console.log("onSendMessage is undefined");
@@ -43,11 +43,8 @@ const ChatInput = ({ onSendMessage }: ChatInputProps) => {
   }, []);
 
   useEffect(() => {
-    console.log(
-      "ChatInput component received new onSendMessage:",
-      onSendMessage
-    );
-  }, [onSendMessage]);
+    console.log("ChatInput component received new onSendMessage:", sendMessage);
+  }, [sendMessage]);
 
   return (
     <div className="fixed inset-x-0 bottom-0 pt-8 bg-input">

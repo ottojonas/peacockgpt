@@ -24,20 +24,17 @@ interface ChatProps {
   sendMessage: (text: string) => void;
 }
 
-const Chat = ({
-  initialMessages = [],
-}: {
-  initialMessages?: MessageItem[];
-}) => {
+const Chat = ({ initialMessages = [], sendMessage }: ChatProps) => {
   const [messages, setMessages] = useState<MessageItem[]>(initialMessages);
 
-  const sendMessage = (text: string) => {
+  const handleSendMessage = (text: string) => {
     const newMessage: MessageItem = {
       key: messages.length + 1,
       text,
       isUser: true,
     };
     setMessages([...messages, newMessage]);
+    handleSendMessage(text);
   };
 
   useEffect(() => {
@@ -48,8 +45,8 @@ const Chat = ({
   }, []);
 
   useEffect(() => {
-    console.log("sendMessage function updated:", sendMessage);
-  }, [sendMessage]);
+    console.log("sendMessage function updated:", handleSendMessage);
+  }, [handleSendMessage]);
 
   return (
     <div className="" style={{ marginLeft: "384px", marginRight: "320px" }}>
@@ -58,7 +55,7 @@ const Chat = ({
           <ChatItem item={item} key={item.key} />
         ))}
       </div>
-      <ChatInput onSendMessage={sendMessage} />
+      <ChatInput sendMessage={handleSendMessage} />
     </div>
   );
 };
