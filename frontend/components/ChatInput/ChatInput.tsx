@@ -2,14 +2,15 @@ import React, { useEffect, useState } from "react";
 import Send from "@/components/icons/Send";
 import Mic from "@/components/icons/Mic";
 import Refresh from "@/components/icons/Refresh";
+import axios from "axios";
 
-interface ChatInputProps {
+interface Props {
   sendMessage: (text: string) => void;
   inputValue: string;
   setInputValue: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const ChatInput: React.FC<ChatInputProps> = ({
+const ChatInput: React.FC<Props> = ({
   sendMessage,
   inputValue,
   setInputValue,
@@ -18,23 +19,39 @@ const ChatInput: React.FC<ChatInputProps> = ({
     setInputValue(event.target.value);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     sendMessage(inputValue);
   };
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (inputValue.trim()) {
-      console.log("sending message:", inputValue);
-      sendMessage(inputValue);
-      setInputValue("");
-    }
-  };
+      try {
+        const response = await axios.get("/api/loadMessages");
+        const messages = response.data;
+        const newMessage = {
+          key: messages.length + 1,
+          text: inputValue.trim(),
+          isUser: true,
+          images: [],
+          date: new Date().toISOString(),
+        };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
+        await axios.post("/api/loadMessages", {
+          newMessage,
+        });
+        sendMessage(inputValue.trim());
+        setInputValue("");
+      } catch (error) {
+        console.error("error sending message:", error);
+      }
     }
   };
 

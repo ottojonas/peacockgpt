@@ -1,8 +1,23 @@
 [
   {
-    "key": "1",
+    "key": 1,
+    "text": "hi",
     "isUser": true,
-    "text": "Hello, world!",
-    "images": []
+    "images": [],
+    "date": "2024-12-14T00:40:42.922Z"
+  },
+  {
+    "key": 2,
+    "text": "number 2",
+    "isUser": true,
+    "images": [],
+    "date": "2024-12-14T01:06:05.192Z"
+  },
+  {
+    "key": 3,
+    "text": "number 3",
+    "isUser": true,
+    "images": [],
+    "date": "2024-12-14T01:06:16.220Z"
   }
 ]

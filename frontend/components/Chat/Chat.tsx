@@ -3,14 +3,17 @@ import ChatItem from "./ChatItem";
 import ChatInput from "@/components/ChatInput";
 import axios from "axios";
 import data from "./data.json";
-import fs from "fs";
-import path from "path";
 
 export interface MessageItem {
-  key: string;
+  key: number;
   isUser: boolean;
   text: string;
   images: { key: number; url: string }[];
+  date: string;
+}
+
+interface ChatProps {
+  sendMessage: (text: string) => void;
 }
 
 //! written by millie
@@ -18,7 +21,7 @@ export interface MessageItem {
 //   in English
 // }
 
-const Chat: React.FC = () => {
+const Chat: React.FC<ChatProps> = ({ sendMessage }) => {
   const [messages, setMessages] = useState<MessageItem[]>([]);
   const [inputValue, setInputValue] = useState<string>("");
 
@@ -46,10 +49,11 @@ const Chat: React.FC = () => {
     console.log("handleSendMessage called with text:", text);
     if (text.trim()) {
       const newMessage: MessageItem = {
-        key: Date.now().toString(),
+        key: messages.length + 1,
         text: text.trim(),
         isUser: true,
         images: [],
+        date: new Date().toISOString(),
       };
       const updatedMessages = [...messages, newMessage];
       setMessages(updatedMessages);
@@ -61,7 +65,7 @@ const Chat: React.FC = () => {
   return (
     <div className="" style={{ marginLeft: "384px", marginRight: "320px" }}>
       <div className="max-w-3xl px-4 pt-16 pb-48 mx-auto">
-        {messages.map((item) => (
+        {messages.filter(Boolean).map((item) => (
           <ChatItem
             item={item}
             key={item.key}
