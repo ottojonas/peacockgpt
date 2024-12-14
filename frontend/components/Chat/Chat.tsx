@@ -14,6 +14,8 @@ export interface MessageItem {
 
 interface ChatProps {
   sendMessage: (text: string) => void;
+  messages: MessageItem[];
+  setMessages: React.Dispatch<React.SetStateAction<MessageItem[]>>;
 }
 
 //! written by millie
@@ -21,20 +23,8 @@ interface ChatProps {
 //   in English
 // }
 
-const Chat: React.FC<ChatProps> = ({ sendMessage }) => {
-  const [messages, setMessages] = useState<MessageItem[]>([]);
+const Chat: React.FC<ChatProps> = ({ sendMessage, messages, setMessages }) => {
   const [inputValue, setInputValue] = useState<string>("");
-
-  useEffect(() => {
-    axios
-      .get("/api/loadMessages")
-      .then((response) => {
-        setMessages(response.data);
-      })
-      .catch((error) => {
-        console.error("Error loading messages:", error);
-      });
-  }, []);
 
   const saveMessagesToFile = async (messages: MessageItem[]) => {
     try {

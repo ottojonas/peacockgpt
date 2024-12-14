@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Sidebar from "@/components/Sidebar";
 import CustomHead from "@/components/common/CustomHead";
@@ -9,10 +9,29 @@ import ChatInput from "@/components/ChatInput";
 import Info from "@/components/Info";
 import fs from "fs";
 import path from "path";
+import { MessageItem } from "@/components/Chat/Chat";
+import io from "socket.io-client";
+
+const socket = io("http://localhost:5000");
 
 export default function Home() {
   const [inputValue, setInputValue] = useState<string>("");
   const [healthStatus, setHealthStatus] = useState("");
+  const [messages, setMessages] = useState<MessageItem[]>([]);
+
+  useEffect(() => {
+    axios.get("/api/loadMessages").then((response) => {
+      setMessages(response.data);
+    });
+
+    socket.on("new_message", (message) => {
+      setMessages((prevMessages) => [...prevMessages, message]);
+    });
+
+    return () => {
+      socket.off("new_message");
+    };
+  }, []);
 
   const checkHealth = async () => {
     try {
@@ -24,7 +43,15 @@ export default function Home() {
   };
 
   const sendMessage = (text: string) => {
-    console.log("message send:", text);
+    const newMessage = {
+      key: messages.length + 1,
+      text,
+      isUser: true,
+      images: [],
+      date: new Date().toISOString(),
+    };
+    socket.emit("send_message", newMessage);
+    setInputValue("");
   };
 
   return (
@@ -33,7 +60,11 @@ export default function Home() {
       <Sidebar />
       <ChatHistory />
       <ChatHeader />
-      <Chat sendMessage={sendMessage} />
+      <Chat
+        sendMessage={sendMessage}
+        messages={messages}
+        setMessages={setMessages}
+      />
       <ChatInput
         sendMessage={sendMessage}
         inputValue={inputValue}

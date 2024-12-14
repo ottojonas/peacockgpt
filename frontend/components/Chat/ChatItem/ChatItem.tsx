@@ -32,6 +32,17 @@ const ChatItem: React.FC<ChatItemProps> = ({
     event.preventDefault();
     sendMessage(inputValue);
   };
+  const formatDate = (date: Date) => {
+    const opeions: Intl.DateTimeFormatOptions = {
+      year: "2-digit",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    return new Intl.DateTimeFormat("en-GB").format(date);
+  };
+  const sentDate = new Date();
   return (
     <div className="py-2" key={item.key} data-testid="chat-item">
       <div className="flex p-2 rounded-md bg-item">
@@ -52,7 +63,7 @@ const ChatItem: React.FC<ChatItemProps> = ({
         </div>
         <div className="w-full">
           <div className="flex items-center justify-between h-10 px-3 grow text-brandGray">
-            <div className="text-sm"> 12 dec </div>
+            <div className="text-sm">{formatDate(sentDate)}</div>
             {item.isUser ? (
               <div className="inline-flex items-center">
                 <button className="grid rounded-md w-7 h-7 place-items-center">
