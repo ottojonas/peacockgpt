@@ -1,22 +1,64 @@
-import pinned from "./pinned.json";
-import all from "./all.json";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import Options from "@/components/icons/Options";
 import Times from "@/components/icons/Times";
 import PencilSquareIcon from "@/components/icons/PencilSquareIcon";
 import SearchIcon from "@/components/icons/SearchIcon";
 import PinnedIcon from "@/components/icons/PinnedIcon";
 import ListAllIcon from "@/components/icons/ListAllIcon";
-import React from "react";
+
+type ItemProps = {
+  key: string;
+  title: string;
+  desc: string;
+  date: string;
+  isSelected: boolean;
+};
 
 type Props = {};
 
+const createNewConversation = (): ItemProps => ({
+  key: Date.now().toString(),
+  isSelected: true,
+  title: "test convo",
+  desc: "test desc",
+  date: new Date().toISOString(),
+});
+
 export default function ChatHistory({}: Props) {
+  const [conversations, setConversations] = useState<ItemProps[]>([]);
+
+  const handleNewConversation = async () => {
+    const newConversation = createNewConversation();
+    const updatedConversations = [...conversations, newConversation];
+    setConversations([...conversations, newConversation]);
+
+    try {
+      await axios.post("/api/saveMessages", {
+        conversations: updatedConversations,
+      });
+    } catch (error) {
+      console.error("error saving conversations:", error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchConversations = async () => {
+      try {
+        const response = await axios.get("/api/loadMessages");
+        setConversations(response.data);
+      } catch (error) {
+        console.error("error fetching conversations:", error);
+      }
+    };
+    fetchConversations();
+  }, []);
   return (
     <div className="fixed top-0 z-10 flex flex-col h-screen px-2 border-r-2 left-16 w-80 border-r-line bg-body">
       <div className="flex items-center px-3 py-3 shrink-0">
         <h2 className="text-lg font-semibold shrink-0 ">Chats</h2>
         <div className="grid w-8 h-8 ml-2 text-sm font-semibold text-black rounded-full shrink-0 bg-brandWhite place-items-center">
-          2
+          {conversations.length}
         </div>
         <div className="grow"> </div>
         <button>
@@ -30,7 +72,9 @@ export default function ChatHistory({}: Props) {
             <SearchIcon className="w-5 h-5 text-brandGray" />
           </div>
         </div>
-        <div className="grid w-10 h-10 rounded-md bg-brandWhite place-items-center shrink-0">
+        <div
+          className="grid w-10 h-10 rounded-md bg-brandWhite place-items-center shrink-0"
+          onClick={handleNewConversation}>
           <PencilSquareIcon className="w-5 h-5 text-brandBlue" />
         </div>
       </div>
@@ -39,16 +83,18 @@ export default function ChatHistory({}: Props) {
         <span className="ml-2 text-sm font-semibold">pinned</span>
       </div>
       <div className="shrink-0">
-        {pinned.map((item) => (
-          <Item item={item} key={item.key} />
-        ))}
+        {conversations
+          .filter((item) => item.isSelected)
+          .map((item) => (
+            <Item item={item} key={item.key} />
+          ))}
       </div>
       <div className="flex items-center px-3 mt-4 mb-1 uppercase shrink-0">
         <ListAllIcon className="w-5 h-5" />
         <span className="ml-2 text-sm font-semibold">all</span>
       </div>
       <div className="grow">
-        {all.map((item) => (
+        {conversations.map((item) => (
           <Item item={item} key={item.key} />
         ))}
       </div>
@@ -63,14 +109,6 @@ export default function ChatHistory({}: Props) {
     </div>
   );
 }
-
-type ItemProps = {
-  key: number;
-  title: string;
-  desc: string;
-  date: string;
-  isSelected: boolean;
-};
 
 function Item({ item }: { item: ItemProps }) {
   return (

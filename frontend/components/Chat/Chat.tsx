@@ -69,6 +69,7 @@ const Chat: React.FC<ChatProps> = ({ sendMessage, messages, setMessages }) => {
         sendMessage={handleSendMessage}
         inputValue={inputValue}
         setInputValue={setInputValue}
+        messages={messages}
       />
     </div>
   );

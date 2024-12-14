@@ -4,16 +4,26 @@ import Mic from "@/components/icons/Mic";
 import Refresh from "@/components/icons/Refresh";
 import axios from "axios";
 
+type MessageItem = {
+  key: number;
+  text: string;
+  isUser: boolean;
+  images: string[];
+  date: string;
+};
+
 interface Props {
   sendMessage: (text: string) => void;
   inputValue: string;
   setInputValue: React.Dispatch<React.SetStateAction<string>>;
+  messages: MessageItem[];
 }
 
 const ChatInput: React.FC<Props> = ({
   sendMessage,
   inputValue,
   setInputValue,
+  messages,
 }) => {
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputValue(event.target.value);
@@ -34,8 +44,6 @@ const ChatInput: React.FC<Props> = ({
   const handleSendMessage = async () => {
     if (inputValue.trim()) {
       try {
-        const response = await axios.get("/api/loadMessages");
-        const messages = response.data;
         const newMessage = {
           key: messages.length + 1,
           text: inputValue.trim(),
