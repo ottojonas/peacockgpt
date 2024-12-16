@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import ChatItem from "./ChatItem";
 import ChatInput from "@/components/ChatInput";
 import axios from "axios";
-import data from "./data.json";
 
 type Image = {
   key: number;
@@ -61,11 +60,6 @@ const Chat: React.FC<ChatProps> = ({
     } catch (error) {
       console.error("error sending message:", error);
     }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    handleSendMessage(newMessage);
   };
 
   return (
