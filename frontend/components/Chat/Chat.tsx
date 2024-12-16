@@ -41,17 +41,7 @@ const Chat: React.FC<ChatProps> = ({
   } | null>(null);
   const [newMessage, setNewMessage] = useState<string>("");
 
-  const saveMessagesToFile = async (messages: MessageItem[]) => {
-    try {
-      console.log("saving message to file:", messages);
-      await axios.post(`/api/messages/${conversationKey}`, { messages });
-    } catch (error) {
-      console.error("error saving messages:", error);
-    }
-  };
-
-  const handleSendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSendMessage = async (message: string) => {
     if (!selectedConversation) {
       console.error("no conversation selected");
       return;
@@ -64,13 +54,18 @@ const Chat: React.FC<ChatProps> = ({
     try {
       const response = await axios.post("/api/messages", {
         conversationKey: selectedConversation.key,
-        content: newMessage,
+        content: message,
       });
       setMessages([...messages, response.data]);
       setNewMessage("");
     } catch (error) {
       console.error("error sending message:", error);
     }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleSendMessage(newMessage);
   };
 
   return (
