@@ -4,11 +4,16 @@ import Mic from "@/components/icons/Mic";
 import Refresh from "@/components/icons/Refresh";
 import axios from "axios";
 
+type Image = {
+  key: number;
+  url: string;
+};
+
 type MessageItem = {
   key: number;
   text: string;
   isUser: boolean;
-  images: string[];
+  images: { key: number; url: string }[];
   date: string;
 };
 
@@ -17,6 +22,7 @@ interface Props {
   inputValue: string;
   setInputValue: React.Dispatch<React.SetStateAction<string>>;
   messages: MessageItem[];
+  conversationKey: string;
 }
 
 const ChatInput: React.FC<Props> = ({
@@ -24,6 +30,7 @@ const ChatInput: React.FC<Props> = ({
   inputValue,
   setInputValue,
   messages,
+  conversationKey,
 }) => {
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputValue(event.target.value);
@@ -34,11 +41,6 @@ const ChatInput: React.FC<Props> = ({
       e.preventDefault();
       handleSendMessage();
     }
-  };
-
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    sendMessage(inputValue);
   };
 
   const handleSendMessage = async () => {
@@ -52,10 +54,10 @@ const ChatInput: React.FC<Props> = ({
           date: new Date().toISOString(),
         };
 
-        await axios.post("/api/loadMessages", {
-          newMessage,
+        await axios.post(`/api/messages/${conversationKey}`, {
+          messages: [...messages, newMessage],
         });
-        sendMessage(inputValue.trim());
+        sendMessage(newMessage.text);
         setInputValue("");
       } catch (error) {
         console.error("error sending message:", error);

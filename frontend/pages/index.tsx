@@ -18,9 +18,10 @@ export default function Home() {
   const [inputValue, setInputValue] = useState<string>("");
   const [healthStatus, setHealthStatus] = useState("");
   const [messages, setMessages] = useState<MessageItem[]>([]);
+  const [conversationKey, setConversationKey] = useState<string>("");
 
   useEffect(() => {
-    axios.get("/api/loadMessages").then((response) => {
+    axios.get("/api/messages").then((response) => {
       setMessages(response.data);
     });
 
@@ -58,17 +59,20 @@ export default function Home() {
     <>
       <CustomHead title="PeacockGPT" />
       <Sidebar />
-      <ChatHistory />
+      <ChatHistory setConversationKey={setConversationKey} />
       <ChatHeader />
       <Chat
         sendMessage={sendMessage}
         messages={messages}
         setMessages={setMessages}
+        conversationKey={conversationKey}
       />
       <ChatInput
         sendMessage={sendMessage}
         inputValue={inputValue}
         setInputValue={setInputValue}
+        messages={messages}
+        conversationKey={conversationKey}
       />
       <Info />
       <div className="fixed z-50 bottom-4 right-4">

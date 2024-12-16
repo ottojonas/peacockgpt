@@ -15,44 +15,124 @@ type ItemProps = {
   isSelected: boolean;
 };
 
-type Props = {};
+type Props = { setConversationKey: (key: string) => void };
 
-const createNewConversation = (): ItemProps => ({
-  key: Date.now().toString(),
-  isSelected: true,
-  title: "test convo",
-  desc: "test desc",
-  date: new Date().toISOString(),
-});
+const createNewConversation = (): ItemProps => {
+  const formatDate = (date: Date) => {
+    const opeions: Intl.DateTimeFormatOptions = {
+      year: "2-digit",
+      month: "numeric",
+      day: "numeric",
+    };
+    return new Intl.DateTimeFormat("en-GB", opeions).format(date);
+  };
 
-export default function ChatHistory({}: Props) {
+  const now = new Date();
+
+  return {
+    key: now.toISOString(),
+    isSelected: true,
+    title: "test",
+    desc: "desc",
+    date: now.toISOString(),
+  };
+};
+
+const ChatHistory: React.FC<Props> = ({ setConversationKey }) => {
   const [conversations, setConversations] = useState<ItemProps[]>([]);
+  const [selectedConversation, setSelectedConversation] =
+    useState<ItemProps | null>(null);
+  const [messages, setMessages] = useState<any[]>([]);
+  const [newMessage, setNewMessage] = useState("");
 
   const handleNewConversation = async () => {
-    const newConversation = createNewConversation();
-    const updatedConversations = [...conversations, newConversation];
-    setConversations([...conversations, newConversation]);
+    const now = new Date();
+
+    const newConversation = {
+      title: "new conversation",
+      desc: "desc",
+      date: now.toISOString(),
+    };
 
     try {
-      await axios.post("/api/saveMessages", {
-        conversations: updatedConversations,
+      console.log("Sending new conversation:", newConversation);
+      const response = await fetch("http://localhost:3000/api/conversations", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newConversation),
       });
+      const data = await response.json();
+      console.log(data);
+
+      setConversations([
+        ...conversations,
+        { ...newConversation, key: data.id, isSelected: false },
+      ]);
     } catch (error) {
-      console.error("error saving conversations:", error);
+      console.error("Error saving conversations:", error);
+    }
+  };
+
+  const fetchConversations = async () => {
+    try {
+      const response = await axios.get("/api/conversations");
+      const formattedConversations = response.data.map((conversation: any) => {
+        const date = new Date(conversation.date);
+        return {
+          ...conversation,
+          date: isNaN(date.getTime())
+            ? "Invalid Date"
+            : new Intl.DateTimeFormat("en-GB", {
+                year: "numeric",
+                month: "numeric",
+                day: "numeric",
+              }).format(date),
+        };
+      });
+      setConversations(formattedConversations);
+    } catch (error) {
+      console.error("Error fetching conversations:", error);
+    }
+  };
+
+  const fetchMessages = async (conversationKey: string) => {
+    try {
+      const response = await axios.get(
+        `/api/messages?conversationKey=${conversationKey}`
+      );
+      setMessages(response.data);
+    } catch (error) {
+      console.error("Error loading messages:", error);
+    }
+  };
+
+  const handleSelectConversation = (conversation: ItemProps) => {
+    setSelectedConversation(conversation);
+    fetchMessages(conversation.key);
+  };
+
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedConversation) return;
+
+    try {
+      const response = await axios.post("/api/messages", {
+        conversationKey: selectedConversation.key,
+        content: newMessage,
+      });
+      setMessages([...messages, response.data]);
+      setNewMessage("");
+    } catch (error) {
+      console.error("Error sending message:", error);
     }
   };
 
   useEffect(() => {
-    const fetchConversations = async () => {
-      try {
-        const response = await axios.get("/api/loadMessages");
-        setConversations(response.data);
-      } catch (error) {
-        console.error("error fetching conversations:", error);
-      }
-    };
     fetchConversations();
   }, []);
+
   return (
     <div className="fixed top-0 z-10 flex flex-col h-screen px-2 border-r-2 left-16 w-80 border-r-line bg-body">
       <div className="flex items-center px-3 py-3 shrink-0">
@@ -94,9 +174,11 @@ export default function ChatHistory({}: Props) {
         <span className="ml-2 text-sm font-semibold">all</span>
       </div>
       <div className="grow">
-        {conversations.map((item) => (
-          <Item item={item} key={item.key} />
-        ))}
+        {conversations
+          .filter((item) => !item.isSelected)
+          .map((item) => (
+            <Item item={item} key={item.key} />
+          ))}
       </div>
       <div className="px-2 py-3 shrink-0">
         <button
@@ -108,7 +190,7 @@ export default function ChatHistory({}: Props) {
       </div>
     </div>
   );
-}
+};
 
 function Item({ item }: { item: ItemProps }) {
   return (
@@ -132,3 +214,5 @@ function Item({ item }: { item: ItemProps }) {
     </div>
   );
 }
+
+export default ChatHistory;

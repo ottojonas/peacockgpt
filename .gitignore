@@ -13,3 +13,4 @@
 /data/peacockgpt.db
 /frontend/build
 backend/venv
+/frontend/.env.local

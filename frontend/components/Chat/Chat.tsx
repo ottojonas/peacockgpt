@@ -4,6 +4,11 @@ import ChatInput from "@/components/ChatInput";
 import axios from "axios";
 import data from "./data.json";
 
+type Image = {
+  key: number;
+  url: string;
+};
+
 export interface MessageItem {
   key: number;
   isUser: boolean;
@@ -16,6 +21,7 @@ interface ChatProps {
   sendMessage: (text: string) => void;
   messages: MessageItem[];
   setMessages: React.Dispatch<React.SetStateAction<MessageItem[]>>;
+  conversationKey: string;
 }
 
 //! written by millie
@@ -23,20 +29,24 @@ interface ChatProps {
 //   in English
 // }
 
-const Chat: React.FC<ChatProps> = ({ sendMessage, messages, setMessages }) => {
+const Chat: React.FC<ChatProps> = ({
+  sendMessage,
+  messages,
+  setMessages,
+  conversationKey,
+}) => {
   const [inputValue, setInputValue] = useState<string>("");
 
   const saveMessagesToFile = async (messages: MessageItem[]) => {
     try {
       console.log("saving message to file:", messages);
-      await axios.post("/api/loadMessages", { messages });
+      await axios.post(`/api/messages/${conversationKey}`, { messages });
     } catch (error) {
       console.error("error saving messages:", error);
     }
   };
 
   const handleSendMessage = (text: string) => {
-    console.log("handleSendMessage called with text:", text);
     if (text.trim()) {
       const newMessage: MessageItem = {
         key: messages.length + 1,
@@ -70,6 +80,7 @@ const Chat: React.FC<ChatProps> = ({ sendMessage, messages, setMessages }) => {
         inputValue={inputValue}
         setInputValue={setInputValue}
         messages={messages}
+        conversationKey={conversationKey}
       />
     </div>
   );
