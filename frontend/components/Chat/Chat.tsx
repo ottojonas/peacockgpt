@@ -18,9 +18,9 @@ export interface MessageItem {
 }
 
 interface ChatProps {
-  sendMessage: (text: string) => void;
+  sendMessage: (message: string) => void;
   messages: MessageItem[];
-  setMessages: React.Dispatch<React.SetStateAction<MessageItem[]>>;
+  setMessages: (messages: MessageItem[]) => void;
   conversationKey: string;
 }
 
@@ -36,6 +36,10 @@ const Chat: React.FC<ChatProps> = ({
   conversationKey,
 }) => {
   const [inputValue, setInputValue] = useState<string>("");
+  const [selectedConversation, setSelectedConversation] = useState<{
+    key: string;
+  } | null>(null);
+  const [newMessage, setNewMessage] = useState<string>("");
 
   const saveMessagesToFile = async (messages: MessageItem[]) => {
     try {
@@ -46,19 +50,26 @@ const Chat: React.FC<ChatProps> = ({
     }
   };
 
-  const handleSendMessage = (text: string) => {
-    if (text.trim()) {
-      const newMessage: MessageItem = {
-        key: messages.length + 1,
-        text: text.trim(),
-        isUser: true,
-        images: [],
-        date: new Date().toISOString(),
-      };
-      const updatedMessages = [...messages, newMessage];
-      setMessages(updatedMessages);
-      setInputValue("");
-      saveMessagesToFile(updatedMessages);
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedConversation) {
+      console.error("no conversation selected");
+      return;
+    }
+
+    if (!newMessage.trim()) {
+      console.error("message content in empty");
+      return;
+    }
+    try {
+      const response = await axios.post("/api/messages", {
+        conversationKey: selectedConversation.key,
+        content: newMessage,
+      });
+      setMessages([...messages, response.data]);
+      setNewMessage("");
+    } catch (error) {
+      console.error("error sending message:", error);
     }
   };
 

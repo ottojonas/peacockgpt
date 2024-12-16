@@ -1,32 +1,34 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import axios from 'axios';
-import connectToDatabase from '../../lib/mongoose';
-import Conversation from '../../models/Conversation';
-import Message from '../../models/Messages'
+import connectToDatabase from '@/lib/mongoose';
+import Conversation from '@/models/Conversation';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    await connectToDatabase();
+  await connectToDatabase();
 
-    if (req.method === 'GET') {
-        try {
-            const conversations = await Conversation.find({});
-            res.status(200).json(conversations);
-        } catch (error) {
-            console.error('error loading conversations:', error);
-            res.status(500).json({ error: 'failed to load conversations' });
-        }
-    } else if (req.method === 'POST') {
-        try {
-            const newConversation = new Conversation(req.body);
-            await newConversation.save();
-            res.status(201).json(newConversation);
-        } catch (error) {
-            console.error('error saving conversation:', error);
-            res.status(500).json({ error: 'failed to save conversation' });
-        }
-    } else {
-        res.setHeader('Allow', ['GET', 'POST']);
-        res.status(405).end(`method ${req.method} not allowed`);
+  if (req.method === 'GET') {
+    try {
+      const conversations = await Conversation.find({});
+      res.status(200).json(conversations);
+    } catch (error) {
+      console.error('error loading conversations:', error);
+      res.status(500).json({ error: 'failed to load conversations' });
     }
-}
+  } else if (req.method === 'POST') {
+    try {
+      const { key, title, desc, date } = req.body;
+      if (!key || !title || !desc || !date) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
 
+      const newConversation = new Conversation({ key, title, desc, date });
+      await newConversation.save();
+      res.status(201).json({ id: newConversation._id });
+    } catch (error) {
+      console.error("Error saving conversation:", error);
+      res.status(500).json({ error: "Failed to save conversation" });
+    }
+  } else {
+    res.setHeader('Allow', ['GET', 'POST']);
+    res.status(405).end(`Method ${req.method} not allowed`);
+  }
+}

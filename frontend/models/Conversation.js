@@ -1,6 +1,11 @@
 import mongoose from "mongoose";
 
 const ConversationSchema = new mongoose.Schema({
+  key: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   title: {
     type: String,
     required: true,

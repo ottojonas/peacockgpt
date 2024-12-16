@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const MessageSchema = new mongoose.Schema({
   conversation_id: {
-    type: Varchar,
+    type: String,
     required: true,
   },
   sender: {
