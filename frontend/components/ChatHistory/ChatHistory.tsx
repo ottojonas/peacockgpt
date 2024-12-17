@@ -30,7 +30,7 @@ const createNewConversation = (): ItemProps => {
       month: "numeric",
       day: "numeric",
     };
-    return new Intl.DateTimeFormat("en-GB", options).format(date).split("T")[0];
+    return new Intl.DateTimeFormat("en-GB", options).format(date);
   };
   const now = new Date();
 
@@ -57,13 +57,16 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
     try {
       const response = await axios.get("/api/conversations");
       const formattedConversations = response.data.map((conversation: any) => {
-        const date = new Date(conversation.date);
+        const dateParts = conversation.date.split("/");
+        const date = new Date(
+          `20${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`
+        );
         return {
           ...conversation,
           date: isNaN(date.getTime())
             ? "Invalid Date"
             : new Intl.DateTimeFormat("en-GB", {
-                year: "numeric",
+                year: "2-digit",
                 month: "numeric",
                 day: "numeric",
               }).format(date),
