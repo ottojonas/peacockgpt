@@ -10,6 +10,7 @@ import Info from "@/components/Info";
 import io from "socket.io-client";
 import { MessageItem } from "../components/Chat/Chat";
 import { v4 as uuidv4 } from "uuid";
+import { sendMessage } from "../lib/sendMessage";
 const socket = io("http://localhost:5000");
 
 export default function Home() {
@@ -20,17 +21,23 @@ export default function Home() {
 
   useEffect(() => {
     if (conversationKey) {
-      axios
-        .get("/api/messages", { params: { conversationKey } })
-        .then((response) => {
+      const fetchMessages = async () => {
+        try {
+          const response = await axios.get("/api/messages", {
+            params: { conversationKey },
+          });
           setMessages(response.data);
-        })
-        .catch((error) => {
+        } catch (error) {
           console.error("error fetching messages:", error);
-        });
+        }
+      };
+
+      fetchMessages();
+
       socket.on("new_message", (message) => {
         setMessages((prevMessages) => [...prevMessages, message]);
       });
+
       return () => {
         socket.off("new_message");
       };
@@ -46,21 +53,6 @@ export default function Home() {
     }
   };
 
-  const sendMessage = (text: string) => {
-    const newMessage = {
-      key: uuidv4().toString(),
-      conversationKey: conversationKey,
-      text,
-      isUser: true,
-      images: [],
-      timestamp: new Date().toISOString(),
-      date: new Date().toISOString(),
-    };
-    socket.emit("send_message", newMessage);
-    setInputValue("");
-    setMessages([...messages, newMessage]);
-  };
-
   return (
     <>
       <CustomHead title="PeacockGPT" />
@@ -71,13 +63,13 @@ export default function Home() {
       />
       <ChatHeader />
       <Chat
-        sendMessage={sendMessage}
+        sendMessage={(text) => sendMessage(text, conversationKey, setMessages)}
         messages={messages}
         setMessages={setMessages}
         conversationKey={conversationKey}
       />
       <ChatInput
-        sendMessage={sendMessage}
+        sendMessage={(text) => sendMessage(text, conversationKey, setMessages)}
         inputValue={inputValue}
         setInputValue={setInputValue}
         messages={messages}

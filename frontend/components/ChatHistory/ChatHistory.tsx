@@ -131,8 +131,19 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
       ]);
       setSelectedConversation(updatedConversation);
       setConversationKey(updatedConversation.key);
+      fetchConversations();
     } catch (error) {
       console.error("Error saving conversation:", error);
+    }
+  };
+
+  const handleClearAllChats = async () => {
+    try {
+      await axios.delete("/api/conversations");
+      setConversations([]);
+      setSelectedConversation(null);
+    } catch (error) {
+      console.error("error clearing all chats:", error);
     }
   };
 
@@ -194,10 +205,7 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
       <div className="px-2 py-3 shrink-0">
         <button
           className="flex items-center justify-center w-full py-2 text-sm font-semibold rounded-md bg-card"
-          onClick={() => {
-            setConversations([]);
-            setSelectedConversation(null);
-          }}>
+          onClick={handleClearAllChats}>
           <Times className="w-5 h-5" />
           <span className="ml-2">Clear All Chats</span>
         </button>

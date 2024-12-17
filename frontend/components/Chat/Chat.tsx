@@ -3,6 +3,7 @@ import ChatItem from "./ChatItem";
 import ChatInput from "@/components/ChatInput";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
+
 type Image = {
   key: number;
   url: string;
@@ -26,40 +27,42 @@ interface ChatProps {
 }
 
 const Chat: React.FC<ChatProps> = ({
-  sendMessage,
   messages,
   setMessages,
   conversationKey,
 }) => {
   const [inputValue, setInputValue] = useState<string>("");
-
-  const handleSendMessage = async (message: string) => {
-    if (!message.trim()) {
+  const sendMessage = async (text: string) => {
+    if (!text.trim()) {
       console.error("message content is empty");
       return;
     }
     try {
-      const response = await axios.post("/api/messages", {
-        conversationKey,
-        content: message,
-      });
-
-      const newMessageItem: MessageItem = {
+      const newMessage = {
         key: uuidv4(),
-        conversationKey,
-        text: message,
+        text: text.trim(),
         isUser: true,
         images: [],
-        timestamp: new Date().toISOString(),
         date: new Date().toISOString(),
+        timestamp: new Date().toISOString(),
+        conversationKey: conversationKey,
       };
-      setMessages([...messages, newMessageItem]);
+
+      await axios.post(`/api/messages`, {
+        conversationKey,
+        message: {
+          text: newMessage.text,
+          sender: "user",
+          content: newMessage.text,
+          date: newMessage.date,
+        },
+      });
+      setMessages([...messages, newMessage]);
       setInputValue("");
     } catch (error) {
       console.error("error sending message:", error);
     }
   };
-
   return (
     <div
       className="chat-container"
@@ -68,19 +71,19 @@ const Chat: React.FC<ChatProps> = ({
         {messages.filter(Boolean).map((item) => (
           <ChatItem
             item={item}
-            key={item.conversationKey}
-            sendMessage={handleSendMessage}
+            key={item.key}
             inputValue={inputValue}
             setInputValue={setInputValue}
+            sendMessage={sendMessage}
           />
         ))}
       </div>
       <ChatInput
-        sendMessage={handleSendMessage}
         inputValue={inputValue}
         setInputValue={setInputValue}
         messages={messages}
         conversationKey={conversationKey}
+        sendMessage={sendMessage}
       />
     </div>
   );

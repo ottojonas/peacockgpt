@@ -45,37 +45,6 @@ const ChatInput: React.FC<Props> = ({
     }
   };
 
-  const handleSendMessage = async () => {
-    if (!inputValue.trim()) {
-      console.error("message content is empty");
-      return;
-    }
-    try {
-      const newMessage = {
-        key: messages.length + 1,
-        text: inputValue.trim(),
-        isUser: true,
-        images: [],
-        date: new Date().toISOString(),
-        conversationKey: conversationKey,
-      };
-
-      await axios.post(`/api/messages`, {
-        conversationKey,
-        message: {
-          text: newMessage.text,
-          sender: "user",
-          content: newMessage.text,
-          date: newMessage.date,
-        },
-      });
-      sendMessage(newMessage.text);
-      setInputValue("");
-    } catch (error) {
-      console.error("error sending message:", error);
-    }
-  };
-
   useEffect(() => {
     const fetchMessage = async () => {
       try {
@@ -92,7 +61,20 @@ const ChatInput: React.FC<Props> = ({
     if (conversationKey) {
       fetchMessage();
     }
+
+    return () => {
+      console.log("cleanup for conversationKey:", conversationKey);
+    };
   }, [conversationKey]);
+
+  const handleSendMessage = async () => {
+    if (!inputValue.trim()) {
+      console.error("message content is empty");
+      return;
+    }
+    sendMessage(inputValue.trim());
+    setInputValue("");
+  };
 
   return (
     <div className="fixed inset-x-0 bottom-0 pt-8 bg-input">

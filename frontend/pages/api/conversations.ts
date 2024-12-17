@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import connectToDatabase from '@/lib/mongoose';
 import Conversation from '@/models/Conversation';
-
+import Messages from '@/models/Messages';
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   await connectToDatabase();
 
@@ -27,8 +27,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       console.error("Error saving conversation:", error);
       res.status(500).json({ error: "Failed to save conversation" });
     }
+  } else if (req.method === 'DELETE') {
+    try {
+      await Conversation.deleteMany({});
+      await Messages.deleteMany({});
+      res.status(200).json({ message: 'All conversations and messages deleted' });
+    } catch (error) {
+      console.error('Error deleting conversations and messages:', error);
+      res.status(500).json({ error: 'Failed to delete conversations and messages' });
+    }
   } else {
-    res.setHeader('Allow', ['GET', 'POST']);
+    res.setHeader('Allow', ['GET', 'POST', 'DELETE']);
     res.status(405).end(`Method ${req.method} not allowed`);
   }
 }
