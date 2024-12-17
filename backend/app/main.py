@@ -1,10 +1,7 @@
 # * Entry point for the backend application.
-import json
-import os
-
 from app import create_app
 from app.services.document_service import get_all_documents
-from flask import jsonify
+from flask import jsonify, request
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit
 
@@ -18,19 +15,23 @@ def get_messages():
     pass
 
 
+@app.route("/api/messages", methods=["POST"])
+def send_message():
+    data = request.json
+    conversation_key = data.get("conversationKey")
+    content = data.get("content")
+
+    if not conversation_key or not content:
+        return jsonify({"error": "invalid data"}), 400
+
+    message = {"conversationKey": conversation_key, "content": "content"}
+    socketio.emir("new_message", message, broadcast=True)
+    return jsonify(message), 200
+
+
 @socketio.on("send_message")
 def handle_send_message(data):
     emit("new_message", data, broadcast=True)
-
-
-@app.route("/api/chat", methods=["GET"])
-def get_chat_data():
-    data_file_path = os.path.join(
-        os.path.dirname(__file__), "../../frontend/components/Chat/data.json"
-    )
-    with open(data_file_path, "r") as file:
-        data = json.load(file)
-    return jsonify(data)
 
 
 @app.route("/api/health", methods=["GET"])

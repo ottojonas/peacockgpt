@@ -5,3 +5,8 @@
 .bg-input{
     background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #111111 18.23%, #111111 100%)
 }
+
+.selected-conversation {
+    background-color: #f0f0f0;
+    color:#111111
+}

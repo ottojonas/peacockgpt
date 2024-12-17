@@ -15,12 +15,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
   } else if (req.method === 'POST') {
     try {
-      const { key, title, desc, date } = req.body;
-      if (!key || !title || !desc || !date) {
+      const { key, title, desc, date, isSelected, isPinned } = req.body;
+      if (!key || !title || !desc || !date || isSelected === undefined || isPinned === undefined) {
         return res.status(400).json({ error: "Missing required fields" });
       }
 
-      const newConversation = new Conversation({ key, title, desc, date });
+      const newConversation = new Conversation({ key, title, desc, date, isSelected, isPinned });
       await newConversation.save();
       res.status(201).json({ id: newConversation._id });
     } catch (error) {

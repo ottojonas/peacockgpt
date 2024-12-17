@@ -1,8 +1,6 @@
 # * Define API routes.
 import datetime
 
-from flask import Blueprint, jsonify, request
-
 from app import db
 from app.models import Conversation, Message
 from app.services.document_service import (
@@ -13,6 +11,7 @@ from app.services.document_service import (
     save_document,
 )
 from app.utils.file_utils import extract_content_from_file
+from flask import Blueprint, jsonify, request
 
 routes = Blueprint("routes", __name__)
 
@@ -69,11 +68,19 @@ def delete_document_route(doc_id):
 @routes.route("/api/conversations", methods=["POST"])
 def create_conversation():
     data = request.json
+    if not data or not all(
+        key in data
+        for key in ("key", "title", "desc", "date", "isSelected", "isPinned")
+    ):
+        return jsonify({"error": "missing required fields"}), 400
     try:
         conversation = Conversation(
+            key=data["key"],
             title=data["title"],
             desc=data["desc"],
             date=datetime.datetime.fromisoformat(data["date"]),
+            isSelected=data["isSelected"],
+            isPinned=data["isPinned"],
         )
         db.session.add(conversation)
         db.session.commit()
@@ -84,17 +91,26 @@ def create_conversation():
 
 
 @routes.route("/api/messages", methods=["POST"])
-def create_message():
+def new_message():
     data = request.json
-    message = Message(
-        conversation_id=data["conversation_id"],
-        sender=data["sender"],
-        content=data["content"],
-        timestamp=datetime.datetime.utcnow(),
-    )
-    db.session.add(message)
-    db.session.commit()
-    return jsonify({"id": message.id}), 201
+    if not data or not all(
+        key in data for key in ("conversationKey", "sender", "content")
+    ):
+        return jsonify({"error": "missing required fields"}), 400
+    try:
+        conversation_key = data["conversationKey"]
+        message = Message(
+            conversationKey=conversation_key,
+            sender=data["sender"],
+            content=data["content"],
+            timestamp=datetime.datetime.utcnow(),
+        )
+        db.session.add(message)
+        db.session.commit()
+        return jsonify({"id": message.id}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "failed to save message", "message": str(e)}), 500
 
 
 @routes.route("/api/conversations", methods=["GET"])
@@ -110,8 +126,11 @@ def get_conversations():
 
 @routes.route("/api/messages", methods=["GET"])
 def get_messages():
-    conversation_id = request.args.get("conversation_id")
-    messages = Message.query.filter_by(conversation_id=conversation_id).all()
+    conversationKey = request.args.get("conversationKey")
+    if not conversationKey:
+        return jsonify({"error": "conversationKey is required"}), 400
+
+    messages = Message.query.filter_by(conversationKey=conversationKey).all()
     return jsonify(
         [
             {

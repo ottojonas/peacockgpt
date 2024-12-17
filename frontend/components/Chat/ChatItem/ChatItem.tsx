@@ -24,27 +24,51 @@ const ChatItem: React.FC<ChatItemProps> = ({
   inputValue,
   setInputValue,
 }) => {
+  const sendMessageAsync = async (text: string) => {
+    try {
+      const response = await fetch("http://localhost:3000/api/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message: text }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`error ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("message sent successfully:", data);
+    } catch (error) {
+      console.error("failed to send message:", error);
+    }
+  };
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    sendMessage(inputValue);
+    await sendMessageAsync(inputValue);
   };
+
   const formatDate = (date: Date) => {
-    const opeions: Intl.DateTimeFormatOptions = {
+    const options: Intl.DateTimeFormatOptions = {
       year: "2-digit",
       month: "short",
       day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
     };
-    return new Intl.DateTimeFormat("en-GB").format(date);
+    return new Intl.DateTimeFormat("en-GB").format(date).split("T")[0];
   };
+
   const sentDate = new Date();
+
   return (
-    <div className="py-2" key={item.key} data-testid="chat-item">
+    <div className="py-2" key={item.conversationKey} data-testid="chat-item">
       <div className="flex p-2 rounded-md bg-item">
         <div className="w-12 shrink-0">
           <div className="grid w-11 h-11 place-items-center">

@@ -12,7 +12,7 @@ class TrainingDocument(db.Model):
 
 
 class Conversation(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    key = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     date = db.Column(db.DateTime, nullable=False)
     messages = db.relationship("Message", backref="conversation", lazy=True)
@@ -20,8 +20,8 @@ class Conversation(db.Model):
 
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    conversation_id = db.Column(
-        db.Integer, db.ForeignKey("conversation.id"), nullable=False
+    conversationKey = db.Column(
+        db.Integer, db.ForeignKey("conversation.key"), nullable=False
     )
     text = db.Column(db.Text, nullable=False)
     is_user = db.Column(db.Boolean, nullable=False)

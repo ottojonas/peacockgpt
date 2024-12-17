@@ -7,11 +7,9 @@ import ChatHeader from "@/components/ChatHeader";
 import Chat from "@/components/Chat";
 import ChatInput from "@/components/ChatInput";
 import Info from "@/components/Info";
-import fs from "fs";
-import path from "path";
-import { MessageItem } from "@/components/Chat/Chat";
 import io from "socket.io-client";
-
+import { MessageItem } from "../components/Chat/Chat";
+import { v4 as uuidv4 } from "uuid";
 const socket = io("http://localhost:5000");
 
 export default function Home() {
@@ -21,18 +19,23 @@ export default function Home() {
   const [conversationKey, setConversationKey] = useState<string>("");
 
   useEffect(() => {
-    axios.get("/api/messages").then((response) => {
-      setMessages(response.data);
-    });
-
-    socket.on("new_message", (message) => {
-      setMessages((prevMessages) => [...prevMessages, message]);
-    });
-
-    return () => {
-      socket.off("new_message");
-    };
-  }, []);
+    if (conversationKey) {
+      axios
+        .get("/api/messages", { params: { conversationKey } })
+        .then((response) => {
+          setMessages(response.data);
+        })
+        .catch((error) => {
+          console.error("error fetching messages:", error);
+        });
+      socket.on("new_message", (message) => {
+        setMessages((prevMessages) => [...prevMessages, message]);
+      });
+      return () => {
+        socket.off("new_message");
+      };
+    }
+  }, [conversationKey]);
 
   const checkHealth = async () => {
     try {
@@ -45,21 +48,27 @@ export default function Home() {
 
   const sendMessage = (text: string) => {
     const newMessage = {
-      key: messages.length + 1,
+      key: uuidv4().toString(),
+      conversationKey: conversationKey,
       text,
       isUser: true,
       images: [],
+      timestamp: new Date().toISOString(),
       date: new Date().toISOString(),
     };
     socket.emit("send_message", newMessage);
     setInputValue("");
+    setMessages([...messages, newMessage]);
   };
 
   return (
     <>
       <CustomHead title="PeacockGPT" />
       <Sidebar />
-      <ChatHistory setConversationKey={setConversationKey} />
+      <ChatHistory
+        setConversationKey={setConversationKey}
+        setMessages={setMessages}
+      />
       <ChatHeader />
       <Chat
         sendMessage={sendMessage}

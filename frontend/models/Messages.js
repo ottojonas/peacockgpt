@@ -1,7 +1,12 @@
 import mongoose from "mongoose";
 
 const MessageSchema = new mongoose.Schema({
-  conversation_id: {
+  key: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  conversationKey: {
     type: String,
     required: true,
   },
@@ -16,6 +21,10 @@ const MessageSchema = new mongoose.Schema({
   timestamp: {
     type: Date,
     default: Date.now,
+  },
+  images: {
+    type: String,
+    required: false,
   },
 });
 

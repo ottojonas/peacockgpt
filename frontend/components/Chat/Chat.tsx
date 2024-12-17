@@ -2,19 +2,21 @@ import React, { useState } from "react";
 import ChatItem from "./ChatItem";
 import ChatInput from "@/components/ChatInput";
 import axios from "axios";
-
+import { v4 as uuidv4 } from "uuid";
 type Image = {
   key: number;
   url: string;
 };
 
-export interface MessageItem {
-  key: number;
+export type MessageItem = {
+  key: string;
+  conversationKey: string;
   isUser: boolean;
   text: string;
   images: { key: number; url: string }[];
+  timestamp: string;
   date: string;
-}
+};
 
 interface ChatProps {
   sendMessage: (message: string) => void;
@@ -23,11 +25,6 @@ interface ChatProps {
   conversationKey: string;
 }
 
-//! written by millie
-// const Chat = () => {
-//   in English
-// }
-
 const Chat: React.FC<ChatProps> = ({
   sendMessage,
   messages,
@@ -35,40 +32,43 @@ const Chat: React.FC<ChatProps> = ({
   conversationKey,
 }) => {
   const [inputValue, setInputValue] = useState<string>("");
-  const [selectedConversation, setSelectedConversation] = useState<{
-    key: string;
-  } | null>(null);
-  const [newMessage, setNewMessage] = useState<string>("");
 
   const handleSendMessage = async (message: string) => {
-    if (!selectedConversation) {
-      console.error("no conversation selected");
-      return;
-    }
-
-    if (!newMessage.trim()) {
-      console.error("message content in empty");
+    if (!message.trim()) {
+      console.error("message content is empty");
       return;
     }
     try {
       const response = await axios.post("/api/messages", {
-        conversationKey: selectedConversation.key,
+        conversationKey,
         content: message,
       });
-      setMessages([...messages, response.data]);
-      setNewMessage("");
+
+      const newMessageItem: MessageItem = {
+        key: uuidv4(),
+        conversationKey,
+        text: message,
+        isUser: true,
+        images: [],
+        timestamp: new Date().toISOString(),
+        date: new Date().toISOString(),
+      };
+      setMessages([...messages, newMessageItem]);
+      setInputValue("");
     } catch (error) {
       console.error("error sending message:", error);
     }
   };
 
   return (
-    <div className="" style={{ marginLeft: "384px", marginRight: "320px" }}>
-      <div className="max-w-3xl px-4 pt-16 pb-48 mx-auto">
+    <div
+      className="chat-container"
+      style={{ marginLeft: "384px", marginRight: "320px" }}>
+      <div className="max-w-3xl px-4 pt-16 pb-48 mx-auto chat-messages">
         {messages.filter(Boolean).map((item) => (
           <ChatItem
             item={item}
-            key={item.key}
+            key={item.conversationKey}
             sendMessage={handleSendMessage}
             inputValue={inputValue}
             setInputValue={setInputValue}

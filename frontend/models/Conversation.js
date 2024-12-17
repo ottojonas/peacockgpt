@@ -15,8 +15,18 @@ const ConversationSchema = new mongoose.Schema({
     required: true,
   },
   date: {
-    type: Date,
+    type: String,
     required: true,
+  },
+  isSelected: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
+  isPinned: {
+    type: Boolean,
+    required: true,
+    default: false,
   },
 });
 

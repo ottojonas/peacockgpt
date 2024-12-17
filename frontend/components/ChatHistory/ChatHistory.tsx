@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 import Options from "@/components/icons/Options";
 import Times from "@/components/icons/Times";
@@ -6,6 +7,7 @@ import PencilSquareIcon from "@/components/icons/PencilSquareIcon";
 import SearchIcon from "@/components/icons/SearchIcon";
 import PinnedIcon from "@/components/icons/PinnedIcon";
 import ListAllIcon from "@/components/icons/ListAllIcon";
+import { MessageItem } from "../Chat/Chat";
 
 type ItemProps = {
   key: string;
@@ -13,9 +15,13 @@ type ItemProps = {
   desc: string;
   date: string;
   isSelected: boolean;
+  isPinned: boolean;
 };
 
-type Props = { setConversationKey: (key: string) => void };
+type Props = {
+  setConversationKey: (key: string) => void;
+  setMessages: (messages: MessageItem[]) => void;
+};
 
 const createNewConversation = (): ItemProps => {
   const formatDate = (date: Date) => {
@@ -24,56 +30,28 @@ const createNewConversation = (): ItemProps => {
       month: "numeric",
       day: "numeric",
     };
-    return new Intl.DateTimeFormat("en-GB", options).format(date);
+    return new Intl.DateTimeFormat("en-GB", options).format(date).split("T")[0];
   };
-
   const now = new Date();
 
   return {
-    key: now.toISOString(),
+    key: uuidv4(),
+    title: "New Conversation",
+    desc: "Description",
+    date: formatDate(now),
     isSelected: true,
-    title: "test",
-    desc: "desc",
-    date: now.toISOString(),
+    isPinned: false,
   };
 };
 
-const ChatHistory: React.FC<Props> = ({ setConversationKey }) => {
+const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
   const [conversations, setConversations] = useState<ItemProps[]>([]);
   const [selectedConversation, setSelectedConversation] =
     useState<ItemProps | null>(null);
-  const [messages, setMessages] = useState<any[]>([]);
-  const [newMessage, setNewMessage] = useState("");
 
-  const handleNewConversation = async () => {
-    const now = new Date();
-    const newConversation = {
-      key: now.toISOString(),
-      title: "new conversation",
-      desc: "desc",
-      date: now.toISOString(),
-    };
-
-    try {
-      console.log("Sending new conversation:", newConversation);
-      const response = await fetch("http://localhost:3000/api/conversations", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newConversation),
-      });
-      const data = await response.json();
-      console.log(data);
-
-      setConversations([
-        ...conversations,
-        { ...newConversation, key: data.id, isSelected: false },
-      ]);
-    } catch (error) {
-      console.error("Error saving conversations:", error);
-    }
-  };
+  useEffect(() => {
+    fetchConversations();
+  }, []);
 
   const fetchConversations = async () => {
     try {
@@ -91,68 +69,69 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey }) => {
               }).format(date),
         };
       });
+
+      formattedConversations.sort(
+        (a: ItemProps, b: ItemProps) =>
+          new Date(b.date).getTime() - new Date(a.date).getTime()
+      );
+
+      if (formattedConversations.length > 0) {
+        const mostRecentConversation = formattedConversations[0];
+        setSelectedConversation(mostRecentConversation);
+        setConversationKey(mostRecentConversation.key);
+      }
       setConversations(formattedConversations);
     } catch (error) {
       console.error("Error fetching conversations:", error);
     }
   };
 
-  async function fetchMessages(conversationKey: string) {
-    try {
-      const response = await axios.get("/api/messages", {
-        params: { conversationKey },
-      });
-      console.log(response.data);
-    } catch (error) {
-      console.error("error loading messages");
-    }
-  }
-
   const handleConversationClick = (key: string) => {
+    setConversations((prevConversations) =>
+      prevConversations.map((conversation) =>
+        conversation.key === key
+          ? { ...conversation, isSelected: true }
+          : { ...conversation, isSelected: false }
+      )
+    );
     const selectedConversation = conversations.find(
       (conversation) => conversation.key === key
     );
     if (selectedConversation) {
-      setSelectedConversation({
-        key: selectedConversation.key,
-        title: selectedConversation.title,
-        desc: selectedConversation.desc,
-        date: selectedConversation.date,
-        isSelected: true,
-      });
-      fetchMessages(key);
+      setSelectedConversation(selectedConversation);
+      setConversationKey(selectedConversation.key);
+      setMessages([]);
     } else {
       console.error("conversation not found");
     }
   };
 
-  const handleSendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedConversation) {
-      console.error("no conversation selected");
-      return;
-    }
-
-    if (!newMessage.trim()) {
-      console.error("message content is empty");
-      return;
-    }
+  const handleNewConversation = async () => {
+    const newConversation = createNewConversation();
 
     try {
-      const response = await axios.post("/api/messages", {
-        conversationKey: selectedConversation.key,
-        content: newMessage,
+      console.log("Sending new conversation:", newConversation);
+      const response = await fetch("/api/conversations", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newConversation),
       });
-      setMessages([...messages, response.data]);
-      setNewMessage("");
+      const data = await response.json();
+      console.log(data);
+
+      const updatedConversation = { ...newConversation, key: data.id };
+      setConversations((prevConversations) => [
+        ...prevConversations.map((conv) => ({ ...conv, isSelected: false })),
+        updatedConversation,
+      ]);
+      setSelectedConversation(updatedConversation);
+      setConversationKey(updatedConversation.key);
     } catch (error) {
-      console.error("error sending message:", error);
+      console.error("Error saving conversation:", error);
     }
   };
-
-  useEffect(() => {
-    fetchConversations();
-  }, []);
 
   return (
     <div className="fixed top-0 z-10 flex flex-col h-screen px-2 border-r-2 left-16 w-80 border-r-line bg-body">
@@ -181,11 +160,11 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey }) => {
       </div>
       <div className="flex items-center px-3 mt-4 mb-1 uppercase shrink-0">
         <PinnedIcon className="w-5 h-5" />
-        <span className="ml-2 text-sm font-semibold">pinned</span>
+        <span className="ml-2 text-sm font-semibold">Pinned</span>
       </div>
       <div className="shrink-0">
         {conversations
-          .filter((item) => item.isSelected)
+          .filter((item) => item.isPinned)
           .map((item) => (
             <Item
               item={item}
@@ -196,11 +175,11 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey }) => {
       </div>
       <div className="flex items-center px-3 mt-4 mb-1 uppercase shrink-0">
         <ListAllIcon className="w-5 h-5" />
-        <span className="ml-2 text-sm font-semibold">all</span>
+        <span className="ml-2 text-sm font-semibold">All</span>
       </div>
       <div className="grow">
         {conversations
-          .filter((item) => !item.isSelected)
+          .filter((item) => !item.isPinned)
           .map((item) => (
             <Item
               item={item}
@@ -212,7 +191,10 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey }) => {
       <div className="px-2 py-3 shrink-0">
         <button
           className="flex items-center justify-center w-full py-2 text-sm font-semibold rounded-md bg-card"
-          onClick={() => {}}>
+          onClick={() => {
+            setConversations([]);
+            setSelectedConversation(null);
+          }}>
           <Times className="w-5 h-5" />
           <span className="ml-2">Clear All Chats</span>
         </button>
@@ -220,6 +202,7 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey }) => {
     </div>
   );
 };
+
 function Item({
   item,
   onClick,
@@ -231,7 +214,7 @@ function Item({
     <div className="py-1">
       <div
         className={`px-3 py-2 text-sm w-full rounded-md ${
-          item.isSelected ? "bg-card" : ""
+          item.isSelected ? "selected-conversation" : "bg-card"
         }`}
         onClick={() => onClick(item.key)}>
         <div className="flex items-center justify-between">
@@ -240,7 +223,7 @@ function Item({
         </div>
         <p
           className={`line-clamp-2 mt-1 ${
-            item.isSelected ? "text-white" : "text-brandGray"
+            item.isSelected ? "text-black" : "text-brandGray"
           }`}>
           {item.desc}
         </p>
@@ -248,4 +231,5 @@ function Item({
     </div>
   );
 }
+
 export default ChatHistory;

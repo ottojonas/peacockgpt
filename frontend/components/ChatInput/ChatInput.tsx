@@ -10,10 +10,12 @@ type Image = {
 };
 
 type MessageItem = {
-  key: number;
-  text: string;
+  key: string;
+  conversationKey: string;
   isUser: boolean;
+  text: string;
   images: { key: number; url: string }[];
+  timestamp: string;
   date: string;
 };
 
@@ -44,26 +46,53 @@ const ChatInput: React.FC<Props> = ({
   };
 
   const handleSendMessage = async () => {
-    if (inputValue.trim()) {
-      try {
-        const newMessage = {
-          key: messages.length + 1,
-          text: inputValue.trim(),
-          isUser: true,
-          images: [],
-          date: new Date().toISOString(),
-        };
+    if (!inputValue.trim()) {
+      console.error("message content is empty");
+      return;
+    }
+    try {
+      const newMessage = {
+        key: messages.length + 1,
+        text: inputValue.trim(),
+        isUser: true,
+        images: [],
+        date: new Date().toISOString(),
+        conversationKey: conversationKey,
+      };
 
-        await axios.post(`/api/messages/${conversationKey}`, {
-          messages: [...messages, newMessage],
-        });
-        sendMessage(newMessage.text);
-        setInputValue("");
-      } catch (error) {
-        console.error("error sending message:", error);
-      }
+      await axios.post(`/api/messages`, {
+        conversationKey,
+        message: {
+          text: newMessage.text,
+          sender: "user",
+          content: newMessage.text,
+          date: newMessage.date,
+        },
+      });
+      sendMessage(newMessage.text);
+      setInputValue("");
+    } catch (error) {
+      console.error("error sending message:", error);
     }
   };
+
+  useEffect(() => {
+    const fetchMessage = async () => {
+      try {
+        console.log("fetching messages with conversationKey:", conversationKey);
+        const response = await axios.get(`/api/messages`, {
+          params: { conversationKey: conversationKey },
+        });
+        console.log(response.data);
+      } catch (error) {
+        console.error("error loading messages:", error);
+      }
+    };
+
+    if (conversationKey) {
+      fetchMessage();
+    }
+  }, [conversationKey]);
 
   return (
     <div className="fixed inset-x-0 bottom-0 pt-8 bg-input">
@@ -72,10 +101,9 @@ const ChatInput: React.FC<Props> = ({
           <div className="flex justify-center py-2">
             <button
               className="py-2.5 px-6 rounded-md bg-card flex items-center"
-              onClick={() => {}}
-            >
+              onClick={() => {}}>
               <Refresh className="w-5 h-5" />
-              <span className="ml-2">Regenerate Anwser</span>
+              <span className="ml-2">Regenerate Answer</span>
             </button>
           </div>
           <div className="relative rounded-md bg-card">
@@ -93,18 +121,15 @@ const ChatInput: React.FC<Props> = ({
                 right: "16px",
                 top: "50%",
                 transform: "translate(0, -50%)",
-              }}
-            >
+              }}>
               <button
                 className="grid w-10 h-10 text-white rounded-md place-items-center"
-                onClick={() => {}}
-              >
+                onClick={() => {}}>
                 <Mic className="w-5 h-5" />
               </button>
               <button
                 className="grid w-10 h-10 text-black rounded-md place-items-center bg-brandWhite"
-                onClick={handleSendMessage}
-              >
+                onClick={handleSendMessage}>
                 <Send className="w-5 h-5" />
               </button>
             </div>
