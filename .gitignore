@@ -14,3 +14,4 @@
 /frontend/build
 backend/venv
 /frontend/.env.local
+frontend/.next
