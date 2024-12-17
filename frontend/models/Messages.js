@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+import Conversation from "./Conversation";
 const MessageSchema = new mongoose.Schema({
   key: {
     type: String,
@@ -7,7 +7,8 @@ const MessageSchema = new mongoose.Schema({
     unique: true,
   },
   conversationKey: {
-    type: String,
+    type: mongoose.Schema.Types.String,
+    ref: "Conversation",
     required: true,
   },
   sender: {
