@@ -72,12 +72,13 @@ const ChatItem: React.FC<ChatItemProps> = ({
       <div className="flex p-2 rounded-md bg-item">
         <div className="w-12 shrink-0">
           <div className="grid w-11 h-11 place-items-center">
-            {item.isUser ? (
+            {item.sender === "user" ? (
               <div
                 className="w-10 h-10 bg-center bg-cover rounded-full"
                 style={{
                   backgroundImage: 'url("/pfp.jpg")',
-                }}></div>
+                }}
+              ></div>
             ) : (
               <div className="grid rounded-full w-9 h-9 place-items-center bg-brandWhite">
                 <GPTLogo className="w-6 h-6 text-blue-900" />
@@ -107,9 +108,10 @@ const ChatItem: React.FC<ChatItemProps> = ({
           </div>
           <div
             className={`px-3 pb-3 ${
-              item.isUser ? "text-white" : "text-brandGray"
-            }`}>
-            {item.text}
+              item.sender === "user" ? "text-white" : "text-brandGray"
+            }`}
+          >
+            {item.content}
           </div>
           {item.images && <ImageSet images={item.images} />}
         </div>

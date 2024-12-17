@@ -17,8 +17,10 @@ export const sendMessage = async (
     conversationKey,
     text: text.trim(),
     isUser: true,
+    content: text,
     images: [],
     timestamp: new Date().toISOString(),
+    sender: "user",
     date: new Date().toISOString(),
   };
 
@@ -27,7 +29,7 @@ export const sendMessage = async (
       conversationKey,
       message: {
         text: newMessage.text,
-        sender: "user",
+        sender: newMessage.sender,
         content: newMessage.text,
         date: newMessage.date,
       },
@@ -37,4 +39,3 @@ export const sendMessage = async (
     console.error("error sending message:", error);
   }
 };
-

@@ -13,10 +13,12 @@ export type MessageItem = {
   key: string;
   conversationKey: string;
   isUser: boolean;
+  sender: string;
   text: string;
   images: { key: number; url: string }[];
   timestamp: string;
   date: string;
+  content: string;
 };
 
 interface ChatProps {
@@ -46,6 +48,8 @@ const Chat: React.FC<ChatProps> = ({
         date: new Date().toISOString(),
         timestamp: new Date().toISOString(),
         conversationKey: conversationKey,
+        content: text,
+        sender: 'user'
       };
 
       await axios.post(`/api/messages`, {
@@ -66,7 +70,8 @@ const Chat: React.FC<ChatProps> = ({
   return (
     <div
       className="chat-container"
-      style={{ marginLeft: "384px", marginRight: "320px" }}>
+      style={{ marginLeft: "384px", marginRight: "320px" }}
+    >
       <div className="max-w-3xl px-4 pt-16 pb-48 mx-auto chat-messages">
         {messages.filter(Boolean).map((item) => (
           <ChatItem
