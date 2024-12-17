@@ -1,13 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Send from "@/components/icons/Send";
 import Mic from "@/components/icons/Mic";
 import Refresh from "@/components/icons/Refresh";
 import axios from "axios";
-
-type Image = {
-  key: number;
-  url: string;
-};
 
 type MessageItem = {
   key: string;
@@ -33,7 +28,6 @@ const ChatInput: React.FC<Props> = ({
   sendMessage,
   inputValue,
   setInputValue,
-  messages,
   conversationKey,
 }) => {
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {

@@ -4,11 +4,6 @@ import ChatInput from "@/components/ChatInput";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 
-type Image = {
-  key: number;
-  url: string;
-};
-
 export type MessageItem = {
   key: string;
   conversationKey: string;
@@ -49,7 +44,7 @@ const Chat: React.FC<ChatProps> = ({
         timestamp: new Date().toISOString(),
         conversationKey: conversationKey,
         content: text,
-        sender: 'user'
+        sender: "user",
       };
 
       await axios.post(`/api/messages`, {

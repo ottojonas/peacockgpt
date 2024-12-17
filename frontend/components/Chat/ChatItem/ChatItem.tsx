@@ -18,42 +18,7 @@ interface ChatItemProps {
   setInputValue: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const ChatItem: React.FC<ChatItemProps> = ({
-  item,
-  sendMessage,
-  inputValue,
-  setInputValue,
-}) => {
-  const sendMessageAsync = async (text: string) => {
-    try {
-      const response = await fetch("http://localhost:3000/api/messages", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ message: text }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`error ${response.status}`);
-      }
-
-      const data = await response.json();
-      console.log("message sent successfully:", data);
-    } catch (error) {
-      console.error("failed to send message:", error);
-    }
-  };
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(event.target.value);
-  };
-
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    await sendMessageAsync(inputValue);
-  };
-
+const ChatItem: React.FC<ChatItemProps> = ({ item }) => {
   const formatDate = (date: Date) => {
     const options: Intl.DateTimeFormatOptions = {
       year: "2-digit",
