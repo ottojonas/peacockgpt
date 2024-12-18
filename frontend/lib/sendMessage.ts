@@ -5,7 +5,7 @@ import { MessageItem } from "../components/Chat/Chat";
 export const sendMessage = async (
   text: string,
   conversationKey: string,
-  setMessages: React.Dispatch<React.SetStateAction<MessageItem[]>>,
+  setMessages: React.Dispatch<React.SetStateAction<MessageItem[]>>
 ) => {
   if (!text.trim()) {
     console.error("message content is empty");
@@ -24,6 +24,8 @@ export const sendMessage = async (
     date: new Date().toISOString(),
   };
 
+  setMessages((prevMessages) => [...prevMessages, newMessage]);
+
   try {
     await axios.post("/api/messages", {
       conversationKey,
@@ -34,7 +36,21 @@ export const sendMessage = async (
         date: newMessage.date,
       },
     });
-    setMessages((prevMessages) => [...prevMessages, newMessage]);
+
+    const response = await axios.post('/api/ask', { question: text.trim() });
+    const assistantMessage: MessageItem = {
+      key: uuidv4(),
+      conversationKey,
+      text: response.data.answer,
+      isUser: false,
+      images: [],
+      date: new Date().toISOString(),
+      timestamp: new Date().toISOString(),
+      content: response.data.answer,
+      sender: 'assistant'
+    };
+
+    setMessages((prevMessages) => [...prevMessages, assistantMessage]);
   } catch (error) {
     console.error("error sending message:", error);
   }
