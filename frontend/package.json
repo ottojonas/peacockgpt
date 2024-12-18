@@ -2,15 +2,17 @@
   "name": "peacockgpt",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "test": "jest",
-    "electron": "electron .",
-    "package": "electron-packager . PeacockGPT --platform=win32 --arch=x64 --out=dist --overwrite"
-  },
+"scripts": {
+  "dev": "next dev",
+  "build": "next build",
+  "start": "next start",
+  "lint": "next lint",
+  "test": "jest",
+  "electron": "electron .",
+  "package-win": "electron-packager . PeacockGPT --platform=win32 --arch=x64 --out=dist --overwrite",
+  "package-mac": "electron-packager . PeacockGPT --platform=darwin --arch=x64 --out=dist --overwrite",
+  "package-linux": "electron-packager . PeacockGPT --platform=linux --arch=x64 --out=dist --overwrite"
+},
   "type": "commonjs",
   "dependencies": {
     "@types/node": "18.15.11",
