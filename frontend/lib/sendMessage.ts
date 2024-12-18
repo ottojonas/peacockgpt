@@ -30,6 +30,8 @@ export const sendMessage = async (
     await axios.post("/api/messages", {
       conversationKey,
       message: {
+        key: newMessage.key,
+        conversationKey: newMessage.conversationKey,
         text: newMessage.text,
         sender: newMessage.sender,
         content: newMessage.text,
@@ -51,6 +53,19 @@ export const sendMessage = async (
     };
 
     setMessages((prevMessages) => [...prevMessages, assistantMessage]);
+
+    await axios.post("/api/messages", {
+      conversationKey,
+      message: {
+        key: assistantMessage.key,
+        conversationKey: assistantMessage.conversationKey,
+        text: assistantMessage.text,
+        sender: assistantMessage.sender,
+        content: assistantMessage.text,
+        date: assistantMessage.date,
+      },
+    });
+
   } catch (error) {
     console.error("error sending message:", error);
   }

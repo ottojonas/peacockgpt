@@ -22,9 +22,9 @@ async function testOpenAI() {
       temperature: 0.5,
     });
 
-    console.log('response from OpenAI:', response.choices?.[0]?.message?.content?.trim());
+    console.log('response from PeacockGPT:', response.choices?.[0]?.message?.content?.trim());
   } catch (error) {
-    console.error('error testing OpenAI:', error);
+    console.error('error testing PeacockGPT:', error);
   }
 }
 
