@@ -76,14 +76,7 @@ export default function Home() {
         conversationKey={conversationKey}
       />
       <Info />
-      <div className="fixed z-50 bottom-4 right-4">
-        <button
-          className="px-4 py-2 text-black bg-white rounded"
-          onClick={checkHealth}>
-          backend connection check
-        </button>
-        {healthStatus && <p>{healthStatus}</p>}
-      </div>
+      <div className="fixed z-50 bottom-4 right-4"></div>
     </>
   );
 }

@@ -5,15 +5,12 @@
 /backend/app/services/__pycache__
 /backend/app/utils/__pycache__
 /data/annotated-documents
-/node_modules
 /frontend/node_modules
 /frontend/package-lock.json
-/admin
 /frontend/.gitignore
 /data/peacockgpt.db
 /frontend/build
 backend/venv
 /frontend/.env.local
 frontend/.next
-/package.json
-/frontend/package.json
+/frontend/dist
