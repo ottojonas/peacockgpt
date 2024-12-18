@@ -1,6 +1,8 @@
 # * Define API routes.
 import datetime
 
+from flask import Blueprint, jsonify, request
+
 from app import db
 from app.models import Conversation, Message
 from app.services.document_service import (
@@ -11,9 +13,27 @@ from app.services.document_service import (
     save_document,
 )
 from app.utils.file_utils import extract_content_from_file
-from flask import Blueprint, jsonify, request
+from app.utils.openai_utils import generate_response
 
 routes = Blueprint("routes", __name__)
+
+
+@routes.route("/api/ask", methods=["POST"])
+def ask_question():
+    data = request.json
+    question = data.get("question")
+    if not question:
+        return jsonify({"error": "question is required"}), 400
+
+    documents = get_all_documents()
+    document_texts = "\n\n".join([doc.content for doc in documents])
+
+    prompt = (
+        f"Here are some documents:\n\n{document_texts}\n\nQuestion: {question}\nAnswer:"
+    )
+
+    answer = generate_response(prompt)
+    return jsonify({"answer": answer})
 
 
 @routes.route("/health", methods=["GET"])

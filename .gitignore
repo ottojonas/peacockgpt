@@ -15,3 +15,5 @@
 backend/venv
 /frontend/.env.local
 frontend/.next
+/package.json
+/frontend/package.json

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Conversation from "./Conversation";
+
 const MessageSchema = new mongoose.Schema({
   key: {
     type: String,
