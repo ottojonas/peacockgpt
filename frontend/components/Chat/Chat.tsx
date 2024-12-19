@@ -5,6 +5,7 @@ import axios from "axios";
 import { sendMessage as sendMsg } from "@/lib/sendMessage";
 import { v4 as uuidv4 } from "uuid";
 
+// * define structure of message item
 export type MessageItem = {
   key: string;
   conversationKey: string;
@@ -17,6 +18,7 @@ export type MessageItem = {
   content: string;
 };
 
+// * define props for chat component
 interface ChatProps {
   messages: MessageItem[];
   setMessages: React.Dispatch<React.SetStateAction<MessageItem[]>>;
@@ -24,12 +26,14 @@ interface ChatProps {
   sendMessage: (text: string) => void;
 }
 
+// * chat component to display chat interface
 const Chat: React.FC<ChatProps> = ({
   messages,
   setMessages,
   conversationKey,
   sendMessage,
 }) => {
+  // * state to manage input value
   const [inputValue, setInputValue] = useState<string>("");
 
   return (
@@ -37,6 +41,7 @@ const Chat: React.FC<ChatProps> = ({
       className="chat-container"
       style={{ marginLeft: "384px", marginRight: "320px" }}>
       <div className="max-w-3xl px-4 pt-16 pb-48 mx-auto chat-messages">
+        {/* Render each chat item */}
         {messages.filter(Boolean).map((item) => (
           <ChatItem
             item={item}
@@ -47,6 +52,7 @@ const Chat: React.FC<ChatProps> = ({
           />
         ))}
       </div>
+      {/* Chat input component */}
       <ChatInput
         inputValue={inputValue}
         setInputValue={setInputValue}

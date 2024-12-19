@@ -2,6 +2,7 @@
 import os
 import sys
 
+# * add parent directory to system path to import the app module
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 import unittest
 
@@ -9,26 +10,32 @@ from app import create_app, db
 from app.models import TrainingDocument
 
 
+# * test case class for api routes
 class RoutesTestCase(unittest.TestCase):
+    # * set up test environment
     def setUp(self):
         self.app = create_app()
         self.app.config["TESTING"] = True
-        self.app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
+        self.app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"  # TODO
         self.client = self.app.test_client()
 
         with self.app.app_context():
-            db.create_all()
+            db.create_all()  # create all database tables
 
+    # * tear down test environment
     def tearDown(self):
         with self.app.app_context():
-            db.session.remove()
-            db.drop_all()
+            db.session.remove()  # remove database session
+            db.drop_all()  # drop all database tables
 
+    # * test document upload route
     def test_upload_document(self):
         with self.app.app_context():
-            os.makedirs("tests", exist_ok=True)
+            os.makedirs(
+                "tests", exist_ok=True
+            )  # create the tests directory if it doesn't exist
             with open("backend/tests/test_document.txt", "wb") as test_file:
-                test_file.write(b"test document content")
+                test_file.write(b"test document content")  # write contents to test file
             response = self.client.post(
                 "/upload",
                 data={
@@ -38,8 +45,11 @@ class RoutesTestCase(unittest.TestCase):
                     )
                 },
             )
-            self.assertEqual(response.status_code, 201)
+            self.assertEqual(
+                response.status_code, 201
+            )  # check if response status code is equal to 201 (created)
 
+    # * test list document route
     def test_list_documents(self):
         with self.app.app_context():
             db.session.add(
@@ -49,9 +59,14 @@ class RoutesTestCase(unittest.TestCase):
             )
             db.session.commit()
             response = self.client.get("/documents")
-            self.assertEqual(response.status_code, 200)
-            self.assertIn("Test Document", response.get_data(as_text=True))
+            self.assertEqual(
+                response.status_code, 200
+            )  # check if the response status code is 200 (OK)
+            self.assertIn(
+                "Test Document", response.get_data(as_text=True)
+            )  # check if the response contains the document title
 
+    # * Test the get document by ID route
     def test_get_document(self):
         with self.app.app_context():
             document = TrainingDocument(
@@ -60,9 +75,14 @@ class RoutesTestCase(unittest.TestCase):
             db.session.add(document)
             db.session.commit()
             response = self.client.get(f"/documents/{document.id}")
-            self.assertEqual(response.status_code, 200)
-            self.assertIn("Test Document", response.get_data(as_text=True))
+            self.assertEqual(
+                response.status_code, 200
+            )  # Check if the response status code is 200 (OK)
+            self.assertIn(
+                "Test Document", response.get_data(as_text=True)
+            )  # Check if the response contains the document title
 
+    # * test the delete document route
     def test_delete_document(self):
         with self.app.app_context():
             document = TrainingDocument(
@@ -71,10 +91,15 @@ class RoutesTestCase(unittest.TestCase):
             db.session.add(document)
             db.session.commit()
             response = self.client.delete(f"/documents/{document.id}")
-            self.assertEqual(response.status_code, 200)
+            self.assertEqual(
+                response.status_code, 200
+            )  # check if the response status code is 200 (OK)
             response = self.client.get(f"/documents/{document.id}")
-            self.assertEqual(response.status_code, 404)
+            self.assertEqual(
+                response.status_code, 404
+            )  # check if the response status code is 404 (not found)
 
 
+# * run the test cases
 if __name__ == "__main__":
     unittest.main()

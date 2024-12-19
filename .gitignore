@@ -14,3 +14,4 @@ backend/venv
 /frontend/.env.local
 frontend/.next
 /frontend/dist
+/bugs.todo

@@ -2,18 +2,21 @@ import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import { MessageItem } from "../components/Chat/Chat";
 
+// * function to send message
 export const sendMessage = async (
-  text: string,
-  conversationKey: string,
-  setMessages: React.Dispatch<React.SetStateAction<MessageItem[]>>
+  text: string, // * message text 
+  conversationKey: string, // * key for current conversation 
+  setMessages: React.Dispatch<React.SetStateAction<MessageItem[]>> // * function to update the messages state
 ) => {
+  // * check if message content is empty 
   if (!text.trim()) {
     console.error("message content is empty");
     return;
   }
 
+  // * create a new message object for user message 
   const newMessage: MessageItem = {
-    key: uuidv4(),
+    key: uuidv4(), // * generate unique key for message 
     conversationKey,
     text: text.trim(),
     isUser: true,
@@ -24,9 +27,11 @@ export const sendMessage = async (
     date: new Date().toISOString(),
   };
 
+  // * update the messages state with the new user message
   setMessages((prevMessages) => [...prevMessages, newMessage]);
 
   try {
+    // * save message to the backend 
     await axios.post("/api/messages", {
       conversationKey,
       message: {
@@ -39,9 +44,12 @@ export const sendMessage = async (
       },
     });
 
+    // * send the user message to assistant and get response
     const response = await axios.post('/api/ask', { question: text.trim() });
+    
+    // * create new message object for assitant message 
     const assistantMessage: MessageItem = {
-      key: uuidv4(),
+      key: uuidv4(), // * generate unique key for assistants message
       conversationKey,
       text: response.data.answer,
       isUser: false,
@@ -52,8 +60,10 @@ export const sendMessage = async (
       sender: 'assistant'
     };
 
+    // * update the messages state with the new user message 
     setMessages((prevMessages) => [...prevMessages, assistantMessage]);
 
+    // * save the assistant's response to the backend
     await axios.post("/api/messages", {
       conversationKey,
       message: {
@@ -67,6 +77,7 @@ export const sendMessage = async (
     });
 
   } catch (error) {
+    // * handle any errors that occur during the message sending process
     console.error("error sending message:", error);
   }
 };

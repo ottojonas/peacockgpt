@@ -3,20 +3,26 @@ import connectToDatabase from '@/lib/mongoose';
 import TrainingDocument from '@/models/TrainingDocument';
 import { OpenAI } from 'openai';
 
+// * initialise openai with the api key from environment variables 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+// * define structure of training documents 
 interface TrainingDocumentType {
   content: string;
 }
 
+// * main handler function for /api/ask end point 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // * connect to mongodb database 
   await connectToDatabase();
 
+  // * handle POST request
   if (req.method === 'POST') {
     const { question } = req.body;
 
+    // * validate request body 
     if (!question) {
     return res.status(400).json({ error: 'question is required' });
     }
@@ -32,7 +38,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         documentTexts = documentTexts.substring(0, maxLength);
     }
 
-    // Log the document texts and prompt
+    // * log the document texts and prompt
     console.log("Document Texts:", documentTexts);
 
     // * create prompt
@@ -47,9 +53,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         max_tokens: 150,
     });
 
+    // * extract answer from response
     const answer = response?.choices?.[0]?.message?.content?.trim();
     res.status(200).json({ answer });
     } catch (error) {
+    // * handle errors during response generation 
     if (error instanceof Error) {
         console.error("error generating response:", error.message);
         console.error("stack trace:", error.stack);
@@ -60,6 +68,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
     }
   } else {
+    // * handle unsupported request methods 
     res.status(405).json({ message: "method not allowed" });
   }
 }

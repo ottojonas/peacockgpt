@@ -9,6 +9,7 @@ import PinnedIcon from "@/components/icons/PinnedIcon";
 import ListAllIcon from "@/components/icons/ListAllIcon";
 import { MessageItem } from "../Chat/Chat";
 
+// * define the type for conversation items
 type ItemProps = {
   key: string;
   title: string;
@@ -18,11 +19,13 @@ type ItemProps = {
   isPinned: boolean;
 };
 
+// * define the props for the ChatHistory component
 type Props = {
   setConversationKey: (key: string) => void;
   setMessages: (messages: MessageItem[]) => void;
 };
 
+// * function to create a new conversation with default values
 const createNewConversation = (): ItemProps => {
   const formatDate = (date: Date) => {
     const options: Intl.DateTimeFormatOptions = {
@@ -44,15 +47,18 @@ const createNewConversation = (): ItemProps => {
   };
 };
 
+// * main ChatHistory component
 const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
   const [conversations, setConversations] = useState<ItemProps[]>([]);
   const [selectedConversation, setSelectedConversation] =
     useState<ItemProps | null>(null);
 
+  // * fetch conversations when the component mounts
   useEffect(() => {
     fetchConversations();
   }, []);
 
+  // * function to fetch conversations from the API
   const fetchConversations = async () => {
     try {
       const response = await axios.get("/api/conversations");
@@ -73,11 +79,14 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
         };
       });
 
+      // * sort conversations by date
       formattedConversations.sort(
         (a: ItemProps, b: ItemProps) =>
           new Date(b.date).getTime() - new Date(a.date).getTime()
       );
 
+      // FIXME
+      // * set the most recent conversation as selected
       if (formattedConversations.length > 0) {
         const mostRecentConversation = formattedConversations[0];
         setSelectedConversation(mostRecentConversation);
@@ -89,6 +98,7 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
     }
   };
 
+  // * handle click on a conversation item
   const handleConversationClick = (key: string) => {
     setConversations((prevConversations) =>
       prevConversations.map((conversation) =>
@@ -109,6 +119,7 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
     }
   };
 
+  // * handle creating a new conversation
   const handleNewConversation = async () => {
     const newConversation = createNewConversation();
 
@@ -137,6 +148,7 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
     }
   };
 
+  // * handle clearing all chats
   const handleClearAllChats = async () => {
     try {
       await axios.delete("/api/conversations");
@@ -214,6 +226,7 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
   );
 };
 
+// * component to render each conversation item
 function Item({
   item,
   onClick,

@@ -4,6 +4,7 @@ import Mic from "@/components/icons/Mic";
 import Refresh from "@/components/icons/Refresh";
 import axios from "axios";
 
+// * define the structure of a message item
 type MessageItem = {
   key: string;
   conversationKey: string;
@@ -16,24 +17,28 @@ type MessageItem = {
   content: string;
 };
 
+// * define the props for the ChatInput component
 interface Props {
-  sendMessage: (message: string) => void;
-  inputValue: string;
-  setInputValue: (value: string) => void;
-  messages: MessageItem[];
-  conversationKey: string;
+  sendMessage: (message: string) => void; // * function to send a message
+  inputValue: string; // * the current input value
+  setInputValue: (value: string) => void; // * function to set the input value
+  messages: MessageItem[]; // * array of message items
+  conversationKey: string; // * key of the current conversation
 }
 
+// * ChatInput component to handle user input and sending messages
 const ChatInput: React.FC<Props> = ({
   sendMessage,
   inputValue,
   setInputValue,
   conversationKey,
 }) => {
+  // * handle change in the textarea input
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputValue(event.target.value);
   };
 
+  // * handle key down event in the textarea input
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -41,6 +46,7 @@ const ChatInput: React.FC<Props> = ({
     }
   };
 
+  // * fetch messages when the conversation key changes
   useEffect(() => {
     const fetchMessage = async () => {
       try {
@@ -63,6 +69,7 @@ const ChatInput: React.FC<Props> = ({
     };
   }, [conversationKey]);
 
+  // * handle sending a message
   const handleSendMessage = async () => {
     if (!inputValue.trim()) {
       console.error("message content is empty");
@@ -72,6 +79,7 @@ const ChatInput: React.FC<Props> = ({
     setInputValue("");
   };
 
+  // TODO regenerate answer
   return (
     <div className="fixed inset-x-0 bottom-0 pt-8 bg-input">
       <div style={{ marginLeft: "384px", marginRight: "320px" }}>
@@ -79,8 +87,7 @@ const ChatInput: React.FC<Props> = ({
           <div className="flex justify-center py-2">
             <button
               className="py-2.5 px-6 rounded-md bg-card flex items-center"
-              onClick={() => {}}
-            >
+              onClick={() => {}}>
               <Refresh className="w-5 h-5" />
               <span className="ml-2">Regenerate Answer</span>
             </button>
@@ -100,18 +107,15 @@ const ChatInput: React.FC<Props> = ({
                 right: "16px",
                 top: "50%",
                 transform: "translate(0, -50%)",
-              }}
-            >
+              }}>
               <button
                 className="grid w-10 h-10 text-white rounded-md place-items-center"
-                onClick={() => {}}
-              >
+                onClick={() => {}}>
                 <Mic className="w-5 h-5" />
               </button>
               <button
                 className="grid w-10 h-10 text-black rounded-md place-items-center bg-brandWhite"
-                onClick={handleSendMessage}
-              >
+                onClick={handleSendMessage}>
                 <Send className="w-5 h-5" />
               </button>
             </div>

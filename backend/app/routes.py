@@ -1,8 +1,6 @@
 # * Define API routes.
 import datetime
 
-from flask import Blueprint, jsonify, request
-
 from app import db
 from app.models import Conversation, Message
 from app.services.document_service import (
@@ -14,10 +12,13 @@ from app.services.document_service import (
 )
 from app.utils.file_utils import extract_content_from_file
 from app.utils.openai_utils import generate_response
+from flask import Blueprint, jsonify, request
 
+# * create a Blueprint for the routes
 routes = Blueprint("routes", __name__)
 
 
+# * route to handle asking a question to the AI
 @routes.route("/api/ask", methods=["POST"])
 def ask_question():
     data = request.json
@@ -25,22 +26,27 @@ def ask_question():
     if not question:
         return jsonify({"error": "question is required"}), 400
 
+    # * fetch all documents from the database
     documents = get_all_documents()
     document_texts = "\n\n".join([doc.content for doc in documents])
 
+    # * create a prompt for the AI
     prompt = (
         f"Here are some documents:\n\n{document_texts}\n\nQuestion: {question}\nAnswer:"
     )
 
+    # * generate a response from the AI
     answer = generate_response(prompt)
     return jsonify({"answer": answer})
 
 
+# * route to check the health status of the application
 @routes.route("/health", methods=["GET"])
 def health_check():
     return {"status": "Healthy"}
 
 
+# * route to handle document uploads
 @routes.route("/upload", methods=["POST"])
 def upload_document():
     if "file" not in request.files:
@@ -49,6 +55,7 @@ def upload_document():
     if file.filename == "":
         return jsonify({"error": "No selected file"}), 400
     try:
+        # * save the uploaded document and extract its content
         filepath = save_document(file)
         content = extract_content_from_file(filepath)
         document = add_document_to_db(file.filename, content)
@@ -60,12 +67,14 @@ def upload_document():
         return jsonify({"error": str(e)}), 400
 
 
+# * route to list all documents
 @routes.route("/documents", methods=["GET"])
 def list_documents():
     documents = get_all_documents()
     return jsonify([{"id": doc.id, "title": doc.title} for doc in documents])
 
 
+# * route to get a specific document by its ID
 @routes.route("/documents/<int:doc_id>", methods=["GET"])
 def get_document(doc_id):
     document = get_document_by_id(db.session, doc_id)
@@ -76,6 +85,7 @@ def get_document(doc_id):
     return jsonify({"error": "Document not found"}), 404
 
 
+# * route to delete a specific document by its ID
 @routes.route("/documents/<int:doc_id>", methods=["DELETE"])
 def delete_document_route(doc_id):
     document = get_document_by_id(db.session, doc_id)
@@ -85,6 +95,7 @@ def delete_document_route(doc_id):
     return jsonify({"error": "Document not found"}), 404
 
 
+# * route to create a new conversation
 @routes.route("/api/conversations", methods=["POST"])
 def create_conversation():
     data = request.json
@@ -94,6 +105,7 @@ def create_conversation():
     ):
         return jsonify({"error": "missing required fields"}), 400
     try:
+        # * create a new conversation object and save it to the database
         conversation = Conversation(
             key=data["key"],
             title=data["title"],
@@ -110,6 +122,19 @@ def create_conversation():
         return jsonify({"error": "Failed to save conversation", "message": str(e)}), 500
 
 
+# * route to get all conversations
+@routes.route("/api/conversations", methods=["GET"])
+def get_conversations():
+    conversations = Conversation.query.all()
+    return jsonify(
+        [
+            {"id": conv.id, "title": conv.title, "date": conv.date.isoformat()}
+            for conv in conversations
+        ]
+    )
+
+
+# * route to create a new message
 @routes.route("/api/messages", methods=["POST"])
 def new_message():
     data = request.json
@@ -118,6 +143,7 @@ def new_message():
     ):
         return jsonify({"error": "missing required fields"}), 400
     try:
+        # * create a new message object and save it to the database
         conversation_key = data["conversationKey"]
         message = Message(
             conversationKey=conversation_key,
@@ -133,17 +159,7 @@ def new_message():
         return jsonify({"error": "failed to save message", "message": str(e)}), 500
 
 
-@routes.route("/api/conversations", methods=["GET"])
-def get_conversations():
-    conversations = Conversation.query.all()
-    return jsonify(
-        [
-            {"id": conv.id, "title": conv.title, "date": conv.date.isoformat()}
-            for conv in conversations
-        ]
-    )
-
-
+# * route to get messages for a specific conversation
 @routes.route("/api/messages", methods=["GET"])
 def get_messages():
     conversationKey = request.args.get("conversationKey")
