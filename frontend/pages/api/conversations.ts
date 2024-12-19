@@ -60,11 +60,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   } else if (req.method === 'PUT') {
     try {
       const {key} = req.query
-      const {isPinned} = req.body 
+      const {isPinned, title, desc} = req.body
+      const updateData: any = {}
+      if (isPinned !== undefined) updateData.isPinned = isPinned
+      if (title !== undefined) updateData.title= title
+      if (desc !== undefined) updateData.desc = desc 
+      
       const updatedConversation = await Conversation.findOneAndUpdate(
-        {key}, {isPinned}, {new:true}
+        {key}, updateData, {new:true}
       )
-      console.log('PUT request received')
 
       if (!updatedConversation) {
         return res.status(404).json({ error: 'conversation not found'})

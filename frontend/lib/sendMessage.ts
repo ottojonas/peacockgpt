@@ -3,11 +3,16 @@ import { v4 as uuidv4 } from "uuid";
 import { MessageItem } from "../components/Chat/Chat";
 import {formatMessage} from '@/utils/formatMessage'
 
+let isFirstUserMessageSet = false; 
+let isFirstAssistantMessageSet = false 
+
 // * function to send message
 export const sendMessage = async (
   text: string, // message text 
   conversationKey: string, // key for current conversation 
-  setMessages: React.Dispatch<React.SetStateAction<MessageItem[]>> // function to update the messages state
+  setMessages: React.Dispatch<React.SetStateAction<MessageItem[]>>, // function to update the messages state
+  setConversations: React.Dispatch<React.SetStateAction<any[]>> // function to update the conversations state
+
 ) => {
   // * check if message content is empty 
   if (!text.trim()) {
@@ -48,11 +53,27 @@ export const sendMessage = async (
       },
     });
 
+    // * check if it's the first user message in the conversation
+    if (!isFirstUserMessageSet) {
+      const updatedConversation = {
+        title: newMessage.text.substring(0, 20),
+      };
+      await axios.put(`api/conversations?key=${conversationKey}`, updatedConversation);
+      setConversations((prevConversations) =>
+        prevConversations.map((conversation) =>
+          conversation.key === conversationKey
+            ? { ...conversation, ...updatedConversation }
+            : conversation
+        )
+      );
+      isFirstUserMessageSet = true;
+    }
+
     // * send the user message to assistant and get response
-    const response = await axios.post('/api/ask', { question: text.trim() });
+    const assistantResponse = await axios.post('/api/ask', { question: text.trim() });
     
     // * format assistants response 
-    const formattedResponse = formatMessage(response.data.answer);
+    const formattedResponse = formatMessage(assistantResponse.data.answer);
     
     // * create new message object for assitant message 
     const assistantMessage: MessageItem = {
@@ -83,6 +104,21 @@ export const sendMessage = async (
       },
     });
 
+    // * check if it's the first assistant message in the conversation
+    if (!isFirstAssistantMessageSet) {
+      const updatedConversation = {
+        desc: assistantMessage.text.substring(0, 50),
+      };
+      await axios.put(`api/conversations?key=${conversationKey}`, updatedConversation);
+      setConversations((prevConversations) =>
+        prevConversations.map((conversation) =>
+          conversation.key === conversationKey
+            ? { ...conversation, ...updatedConversation }
+            : conversation
+        )
+      );
+      isFirstAssistantMessageSet = true;
+    }
   } catch (error) {
     // * handle any errors that occur during the message sending process
     console.error("error sending message:", error);

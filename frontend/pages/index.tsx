@@ -25,6 +25,8 @@ export default function Home() {
   const [messages, setMessages] = useState<MessageItem[]>([]);
   // * state to manage current conversation key
   const [conversationKey, setConversationKey] = useState<string>("");
+  // * state to manage list of conversations
+  const [conversations, setConversations] = useState<any[]>([]);
 
   // * effect to fetch messages when the conversation key changes
   useEffect(() => {
@@ -79,7 +81,9 @@ export default function Home() {
       <ChatHeader />
       {/* chat component to display chat messages */}
       <Chat
-        sendMessage={(text) => sendMessage(text, conversationKey, setMessages)}
+        sendMessage={(text) =>
+          sendMessage(text, conversationKey, setMessages, setConversations)
+        }
         messages={messages}
         setMessages={setMessages}
         conversationKey={conversationKey}
@@ -87,7 +91,9 @@ export default function Home() {
       {/* chat input component for user input */}
       <ChatInput
         setMessages={setMessages}
-        sendMessage={(text) => sendMessage(text, conversationKey, setMessages)}
+        sendMessage={(text) =>
+          sendMessage(text, conversationKey, setMessages, setConversations)
+        }
         inputValue={inputValue}
         setInputValue={setInputValue}
         messages={messages}
