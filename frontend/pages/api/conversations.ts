@@ -8,6 +8,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // * connect to mongodb database
   await connectToDatabase();
 
+  const { key } = req.query
   // * handle GET requests
   if (req.method === 'GET') {
     try {
@@ -56,11 +57,29 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       console.error('Error deleting conversations and messages:', error);
       res.status(500).json({ error: 'Failed to delete conversations and messages' });
     }
-  } 
+  } else if (req.method === 'PUT') {
+    try {
+      const {key} = req.query
+      const {isPinned} = req.body 
+      const updatedConversation = await Conversation.findOneAndUpdate(
+        {key}, {isPinned}, {new:true}
+      )
+      console.log('PUT request received')
+
+      if (!updatedConversation) {
+        return res.status(404).json({ error: 'conversation not found'})
+      }
+
+      res.status(200).json(updatedConversation) 
+    } catch (error) {
+      console.error('error updating conversation:', error)
+      res.status(500).json({ error: 'failed to update conversation' })
+    }
+  }
   // * handle unsupported requests 
   else {
     // * set allowed methods in the response header 
-    res.setHeader('Allow', ['GET', 'POST', 'DELETE']);
+    res.setHeader('Allow', ['GET', 'POST', 'DELETE', 'PUT']);
     // * response with a 405 fir unsupported methods 
     res.status(405).end(`Method ${req.method} not allowed`);
   }

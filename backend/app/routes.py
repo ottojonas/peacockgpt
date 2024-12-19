@@ -178,3 +178,25 @@ def get_messages():
             for msg in messages
         ]
     )
+
+
+# * route to update conversation
+@routes.route("/api/conversations/<string:key>", methods=["PUT"])
+def update_conversation(key):
+    data = request.json
+    if not data or "isPinned" not in data:
+        return jsonify({"error": "missing required fields"}), 400
+    try:
+        # * find conversation by key and update pinned state
+        conversation = Conversation.query.filter_by(key=key).first()
+        if not conversation:
+            return jsonify({"error": "conversation not found"}), 404
+        conversation.isPinned = data["isPinned"]
+        db.session.commit()
+        return jsonify({"message": "conversation updated successfully"})
+    except Exception as e:
+        db.session.rollback()
+        return (
+            jsonify({"error": "failed to update conversation", "message": str(e)}),
+            500,
+        )

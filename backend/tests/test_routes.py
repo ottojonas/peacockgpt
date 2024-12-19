@@ -8,6 +8,7 @@ import unittest
 
 from app import create_app, db
 from app.models import TrainingDocument
+from pymongo import MongoClient
 
 
 # * test case class for api routes
@@ -16,8 +17,9 @@ class RoutesTestCase(unittest.TestCase):
     def setUp(self):
         self.app = create_app()
         self.app.config["TESTING"] = True
-        self.app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"  # TODO
         self.client = self.app.test_client()
+        self.mongo_client = MongoClient(os.getenv("MONGODB_URI"))
+        self.db = self.mongo_client.get_database("test")
 
         with self.app.app_context():
             db.create_all()  # create all database tables
@@ -25,8 +27,8 @@ class RoutesTestCase(unittest.TestCase):
     # * tear down test environment
     def tearDown(self):
         with self.app.app_context():
-            db.session.remove()  # remove database session
-            db.drop_all()  # drop all database tables
+            self.db.drop_collection("trainingdocuments")
+            self.mongo_client.close()
 
     # * test document upload route
     def test_upload_document(self):
@@ -102,4 +104,5 @@ class RoutesTestCase(unittest.TestCase):
 
 # * run the test cases
 if __name__ == "__main__":
+    unittest.main()
     unittest.main()

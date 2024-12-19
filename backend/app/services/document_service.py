@@ -1,4 +1,4 @@
-# *  Handles document ingestion and processing.
+# * Handles document ingestion and processing.
 import os
 
 from app import db
@@ -38,7 +38,8 @@ def get_all_documents():
 
 
 def delete_document(doc_id):
-    document = TrainingDocument.query.get(doc_id)
+    session = db.session
+    document = session.get(TrainingDocument, doc_id)
     if document:
-        db.session.delete(document)
-        db.session.commit()
+        session.delete(document)
+        session.commit()

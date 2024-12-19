@@ -149,6 +149,30 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
     }
   };
 
+  // * handle user pinning conversation
+  const handlePinConversation = async (key: string) => {
+    const updatedConversations = conversations.map((conversation) =>
+      conversation.key === key
+        ? { ...conversation, isPinned: !conversation.isPinned }
+        : conversation
+    );
+    setConversations(updatedConversations);
+
+    const pinnedConversation = updatedConversations.find(
+      (conversation) => conversation.key === key
+    );
+
+    if (pinnedConversation) {
+      try {
+        await axios.put(`/api/conversations?key=${key}`, {
+          isPinned: pinnedConversation.isPinned,
+        });
+      } catch (error) {
+        console.error("Error updating pinned state:", error);
+      }
+    }
+  };
+
   // * handle clearing all chats
   const handleClearAllChats = async () => {
     try {
@@ -197,6 +221,7 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
               item={item}
               key={item.key}
               onClick={handleConversationClick}
+              onPin={handlePinConversation}
             />
           ))}
       </div>
@@ -212,6 +237,7 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
               item={item}
               key={item.key}
               onClick={handleConversationClick}
+              onPin={handlePinConversation}
             />
           ))}
       </div>
@@ -231,9 +257,11 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
 function Item({
   item,
   onClick,
+  onPin,
 }: {
   item: ItemProps;
   onClick: (key: string) => void;
+  onPin: (key: string) => void;
 }) {
   return (
     <div className="py-1">
@@ -245,6 +273,9 @@ function Item({
         <div className="flex items-center justify-between">
           <h3 className="font-semibold grow line-clamp-1">{item.title}</h3>
           <span className="pl-2 shrink-0">{item.date}</span>
+          <button onClick={() => onPin(item.key)}>
+            <PinnedIcon className="w-5 h-5" />
+          </button>
         </div>
         <p
           className={`line-clamp-2 mt-1 ${
