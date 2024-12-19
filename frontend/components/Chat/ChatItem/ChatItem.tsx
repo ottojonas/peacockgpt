@@ -80,9 +80,8 @@ const ChatItem: React.FC<ChatItemProps> = ({ item }) => {
           <div
             className={`px-3 pb-3 ${
               item.sender === "user" ? "text-white" : "text-white"
-            }`}>
-            {item.content}
-          </div>
+            }`}
+            dangerouslySetInnerHTML={{ __html: item.content }}></div>
           {/* Display images if any */}
           {item.images && <ImageSet images={item.images} />}
         </div>

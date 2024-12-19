@@ -86,6 +86,7 @@ export default function Home() {
       />
       {/* chat input component for user input */}
       <ChatInput
+        setMessages={setMessages}
         sendMessage={(text) => sendMessage(text, conversationKey, setMessages)}
         inputValue={inputValue}
         setInputValue={setInputValue}

@@ -54,6 +54,7 @@ const Chat: React.FC<ChatProps> = ({
       </div>
       {/* Chat input component */}
       <ChatInput
+        setMessages={setMessages}
         inputValue={inputValue}
         setInputValue={setInputValue}
         messages={messages}

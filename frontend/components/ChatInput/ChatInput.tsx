@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 import Send from "@/components/icons/Send";
 import Mic from "@/components/icons/Mic";
 import Refresh from "@/components/icons/Refresh";
+import { formatMessage } from "@/utils/formatMessage";
+import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 
 // * define the structure of a message item
@@ -19,17 +21,20 @@ type MessageItem = {
 
 // * define the props for the ChatInput component
 interface Props {
-  sendMessage: (message: string) => void; // * function to send a message
-  inputValue: string; // * the current input value
-  setInputValue: (value: string) => void; // * function to set the input value
-  messages: MessageItem[]; // * array of message items
-  conversationKey: string; // * key of the current conversation
+  sendMessage: (message: string) => void; // function to send a message
+  inputValue: string; // the current input value
+  setInputValue: (value: string) => void; // function to set the input value
+  messages: MessageItem[]; //  array of message items
+  setMessages: React.Dispatch<React.SetStateAction<MessageItem[]>>; // function to update the messages state
+  conversationKey: string; // key of the current conversation
 }
 
 // * ChatInput component to handle user input and sending messages
 const ChatInput: React.FC<Props> = ({
   sendMessage,
   inputValue,
+  messages,
+  setMessages,
   setInputValue,
   conversationKey,
 }) => {
@@ -79,7 +84,37 @@ const ChatInput: React.FC<Props> = ({
     setInputValue("");
   };
 
-  // TODO regenerate answer
+  // * hanle regnerating answer
+  const handleRegenerateAnswer = async () => {
+    try {
+      const lastMessage = messages[messages.length - 1];
+      if (lastMessage && !lastMessage.isUser) {
+        const response = await axios.post("/api/ask", {
+          question: lastMessage.text,
+        });
+        const newAnswer = response.data.answer;
+        const formattedAnswer = formatMessage(newAnswer);
+
+        const newMessage: MessageItem = {
+          ...lastMessage,
+          key: uuidv4(),
+          text: formattedAnswer,
+          content: formattedAnswer,
+          timestamp: new Date().toISOString(),
+          date: new Date().toISOString(),
+        };
+
+        setMessages((prevMessages) => [...prevMessages, newMessage]);
+      } else {
+        console.error(
+          "no valid last message found or last message is from user"
+        );
+      }
+    } catch (error) {
+      console.error("error regenerating answer:", error);
+    }
+  };
+
   return (
     <div className="fixed inset-x-0 bottom-0 pt-8 bg-input">
       <div style={{ marginLeft: "384px", marginRight: "320px" }}>
@@ -87,7 +122,7 @@ const ChatInput: React.FC<Props> = ({
           <div className="flex justify-center py-2">
             <button
               className="py-2.5 px-6 rounded-md bg-card flex items-center"
-              onClick={() => {}}>
+              onClick={handleRegenerateAnswer}>
               <Refresh className="w-5 h-5" />
               <span className="ml-2">Regenerate Answer</span>
             </button>

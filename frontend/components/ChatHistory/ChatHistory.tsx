@@ -86,6 +86,7 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
       );
 
       // FIXME
+      // TODO
       // * set the most recent conversation as selected
       if (formattedConversations.length > 0) {
         const mostRecentConversation = formattedConversations[0];

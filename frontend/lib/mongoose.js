@@ -26,6 +26,7 @@ async function connectToDatabase() {
   // * if connection promise doesnt exist create one
   if (!cached.promise) {
     const opts = {
+      // ! depreciated
       useNewUrlParser: true, // * use new url parser
       // ! depreciated
       useUnifiedTopology: true, // * use new server discover and onitoring engine

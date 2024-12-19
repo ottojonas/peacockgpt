@@ -1,12 +1,13 @@
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import { MessageItem } from "../components/Chat/Chat";
+import {formatMessage} from '@/utils/formatMessage'
 
 // * function to send message
 export const sendMessage = async (
-  text: string, // * message text 
-  conversationKey: string, // * key for current conversation 
-  setMessages: React.Dispatch<React.SetStateAction<MessageItem[]>> // * function to update the messages state
+  text: string, // message text 
+  conversationKey: string, // key for current conversation 
+  setMessages: React.Dispatch<React.SetStateAction<MessageItem[]>> // function to update the messages state
 ) => {
   // * check if message content is empty 
   if (!text.trim()) {
@@ -14,13 +15,16 @@ export const sendMessage = async (
     return;
   }
 
+  // * format text in message 
+  const formattedText = formatMessage(text.trim())
+
   // * create a new message object for user message 
   const newMessage: MessageItem = {
     key: uuidv4(), // * generate unique key for message 
     conversationKey,
-    text: text.trim(),
+    text: formattedText,
     isUser: true,
-    content: text,
+    content: formattedText,
     images: [],
     timestamp: new Date().toISOString(),
     sender: "user",
@@ -47,16 +51,19 @@ export const sendMessage = async (
     // * send the user message to assistant and get response
     const response = await axios.post('/api/ask', { question: text.trim() });
     
+    // * format assistants response 
+    const formattedResponse = formatMessage(response.data.answer);
+    
     // * create new message object for assitant message 
     const assistantMessage: MessageItem = {
       key: uuidv4(), // * generate unique key for assistants message
       conversationKey,
-      text: response.data.answer,
+      text: formattedResponse,
       isUser: false,
       images: [],
       date: new Date().toISOString(),
       timestamp: new Date().toISOString(),
-      content: response.data.answer,
+      content:formattedResponse,
       sender: 'assistant'
     };
 
