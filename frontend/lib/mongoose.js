@@ -11,7 +11,7 @@ if (!MONGODB_URI) {
 // * cache the mongodb connection globally to prevent multiple connections
 let cached = global.mongoose;
 
-// * initialise the chase if it doesnt exist
+// * initialise the cache if it doesn't exist
 if (!cached) {
   cached = global.mongoose = { conn: null, promise: null };
 }
@@ -19,17 +19,15 @@ if (!cached) {
 // * function to connect to database
 async function connectToDatabase() {
   if (cached.conn) {
-    // * if connection already exists return if
+    // * if connection already exists return it
     return cached.conn;
   }
 
-  // * if connection promise doesnt exist create one
+  // * if connection promise doesn't exist create one
   if (!cached.promise) {
     const opts = {
-      // ! depreciated
-      useNewUrlParser: true, // * use new url parser
-      // ! depreciated
-      useUnifiedTopology: true, // * use new server discover and onitoring engine
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
     };
 
     // * create connection promise and store in cache
@@ -43,5 +41,5 @@ async function connectToDatabase() {
   return cached.conn;
 }
 
-// * export the connectToDatebase function as the default export
+// * export the connectToDatabase function as the default export
 export default connectToDatabase;
