@@ -61,6 +61,7 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
           date: isNaN(date.getTime())
             ? new Date().toISOString()
             : date.toISOString(),
+          isSelected: false,
         };
       });
 
@@ -69,13 +70,6 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
         (a: ItemProps, b: ItemProps) =>
           new Date(b.date).getTime() - new Date(a.date).getTime()
       );
-
-      // * set the most recent conversation as selected
-      if (formattedConversations.length > 0) {
-        const mostRecentConversation = formattedConversations[0];
-        setSelectedConversation(mostRecentConversation);
-        setConversationKey(mostRecentConversation.key);
-      }
 
       setConversations(formattedConversations);
     } catch (error) {
