@@ -15,3 +15,4 @@ backend/venv
 frontend/.next
 /frontend/dist
 /bugs.todo
+/backend/app/__pycache__

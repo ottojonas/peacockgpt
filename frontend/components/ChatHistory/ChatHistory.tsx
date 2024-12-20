@@ -198,7 +198,11 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
       </div>
       <div className="flex px-3 space-x-2 shrink-0">
         <div className="relative h-10 rounded-md grow bg-card">
-          <input className="w-full h-10 pl-4 pr-10 rounded-md bg-card" />
+          <input
+            className="w-full h-10 pl-4 pr-10 rounded-md bg-card"
+            spellCheck={false}
+            data-ms-editor={false}
+          />
           <div className="absolute inset-y-0 right-0 grid w-10 place-items-center">
             <SearchIcon className="w-5 h-5 text-brandGray" />
           </div>
@@ -272,10 +276,12 @@ function Item({
         onClick={() => onClick(item.key)}>
         <div className="flex items-center justify-between">
           <h3 className="font-semibold grow line-clamp-1">{item.title}</h3>
-          <span className="pl-2 shrink-0">{item.date}</span>
-          <button onClick={() => onPin(item.key)}>
-            <PinnedIcon className="w-5 h-5" />
-          </button>
+          <div className="flex flex-col items-end">
+            <span className="pl-2 shrink-0">{item.date}</span>
+            <button onClick={() => onPin(item.key)}>
+              <PinnedIcon className="w-3 h-3" />
+            </button>
+          </div>
         </div>
         <p
           className={`line-clamp-2 mt-1 ${

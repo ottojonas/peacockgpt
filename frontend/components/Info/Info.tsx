@@ -5,6 +5,9 @@ import trending from "./trending.json";
 import TrendingIcon from "@/components/icons/TrendingIcon";
 import StarIcon from "@/components/icons/StarIcon";
 import WarningIcon from "@/components/icons/WarningIcon";
+
+// TODO
+
 type Props = {};
 
 export default function Info({}: Props) {
