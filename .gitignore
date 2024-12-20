@@ -16,3 +16,4 @@ frontend/.next
 /frontend/dist
 /bugs.todo
 /backend/app/__pycache__
+/notes.txt
