@@ -54,10 +54,15 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
   const fetchConversations = async () => {
     try {
       const response = await axios.get("/api/conversations");
-      const formattedConversations = response.data.map((conversation: any) => ({
-        ...conversation,
-        date: new Date(conversation.date).toISOString(),
-      }));
+      const formattedConversations = response.data.map((conversation: any) => {
+        const date = new Date(conversation.date);
+        return {
+          ...conversation,
+          date: isNaN(date.getTime())
+            ? new Date().toISOString()
+            : date.toISOString(),
+        };
+      });
 
       // * sort conversations by date
       formattedConversations.sort(
