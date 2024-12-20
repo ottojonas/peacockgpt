@@ -179,6 +179,7 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
       await axios.delete("/api/conversations");
       setConversations([]);
       setSelectedConversation(null);
+      setMessages([]);
     } catch (error) {
       console.error("error clearing all chats:", error);
     }
