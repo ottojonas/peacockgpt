@@ -14,6 +14,6 @@ def generate_response(prompt):
         max_tokens=150,
         n=1,
         stop=None,
-        temperature=0.5,
+        temperature=0.3,
     )
     return response.choices[0].text.strip()

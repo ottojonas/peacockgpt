@@ -27,21 +27,13 @@ type Props = {
 
 // * function to create a new conversation with default values
 const createNewConversation = (): ItemProps => {
-  const formatDate = (date: Date) => {
-    const options: Intl.DateTimeFormatOptions = {
-      year: "2-digit",
-      month: "numeric",
-      day: "numeric",
-    };
-    return new Intl.DateTimeFormat("en-GB", options).format(date);
-  };
   const now = new Date();
 
   return {
     key: uuidv4(),
     title: "New Conversation",
     desc: "Description",
-    date: formatDate(now),
+    date: now.toISOString(), // Use ISO string for accurate sorting
     isSelected: true,
     isPinned: false,
   };
@@ -62,22 +54,10 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
   const fetchConversations = async () => {
     try {
       const response = await axios.get("/api/conversations");
-      const formattedConversations = response.data.map((conversation: any) => {
-        const dateParts = conversation.date.split("/");
-        const date = new Date(
-          `20${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`
-        );
-        return {
-          ...conversation,
-          date: isNaN(date.getTime())
-            ? "Invalid Date"
-            : new Intl.DateTimeFormat("en-GB", {
-                year: "2-digit",
-                month: "numeric",
-                day: "numeric",
-              }).format(date),
-        };
-      });
+      const formattedConversations = response.data.map((conversation: any) => ({
+        ...conversation,
+        date: new Date(conversation.date).toISOString(),
+      }));
 
       // * sort conversations by date
       formattedConversations.sort(
@@ -85,14 +65,13 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
           new Date(b.date).getTime() - new Date(a.date).getTime()
       );
 
-      // FIXME
-      // TODO
       // * set the most recent conversation as selected
       if (formattedConversations.length > 0) {
         const mostRecentConversation = formattedConversations[0];
         setSelectedConversation(mostRecentConversation);
         setConversationKey(mostRecentConversation.key);
       }
+
       setConversations(formattedConversations);
     } catch (error) {
       console.error("Error fetching conversations:", error);
@@ -125,7 +104,6 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
     const newConversation = createNewConversation();
 
     try {
-      // * console.log("Sending new conversation:", newConversation);
       const response = await fetch("/api/conversations", {
         method: "POST",
         headers: {
@@ -134,16 +112,25 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
         body: JSON.stringify(newConversation),
       });
       const data = await response.json();
-      // * console.log(data);
 
       const updatedConversation = { ...newConversation, key: data.id };
-      setConversations((prevConversations) => [
-        ...prevConversations.map((conv) => ({ ...conv, isSelected: false })),
+      const updatedConversations = [
+        ...conversations.map((conv) => ({ ...conv, isSelected: false })),
         updatedConversation,
-      ]);
-      setSelectedConversation(updatedConversation);
-      setConversationKey(updatedConversation.key);
-      fetchConversations();
+      ];
+
+      // * sort conversations by date
+      updatedConversations.sort(
+        (a: ItemProps, b: ItemProps) =>
+          new Date(b.date).getTime() - new Date(a.date).getTime()
+      );
+
+      // * set the most recent conversation as selected
+      const mostRecentConversation = updatedConversations[0];
+      setSelectedConversation(mostRecentConversation);
+      setConversationKey(mostRecentConversation.key);
+
+      setConversations(updatedConversations);
     } catch (error) {
       console.error("Error saving conversation:", error);
     }
@@ -161,7 +148,6 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
     const pinnedConversation = updatedConversations.find(
       (conversation) => conversation.key === key
     );
-
     if (pinnedConversation) {
       try {
         await axios.put(`/api/conversations?key=${key}`, {
@@ -179,9 +165,22 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
       await axios.delete("/api/conversations");
       setConversations([]);
       setSelectedConversation(null);
+      setMessages([]);
     } catch (error) {
       console.error("error clearing all chats:", error);
     }
+  };
+
+  // * function to format the date for display
+  const formatDate = (date: string) => {
+    const options: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    return new Intl.DateTimeFormat("en-GB", options).format(new Date(date));
   };
 
   return (
@@ -226,6 +225,7 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
               key={item.key}
               onClick={handleConversationClick}
               onPin={handlePinConversation}
+              formatDate={formatDate}
             />
           ))}
       </div>
@@ -242,6 +242,7 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
               key={item.key}
               onClick={handleConversationClick}
               onPin={handlePinConversation}
+              formatDate={formatDate}
             />
           ))}
       </div>
@@ -262,10 +263,12 @@ function Item({
   item,
   onClick,
   onPin,
+  formatDate,
 }: {
   item: ItemProps;
   onClick: (key: string) => void;
   onPin: (key: string) => void;
+  formatDate: (date: string) => string;
 }) {
   return (
     <div className="py-1">
@@ -277,7 +280,7 @@ function Item({
         <div className="flex items-center justify-between">
           <h3 className="font-semibold grow line-clamp-1">{item.title}</h3>
           <div className="flex flex-col items-end">
-            <span className="pl-2 shrink-0">{item.date}</span>
+            <span className="pl-2 shrink-0">{formatDate(item.date)}</span>
             <button onClick={() => onPin(item.key)}>
               <PinnedIcon className="w-3 h-3" />
             </button>

@@ -55,6 +55,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           model: 'gpt-4o',
           messages: [{ role: 'user', content: prompt }],
           max_tokens: 1000,
+          tempreture: 0.3,
         });
 
         // * extract answer from response
