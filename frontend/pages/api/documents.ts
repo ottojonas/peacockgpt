@@ -9,7 +9,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         process.cwd(),
         "../data/annotated-documents"
       );
-      console.log('directory path:', directoryPath);
+      // * console.log('directory path:', directoryPath);
       
       if (!fs.existsSync(directoryPath)) {
         console.error('directory doesnt exist:', directoryPath); 
@@ -18,7 +18,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
       const documents = fs.readdirSync(directoryPath).map((filename, index) => {
         const filePath = path.join(directoryPath, filename);
-        console.log('reading file:', filePath)
+        // * console.log('reading file:', filePath)
 
         if (!fs.existsSync(filePath)) {
             console.error('file does not exist:', filePath);

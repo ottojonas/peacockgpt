@@ -29,7 +29,7 @@ async function testOpenAI() {
     });
 
     // * log response from openai
-    console.log('response from PeacockGPT:', response.choices?.[0]?.message?.content?.trim());
+    // * console.log('response from PeacockGPT:', response.choices?.[0]?.message?.content?.trim());
   } catch (error) {
     // * handle any errors 
     console.error('error testing PeacockGPT:', error);

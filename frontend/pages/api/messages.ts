@@ -12,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // * handle GET requests
   if (req.method === 'GET') {
     const { conversationKey } = req.query;
-    console.log('GET request received with conversationKey:', conversationKey);
+    // * console.log('GET request received with conversationKey:', conversationKey);
     // * check if conversationKey is provided
     if (!conversationKey) {
       console.error('missing conversationKey');
@@ -35,7 +35,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // * handle POST requests
   else if (req.method === 'POST') {
     const { conversationKey, message } = req.body;
-    console.log('POST request received with conversationKey:', conversationKey, 'and message:', message);
+    // * console.log('POST request received with conversationKey:', conversationKey, 'and message:', message);
 
     // * validate the request body
     if (!conversationKey) {

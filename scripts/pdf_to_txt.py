@@ -22,7 +22,7 @@ def convert_all_pdfs_in_directory(directory):
             pdf_path = os.path.join(directory, filename)
             txt_path = os.path.join(directory, filename.replace(".pdf", ".txt"))
             pdf_to_text(pdf_path, txt_path)
-            ic(f"converted {filename} to {filename.replace('.pdf', '.txt')}")
+            # * ic(f"converted {filename} to {filename.replace('.pdf', '.txt')}")
 
 
 pdf_directory = "data/training-documents"

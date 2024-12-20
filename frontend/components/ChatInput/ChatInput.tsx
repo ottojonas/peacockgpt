@@ -55,11 +55,11 @@ const ChatInput: React.FC<Props> = ({
   useEffect(() => {
     const fetchMessage = async () => {
       try {
-        console.log("fetching messages with conversationKey:", conversationKey);
+        // * console.log("fetching messages with conversationKey:", conversationKey);
         const response = await axios.get(`/api/messages`, {
           params: { conversationKey: conversationKey },
         });
-        console.log(response.data);
+        // * console.log(response.data);
       } catch (error) {
         console.error("error loading messages:", error);
       }
@@ -70,7 +70,7 @@ const ChatInput: React.FC<Props> = ({
     }
 
     return () => {
-      console.log("cleanup for conversationKey:", conversationKey);
+      // * console.log("cleanup for conversationKey:", conversationKey);
     };
   }, [conversationKey]);
 

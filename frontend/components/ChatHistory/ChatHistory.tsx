@@ -125,7 +125,7 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
     const newConversation = createNewConversation();
 
     try {
-      console.log("Sending new conversation:", newConversation);
+      // * console.log("Sending new conversation:", newConversation);
       const response = await fetch("/api/conversations", {
         method: "POST",
         headers: {
@@ -134,7 +134,7 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
         body: JSON.stringify(newConversation),
       });
       const data = await response.json();
-      console.log(data);
+      // * console.log(data);
 
       const updatedConversation = { ...newConversation, key: data.id };
       setConversations((prevConversations) => [

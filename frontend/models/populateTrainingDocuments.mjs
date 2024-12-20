@@ -8,7 +8,7 @@ import { fileURLToPath } from "url";
 dotenv.config();
 
 const MONGODB_URI = process.env.MONGODB_URI;
-console.log("mongodb_uri:", MONGODB_URI);
+// * console.log("mongodb_uri:", MONGODB_URI);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -38,7 +38,7 @@ async function populateTrainingDocuments() {
 
   try {
     await TrainingDocument.insertMany(trainingDocuments);
-    console.log("success");
+    // * console.log("success");
   } catch (error) {
     console.error("error:", error);
   } finally {
