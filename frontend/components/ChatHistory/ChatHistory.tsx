@@ -9,7 +9,7 @@ import PinnedIcon from "@/components/icons/PinnedIcon";
 import ListAllIcon from "@/components/icons/ListAllIcon";
 import { MessageItem } from "../Chat/Chat";
 
-// * define the type for conversation items
+// Define the type for conversation items
 type ItemProps = {
   key: string;
   title: string;
@@ -19,16 +19,15 @@ type ItemProps = {
   isPinned: boolean;
 };
 
-// * define the props for the ChatHistory component
+// Define the props for the ChatHistory component
 type Props = {
   setConversationKey: (key: string) => void;
   setMessages: (messages: MessageItem[]) => void;
 };
 
-// * function to create a new conversation with default values
+// Function to create a new conversation with default values
 const createNewConversation = (): ItemProps => {
   const now = new Date();
-
   return {
     key: uuidv4(),
     title: "New Conversation",
@@ -39,18 +38,43 @@ const createNewConversation = (): ItemProps => {
   };
 };
 
-// * main ChatHistory component
+// Main ChatHistory component
 const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
   const [conversations, setConversations] = useState<ItemProps[]>([]);
   const [selectedConversation, setSelectedConversation] =
     useState<ItemProps | null>(null);
 
-  // * fetch conversations when the component mounts
+  // Fetch conversations when the component mounts
   useEffect(() => {
     fetchConversations();
   }, []);
 
-  // * function to fetch conversations from the API
+  // Handle creating a new conversation
+  const handleNewConversation = async () => {
+    const newConversation = createNewConversation();
+    try {
+      const response = await fetch("/api/conversations", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newConversation),
+      });
+      const data = await response.json();
+      const updatedConversation = { ...newConversation, key: data.id };
+      setConversations((prevConversations) => [
+        ...prevConversations.map((conv) => ({ ...conv, isSelected: false })),
+        updatedConversation,
+      ]);
+      setSelectedConversation(updatedConversation);
+      setConversationKey(updatedConversation.key);
+      setMessages([]);
+    } catch (error) {
+      console.error("Error creating new conversation:", error);
+    }
+  };
+
+  // Function to fetch conversations from the API
   const fetchConversations = async () => {
     try {
       const response = await axios.get("/api/conversations");
@@ -64,20 +88,17 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
           isSelected: false,
         };
       });
-
-      // * sort conversations by date
       formattedConversations.sort(
-        (a: ItemProps, b: ItemProps) =>
+        (a: { date: string }, b: { date: string }) =>
           new Date(b.date).getTime() - new Date(a.date).getTime()
       );
-
       setConversations(formattedConversations);
     } catch (error) {
       console.error("Error fetching conversations:", error);
     }
   };
 
-  // * handle click on a conversation item
+  // Handle click on a conversation item
   const handleConversationClick = (key: string) => {
     setConversations((prevConversations) =>
       prevConversations.map((conversation) =>
@@ -94,48 +115,11 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
       setConversationKey(selectedConversation.key);
       setMessages([]);
     } else {
-      console.error("conversation not found");
+      console.error("Conversation not found");
     }
   };
 
-  // * handle creating a new conversation
-  const handleNewConversation = async () => {
-    const newConversation = createNewConversation();
-
-    try {
-      const response = await fetch("/api/conversations", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newConversation),
-      });
-      const data = await response.json();
-
-      const updatedConversation = { ...newConversation, key: data.id };
-      const updatedConversations = [
-        ...conversations.map((conv) => ({ ...conv, isSelected: false })),
-        updatedConversation,
-      ];
-
-      // * sort conversations by date
-      updatedConversations.sort(
-        (a: ItemProps, b: ItemProps) =>
-          new Date(b.date).getTime() - new Date(a.date).getTime()
-      );
-
-      // * set the most recent conversation as selected
-      const mostRecentConversation = updatedConversations[0];
-      setSelectedConversation(mostRecentConversation);
-      setConversationKey(mostRecentConversation.key);
-
-      setConversations(updatedConversations);
-    } catch (error) {
-      console.error("Error saving conversation:", error);
-    }
-  };
-
-  // * handle user pinning conversation
+  // Handle user pinning conversation
   const handlePinConversation = async (key: string) => {
     const updatedConversations = conversations.map((conversation) =>
       conversation.key === key
@@ -143,7 +127,6 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
         : conversation
     );
     setConversations(updatedConversations);
-
     const pinnedConversation = updatedConversations.find(
       (conversation) => conversation.key === key
     );
@@ -158,7 +141,7 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
     }
   };
 
-  // * handle clearing all chats
+  // Handle clearing all chats
   const handleClearAllChats = async () => {
     try {
       await axios.delete("/api/conversations");
@@ -166,11 +149,11 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
       setSelectedConversation(null);
       setMessages([]);
     } catch (error) {
-      console.error("error clearing all chats:", error);
+      console.error("Error clearing all chats:", error);
     }
   };
 
-  // * function to format the date for display
+  // Function to format the date for display
   const formatDate = (date: string) => {
     const options: Intl.DateTimeFormatOptions = {
       year: "numeric",
@@ -257,7 +240,7 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
   );
 };
 
-// * component to render each conversation item
+// Component to render each conversation item
 function Item({
   item,
   onClick,

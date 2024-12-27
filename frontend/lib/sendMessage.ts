@@ -1,32 +1,31 @@
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import { MessageItem } from "../components/Chat/Chat";
-import {formatMessage} from '@/utils/formatMessage'
+import { formatMessage } from "@/utils/formatMessage";
 
-let isFirstUserMessageSet = false; 
-let isFirstAssistantMessageSet = false 
+let isFirstUserMessageSet = false;
+let isFirstAssistantMessageSet = false;
 
 // * function to send message
 export const sendMessage = async (
-  text: string, // message text 
-  conversationKey: string, // key for current conversation 
+  text: string, // message text
+  conversationKey: string, // key for current conversation
   setMessages: React.Dispatch<React.SetStateAction<MessageItem[]>>, // function to update the messages state
   setConversations: React.Dispatch<React.SetStateAction<any[]>> // function to update the conversations state
-
 ) => {
-  // * check if message content is empty 
+  // * check if message content is empty
   if (!text.trim()) {
     console.error("message content is empty");
     return;
   }
 
-  // * format text in message 
-  const formattedText = formatMessage(text.trim())
+  // * format text in message
+  const formattedText = formatMessage(text.trim());
 
-  // * create a new message object for user message 
+  // * create a new message object for user message
   const newMessage: MessageItem = {
-    key: uuidv4(), // * generate unique key for message 
-    conversationKey,
+    key: uuidv4(), // * generate unique key for message
+    conversationKey: conversationKey,
     text: formattedText,
     isUser: true,
     content: formattedText,
@@ -40,9 +39,12 @@ export const sendMessage = async (
   setMessages((prevMessages) => [...prevMessages, newMessage]);
 
   try {
-    // * save message to the backend 
+    // * wait for a short delay to ensure the conversation is indexed
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    // * save message to the backend
     await axios.post("/api/messages", {
-      conversationKey,
+      conversationKey: conversationKey,
       message: {
         key: newMessage.key,
         conversationKey: newMessage.conversationKey,
@@ -70,12 +72,12 @@ export const sendMessage = async (
     }
 
     // * send the user message to assistant and get response
-    const assistantResponse = await axios.post('/api/ask', { question: text.trim() });
-    
-    // * format assistants response 
+    const assistantResponse = await axios.post("/api/ask", { question: text.trim() });
+
+    // * format assistants response
     const formattedResponse = formatMessage(assistantResponse.data.answer);
-    
-    // * create new message object for assitant message 
+
+    // * create new message object for assistant message
     const assistantMessage: MessageItem = {
       key: uuidv4(), // * generate unique key for assistants message
       conversationKey,
@@ -84,11 +86,11 @@ export const sendMessage = async (
       images: [],
       date: new Date().toISOString(),
       timestamp: new Date().toISOString(),
-      content:formattedResponse,
-      sender: 'assistant'
+      content: formattedResponse,
+      sender: "assistant",
     };
 
-    // * update the messages state with the new user message 
+    // * update the messages state with the new user message
     setMessages((prevMessages) => [...prevMessages, assistantMessage]);
 
     // * save the assistant's response to the backend

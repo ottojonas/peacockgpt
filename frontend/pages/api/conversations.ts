@@ -25,16 +25,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // * handle POST request
   else if (req.method === 'POST') {
     try {
-      // * destructure the required fields from the request body 
       const { key, title, desc, date, isSelected, isPinned } = req.body;
-      // * validate request body 
       if (!key || !title || !desc || !date || isSelected === undefined || isPinned === undefined) {
         return res.status(400).json({ error: "Missing required fields" });
       }
 
-      // * create new conversation object 
       const newConversation = new Conversation({ key, title, desc, date, isSelected, isPinned });
-      // * save new conversation to database 
       await newConversation.save();
       // * response with id of newly created conversation
       res.status(201).json({ id: newConversation._id });
