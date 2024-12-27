@@ -1,0 +1,28 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap");
+
+.authWrapper * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.authWrapper {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: url("/blackthornblack.png") no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+.authWrapper code {
+  font-family: source-code-pro, Menlo, Monaco, Consalas, "Courier New",
+    monospace;
+}

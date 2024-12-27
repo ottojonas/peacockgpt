@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import axios, { AxiosError } from "axios";
 import { useRouter } from "next/router";
+import styles from "@/styles/auth.module.css";
+import registerStyles from "@/styles/registerform.module.css";
+import { FaUser, FaLock } from "react-icons/fa";
 
 const Register = () => {
   const [email, setEmail] = useState("");
@@ -13,7 +16,7 @@ const Register = () => {
     try {
       const response = await axios.post("/api/register", { email, password });
       alert(response.data.message);
-      router.push("/");
+      router.push("/login");
     } catch (error) {
       if (axios.isAxiosError(error)) {
         alert(error.response?.data.error || "An error occurred");
@@ -24,38 +27,37 @@ const Register = () => {
   };
 
   return (
-    <div className="register-container">
-      <div className="left">
-        <h1>
-          WELCOME TO
-          <br />
-          PEACOCKGPT
-        </h1>
-      </div>
-      <div className="right">
-        <div className="form-container">
-          <h2>Register</h2>
-          {error && <p className="error-message">{error}</p>}
-          <form onSubmit={handleRegister}>
+    <div className={styles.authWrapper}>
+      <div className={registerStyles.wrapper}>
+        <form action="" onSubmit={handleRegister}>
+          <h1>Register</h1>
+          <div className={registerStyles["input-box"]}>
             <input
               type="email"
-              placeholder="e.g = johndoe@email.com"
+              placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="form-input"
+              required
             />
+            <FaUser className={registerStyles.icon} />
+          </div>
+          <div className={registerStyles["input-box"]}>
             <input
               type="password"
               placeholder="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="form-input"
+              required
             />
-            <button type="submit" className="register-button">
-              Register
-            </button>
-          </form>
-        </div>
+            <FaLock className={registerStyles.icon} />
+          </div>
+          <button type="submit">Register</button>
+          <div className={registerStyles["login-link"]}>
+            <p>
+              Already have an account? <a href="/login">Sign In</a>
+            </p>
+          </div>
+        </form>
       </div>
     </div>
   );
