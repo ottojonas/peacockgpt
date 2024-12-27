@@ -47,7 +47,7 @@ const ChatItem: React.FC<ChatItemProps> = ({ item }) => {
               <div
                 className="w-10 h-10 bg-center bg-cover rounded-full"
                 style={{
-                  backgroundImage: 'url("/pfp.jpg")',
+                  backgroundImage: 'url("/pfpplaceholder.jpg")',
                 }}></div>
             ) : (
               <div className="grid rounded-full w-9 h-9 place-items-center bg-brandWhite">
