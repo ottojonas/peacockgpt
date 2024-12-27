@@ -4,6 +4,7 @@ import axios, { AxiosError } from "axios";
 const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleRegister = async () => {
     try {
@@ -21,21 +22,39 @@ const Register = () => {
   };
 
   return (
-    <div>
-      <h2>register</h2>
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button onClick={handleRegister}>register</button>
+    <div className="register-container">
+      <div className="left">
+        <h1>
+          WELCOME TO
+          <br />
+          PEACOCKGPT
+        </h1>
+      </div>
+      <div className="right">
+        <div className="form-container">
+          <h2>Register</h2>
+          {error && <p className="error-message">{error}</p>}
+          <form onSubmit={handleRegister}>
+            <input
+              type="email"
+              placeholder="e.g = johndoe@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="form-input"
+            />
+            <input
+              type="password"
+              placeholder="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="form-input"
+            />
+            <button type="submit" className="register-button">
+              Register
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };

@@ -16,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         await connectToDatabase(); 
 
         const user = await User.findOne({email})
-        if (!User || !(await bcrypt.compare(password, user.password))) {
+        if (!user || !(await bcrypt.compare(password, user.password))) {
             return res.status(401).json({ error: 'invalid email or password'})
         }
 
