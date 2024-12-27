@@ -1,21 +1,23 @@
 import React, { useState } from "react";
 import axios, { AxiosError } from "axios";
+import { useRouter } from "next/router";
 
 const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const router = useRouter();
 
-  const handleRegister = async () => {
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
       const response = await axios.post("/api/register", { email, password });
       alert(response.data.message);
+      router.push("/");
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        // Handle AxiosError
         alert(error.response?.data.error || "An error occurred");
       } else {
-        // Handle other errors
         alert("An unexpected error occurred");
       }
     }
