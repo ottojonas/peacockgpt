@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import axios, { AxiosError } from "axios";
 import { useRouter } from "next/router";
+import styles from "@/styles/auth.module.css";
+import loginStyles from "@/styles/loginform.module.css";
+import { FaUser, FaLock } from "react-icons/fa";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -24,38 +27,45 @@ const Login = () => {
   };
 
   return (
-    <div className="register-container">
-      <div className="left">
-        <h1>
-          WELCOME BACK TO
-          <br />
-          PEACOCKGPT
-        </h1>
-      </div>
-      <div className="right">
-        <div className="form-container">
-          <h2>Login</h2>
-          {error && <p className="error-message">{error}</p>}
-          <form onSubmit={handleLogin}>
+    <div className={styles.authWrapper}>
+      <div className={loginStyles.wrapper}>
+        <form onSubmit={handleLogin} action="">
+          <h1>Login</h1>
+          <div className={loginStyles["input-box"]}>
             <input
               type="email"
-              placeholder="e.g: johndoe@email.com"
+              placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="form-input"
+              required
             />
+            <FaUser className={loginStyles.icon} />
+          </div>
+          <div className={loginStyles["input-box"]}>
             <input
               type="password"
-              placeholder="password"
+              placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="form-input"
+              required
             />
-            <button type="submit" className="register-button">
-              Sign In
-            </button>
-          </form>
-        </div>
+            <FaLock className={loginStyles.icon} />
+          </div>
+
+          <div className={loginStyles["remember-forget"]}>
+            <label>
+              <input type="checkbox" />
+              Remember Details
+            </label>
+            <a href="/forgotpassword">Forgot Password?</a>
+          </div>
+          <button type="submit">Login</button>
+          <div className={loginStyles["register-link"]}>
+            <p>
+              Don't have an account? <a href="/register">Register</a>
+            </p>
+          </div>
+        </form>
       </div>
     </div>
   );
