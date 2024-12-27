@@ -33,7 +33,7 @@ const createNewConversation = (): ItemProps => {
     key: uuidv4(),
     title: "New Conversation",
     desc: "Description",
-    date: now.toISOString(), // Use ISO string for accurate sorting
+    date: now.toISOString(),
     isSelected: true,
     isPinned: false,
   };
