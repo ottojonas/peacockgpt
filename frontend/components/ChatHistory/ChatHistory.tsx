@@ -19,12 +19,6 @@ type ItemProps = {
   isPinned: boolean;
 };
 
-// Define the props for the ChatHistory component
-type Props = {
-  setConversationKey: (key: string) => void;
-  setMessages: (messages: MessageItem[]) => void;
-};
-
 // Function to create a new conversation with default values
 const createNewConversation = (): ItemProps => {
   const now = new Date();
@@ -36,6 +30,12 @@ const createNewConversation = (): ItemProps => {
     isSelected: true,
     isPinned: false,
   };
+};
+
+// Define the props for the ChatHistory component
+type Props = {
+  setConversationKey: (key: string) => void;
+  setMessages: (messages: MessageItem[]) => void;
 };
 
 // Main ChatHistory component
@@ -61,7 +61,7 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
         body: JSON.stringify(newConversation),
       });
       const data = await response.json();
-      const updatedConversation = { ...newConversation, key: data.id };
+      const updatedConversation = { ...newConversation, key: data.key };
       setConversations((prevConversations) => [
         ...prevConversations.map((conv) => ({ ...conv, isSelected: false })),
         updatedConversation,

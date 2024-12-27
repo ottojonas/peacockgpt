@@ -53,7 +53,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     try {
-      const conversation = await Conversation.findOne({ key: conversationKey });
+      const conversation = await Conversation.findOne({ key: key });
       if (!conversation) {
         console.error('Conversation not found');
         return res.status(404).json({ error: 'Conversation not found' });
