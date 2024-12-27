@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import Chat from "./Chat";
+import Chat from "../components/Chat";
 
 beforeEach(() => {
   jest.spyOn(console, "log").mockImplementation(() => {});
@@ -13,14 +13,28 @@ afterAll(() => {
 
 describe("Chat Component", () => {
   it("should mount and unmount correctly", () => {
-    const { unmount } = render(<Chat />);
+    const { unmount } = render(
+      <Chat
+        messages={[]}
+        setMessages={() => {}}
+        conversationKey="test"
+        sendMessage={() => {}}
+      />
+    );
     expect(console.log).toHaveBeenCalledWith("chat component mounted");
     unmount();
     expect(console.log).toHaveBeenCalledWith("chat component unmounted");
   });
 
   it("should add a new message when sendMessage is called", () => {
-    render(<Chat />);
+    render(
+      <Chat
+        messages={[]}
+        setMessages={() => {}}
+        conversationKey="test"
+        sendMessage={() => {}}
+      />
+    );
     const input = screen.getByPlaceholderText("Type a message...");
     fireEvent.change(input, { target: { value: "Hello, world!" } });
     fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
@@ -32,10 +46,36 @@ describe("Chat Component", () => {
 
   it("should render ChatItem components based on messages state", () => {
     const initialMessages = [
-      { key: 0, text: "Hello", isUser: true },
-      { key: 1, text: "Hi", isUser: false },
+      {
+        key: "0",
+        text: "Hello",
+        isUser: true,
+        conversationKey: "test",
+        sender: "user",
+        images: [],
+        timestamp: new Date().toISOString(),
+        date: new Date().toISOString(),
+        content: "text",
+      },
+      {
+        key: "1",
+        text: "Hi",
+        isUser: false,
+        conversationKey: "test",
+        sender: "bot",
+        images: [],
+        timestamp: new Date().toISOString(),
+        date: new Date().toISOString(),
+      },
     ];
-    render(<Chat initialMessages={initialMessages} />);
+    render(
+      <Chat
+        messages={[]}
+        setMessages={() => {}}
+        conversationKey="test"
+        sendMessage={() => {}}
+      />
+    );
     const messages = screen.getAllByTestId("chat-item");
     expect(messages).toHaveLength(initialMessages.length);
     expect(messages[0]).toHaveTextContent("Hello");
@@ -43,7 +83,14 @@ describe("Chat Component", () => {
   });
 
   it("should call sendMessage when a message is sent from ChatInput", () => {
-    render(<Chat />);
+    render(
+      <Chat
+        messages={[]}
+        setMessages={() => {}}
+        conversationKey="test"
+        sendMessage={() => {}}
+      />
+    );
     const input = screen.getByPlaceholderText("Type a message...");
     fireEvent.change(input, { target: { value: "Test message" } });
     fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
@@ -54,7 +101,14 @@ describe("Chat Component", () => {
   });
 
   it("should render ChatInput component", () => {
-    render(<Chat />);
+    render(
+      <Chat
+        messages={[]}
+        setMessages={() => {}}
+        conversationKey="test"
+        sendMessage={() => {}}
+      />
+    );
     const input = screen.getByPlaceholderText("Type a message...");
     expect(input).toBeInTheDocument();
   });
@@ -68,7 +122,14 @@ describe("Chat Component", () => {
         images: [{ key: 0, url: "https://example.com/image1.jpg" }],
       },
     ];
-    render(<Chat />);
+    render(
+      <Chat
+        messages={[]}
+        setMessages={() => {}}
+        conversationKey="test"
+        sendMessage={() => {}}
+      />
+    );
     const messages = screen.getAllByTestId("chat-item");
     expect(messages).toHaveLength(initialMessages.length);
     expect(messages[0]).toHaveTextContent("Check this out");
@@ -77,7 +138,14 @@ describe("Chat Component", () => {
   });
 
   it("should handle messages with images in sendMessage", () => {
-    render(<Chat />);
+    render(
+      <Chat
+        messages={[]}
+        setMessages={() => {}}
+        conversationKey="test"
+        sendMessage={() => {}}
+      />
+    );
     const input = screen.getByPlaceholderText("Type a message...");
     fireEvent.change(input, { target: { value: "Look at this" } });
     fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
