@@ -1,8 +1,9 @@
 # * Define API routes.
 import datetime
 
+import jwt
 from app import db
-from app.models import Conversation, Message
+from app.models import Conversation, Message, User
 from app.services.document_service import (
     add_document_to_db,
     delete_document,
@@ -16,6 +17,43 @@ from flask import Blueprint, jsonify, request
 
 # * create a Blueprint for the routes
 routes = Blueprint("routes", __name__)
+
+
+# * route to handle account creation and user registration
+@routes.route("/api/register", methods=["POST"])
+def register():
+    data = request.json
+    email = data.get("email")
+    password = data.get("password")
+    if not email or not password:
+        return jsonify({"error": "email and password are required"}), 400
+    if User.query.filter_by(email=email).first():
+        return jsonify({"error": "email already registered"}), 400
+
+    user = User(email=email)
+    user.set_password(password)
+    db.session.add(user)
+    db.session.commit()
+
+    return jsonify({"message": "user registered successfully"}), 201
+
+
+# * route to handle user signing in
+@routes.route("/api/login", methods=["POST"])
+def login():
+    data = request.json
+    email = data.get("email")
+    password = data.get("password")
+
+    if not email or not password:
+        return jsonify({"error": "email and password are required"}), 400
+
+    user = User.query.filter_by(email=email).first()
+    if user is None or not user.check_password(password):
+        return jsonify({"error": "invalid email or password"}), 401
+
+    # TODO implement session or token generation here
+    return jsonify({"message": "login successful"}), 200
 
 
 # * route to handle asking a question to the AI
