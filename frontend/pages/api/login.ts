@@ -1,5 +1,5 @@
 import {NextApiRequest, NextApiResponse} from 'next'
-import connectToDatabase from 'mongoose'
+import connectToDatabase from '@/lib/mongoose'
 import User from '@/models/User'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
@@ -17,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const user = await User.findOne({email})
         if (!User || !(await bcrypt.compare(password, user.password))) {
-            return res.status.(401).json({ error: 'invalid email or password'})
+            return res.status(401).json({ error: 'invalid email or password'})
         }
 
         const token = jwt.sign({ userId: user._id}, SECRET_KEY, {expiresIn: '1h'})
