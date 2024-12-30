@@ -15,22 +15,17 @@ import { sendMessage } from "../lib/sendMessage";
 // * initialise socket connection
 const socket = io("http://localhost:5000");
 
-// * main home component
 export default function Home() {
-  // * state to manage input value
   const [inputValue, setInputValue] = useState<string>("");
-  // * state to manage status of backend
   const [healthStatus, setHealthStatus] = useState("");
-  // * state to manage list of messages
   const [messages, setMessages] = useState<MessageItem[]>([]);
-  // * state to manage current conversation key
   const [conversationKey, setConversationKey] = useState<string>("");
-  // * state to manage list of conversations
   const [conversations, setConversations] = useState<any[]>([]);
 
   // * effect to fetch messages when the conversation key changes
   useEffect(() => {
     if (conversationKey) {
+      console.log("fetching messages for:", conversationKey);
       const fetchMessages = async () => {
         try {
           const response = await axios.get("/api/messages", {
