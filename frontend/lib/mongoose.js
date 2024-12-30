@@ -6,8 +6,7 @@ global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
 
 // * get mongodb uri from environment variables
-const MONGODB_URI =
-  "mongodb+srv://ottojonas:WeazlePanda1-@peacockgpt.ip74e.mongodb.net/PeacockGPT";
+const MONGODB_URI = process.env.MONGODB_URI;
 
 // * throw an error if mongodb uri not defined
 if (!MONGODB_URI) {
