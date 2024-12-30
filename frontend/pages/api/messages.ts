@@ -47,7 +47,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       console.error('Missing message content');
       return res.status(400).json({ error: 'message content is required' });
     }
-    //FIXME
     try {
       const conversation = await Conversation.findOne({ key: conversationKey });
       if (!conversation) {
