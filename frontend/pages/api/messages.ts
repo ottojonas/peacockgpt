@@ -9,6 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (req.method === 'GET') {
     const { conversationKey } = req.query;
+    console.log('conversationKey:', conversationKey)
     if (!conversationKey) {
       console.error('missing conversationKey');
       return res.status(400).json({ error: 'conversationKey is required' });
@@ -26,7 +27,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
   } 
   else if (req.method === 'POST') {
-    const { conversationKey, message } = req.body;
+    const { message, conversationKey } = req.body;
+    console.log(conversationKey)
+    console.log('received payload:', req.body)
 
     if (!conversationKey) {
       console.error('Missing conversationKey');
@@ -46,15 +49,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
     //FIXME
     try {
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-      // * check if the conversation exists
-=======
->>>>>>> Stashed changes
+      // * Ensure the conversation exists before saving the message
       const conversation = await Conversation.findOne({ key: conversationKey });
-=======
+      // * check if the conversation exists
+      const conversation = await Conversation.findOne({ key: conversationKey });
+
       const conversation = await Conversation.findOne({ key: key });
->>>>>>> ottojonas/issue5
+
       if (!conversation) {
         console.error('Conversation not found');
         return res.status(404).json({ error: 'Conversation not found' });
@@ -75,7 +76,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.status(500).json({ error: 'failed to save message' });
     }
   } 
-  // * handle unsupported request methods
   else {
     res.setHeader('Allow', ['GET', 'POST']);
     res.status(405).end(`Method ${req.method} not allowed`);

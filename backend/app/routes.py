@@ -1,7 +1,8 @@
 # * Define API routes.
 import datetime
 
-import jwt
+from flask import Blueprint, jsonify, request
+
 from app import db
 from app.models import Conversation, Message, User
 from app.services.document_service import (
@@ -13,7 +14,6 @@ from app.services.document_service import (
 )
 from app.utils.file_utils import extract_content_from_file
 from app.utils.openai_utils import generate_response
-from flask import Blueprint, jsonify, request
 
 # * create a Blueprint for the routes
 routes = Blueprint("routes", __name__)
@@ -154,9 +154,11 @@ def create_conversation():
         )
         db.session.add(conversation)
         db.session.commit()
+        print(f"conversation saved: {conversation}")
         return jsonify({"id": conversation.id}), 201
     except Exception as e:
         db.session.rollback()
+        print(f"error saving conversation: {e}")
         return jsonify({"error": "Failed to save conversation", "message": str(e)}), 500
 
 
