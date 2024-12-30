@@ -12,14 +12,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // * handle GET requests
   if (req.method === 'GET') {
     const { conversationKey } = req.query;
-    // * console.log('GET request received with conversationKey:', conversationKey);
-    // * check if conversationKey is provided
+    console.log('conversationKey:', conversationKey)
     if (!conversationKey) {
       console.error('missing conversationKey');
       return res.status(400).json({ error: 'conversationKey is required' });
     }
     try {
-      // * fetch messages for the selected conversation conversationKey from the database
       const messages = await Messages.find({ conversationKey });
       res.status(200).json(messages);
     } catch (error) {
@@ -33,7 +31,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   } 
   // * handle POST requests
   else if (req.method === 'POST') {
-    const { conversationKey, message } = req.body;
+    const { message, conversationKey } = req.body;
+    console.log(conversationKey)
+    console.log('received payload:', req.body)
 
     if (!conversationKey) {
       console.error('Missing conversationKey');
@@ -53,7 +53,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     try {
-      const conversation = await Conversation.findOne({ key: key });
+      // * Ensure the conversation exists before saving the message
+      const conversation = await Conversation.findOne({ key: conversationKey });
       if (!conversation) {
         console.error('Conversation not found');
         return res.status(404).json({ error: 'Conversation not found' });
@@ -74,7 +75,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.status(500).json({ error: 'failed to save message' });
     }
   } 
-  // * handle unsupported request methods
   else {
     res.setHeader('Allow', ['GET', 'POST']);
     res.status(405).end(`Method ${req.method} not allowed`);

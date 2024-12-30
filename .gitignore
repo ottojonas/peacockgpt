@@ -1,9 +1,6 @@
 /.env
 /.todo
 /data/training-documents
-/backend/tests/__pycache__
-/backend/app/services/__pycache__
-/backend/app/utils/__pycache__
 /data/annotated-documents
 /frontend/node_modules
 /frontend/package-lock.json
@@ -15,5 +12,4 @@ backend/venv
 frontend/.next
 /frontend/dist
 /bugs.todo
-/backend/app/__pycache__
 /notes.txt
