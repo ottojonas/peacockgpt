@@ -22,6 +22,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const token = jwt.sign({ userId: user._id}, SECRET_KEY, {expiresIn: '1h'})
 
+<<<<<<< Updated upstream
+=======
+        return res.status(200).json({ message: 'user signed in successfully'})
+>>>>>>> Stashed changes
         return res.status(200).json({ token })
     } else {
         res.setHeader('allow', ['POST'])

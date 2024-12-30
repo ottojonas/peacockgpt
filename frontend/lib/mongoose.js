@@ -1,3 +1,7 @@
+import { TextEncoder, TextDecoder } from "text-encoding";
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
+
 import mongoose from "mongoose";
 
 // * get mongodb uri from environment variables
