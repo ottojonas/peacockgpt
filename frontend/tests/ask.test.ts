@@ -2,6 +2,8 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import handler from '../pages/api/ask';
 import axios from 'axios';
 
+// ! test fails when mongodb_uri stored in .env.local file - should be 'public' in mongoose.js
+
 jest.mock('axios');
 
 describe('ask API', () => {
