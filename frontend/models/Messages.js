@@ -8,7 +8,7 @@ const MessageSchema = new mongoose.Schema({
     unique: true,
   },
   conversationKey: {
-    type: mongoose.Schema.Types.String,
+    type: String,
     ref: "Conversation",
     required: true,
   },
@@ -28,6 +28,13 @@ const MessageSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+});
+
+MessageSchema.virtual("conversation", {
+  ref: "Conversation",
+  localField: "conversationKey",
+  foreignField: "key",
+  justOne: true,
 });
 
 export default mongoose.models.Message ||

@@ -43,28 +43,8 @@ export default function Home() {
       };
 
       fetchMessages();
-
-      // * listen for new messages from socket
-      socket.on("new_message", (message) => {
-        setMessages((prevMessages) => [...prevMessages, message]);
-      });
-
-      // * cleanup socket listener on component unmount
-      return () => {
-        socket.off("new_message");
-      };
     }
   }, [conversationKey]);
-
-  // * function to check health status of backend
-  const checkHealth = async () => {
-    try {
-      const response = await axios.get("/api/health");
-      setHealthStatus(response.data.status);
-    } catch (error) {
-      setHealthStatus("error: unable to connect to backend");
-    }
-  };
 
   return (
     <>
@@ -108,7 +88,6 @@ export default function Home() {
           onClick={checkHealth}>
           backend connection check
         </button>
-        {healthStatus && <p>{healthStatus}</p>}
         */}
       </div>
     </>

@@ -17,7 +17,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const messages = await Messages.find({ conversationKey });
       res.status(200).json(messages);
     } catch (error) {
-      // * handle errors during message fetching 
       if (error instanceof Error) {
         console.error('error loading messages:', error.stack);
       } else {
@@ -28,9 +27,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   } 
   else if (req.method === 'POST') {
     const { conversationKey, message } = req.body;
-    // * console.log('POST request received with conversationKey:', conversationKey, 'and message:', message);
 
-    // * validate the request body
     if (!conversationKey) {
       console.error('Missing conversationKey');
       return res.status(400).json({ error: 'conversationKey is required' });
@@ -49,17 +46,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
     //FIXME
     try {
+<<<<<<< HEAD
 <<<<<<< Updated upstream
       // * check if the conversation exists
 =======
 >>>>>>> Stashed changes
       const conversation = await Conversation.findOne({ key: conversationKey });
+=======
+      const conversation = await Conversation.findOne({ key: key });
+>>>>>>> ottojonas/issue5
       if (!conversation) {
         console.error('Conversation not found');
         return res.status(404).json({ error: 'Conversation not found' });
       }
 
-      // * create a new message
       const newMessage = new Messages({
         key: uuidv4(),
         conversationKey,
@@ -68,11 +68,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         timestamp: new Date(),
       });
 
-      // * save the new message to the database
       await newMessage.save();
       res.status(201).json(newMessage);
     } catch (error) {
-      // * handle errors during message saving
       console.error('error saving message:', error);
       res.status(500).json({ error: 'failed to save message' });
     }
