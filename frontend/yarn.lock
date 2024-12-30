@@ -1841,6 +1841,11 @@
   resolved "https://registry.npmjs.org/@types/stack-utils/-/stack-utils-2.0.3.tgz"
   integrity sha512-9aEbYZ3TbYMznPdcdr3SmIrLXwC/AKZXQeCf9Pgao5CKb8CyHuEX5jzWPTkvregvhRJHcpRO6BFoGW9ycaOkYw==
 
+"@types/text-encoding@^0.0.40":
+  version "0.0.40"
+  resolved "https://registry.npmjs.org/@types/text-encoding/-/text-encoding-0.0.40.tgz"
+  integrity sha512-dHzoIdwBfY7jcSTTt6XBkaeiuFQAQD7r/7aJySKDdHkYBCDOvs9jPVt4NYXuwBMn89PP6gSd29WubIS19wTiXg==
+
 "@types/tough-cookie@*":
   version "4.0.5"
   resolved "https://registry.npmjs.org/@types/tough-cookie/-/tough-cookie-4.0.5.tgz"

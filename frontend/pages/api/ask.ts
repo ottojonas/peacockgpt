@@ -1,3 +1,4 @@
+import 'openai/shims/node'
 import { NextApiRequest, NextApiResponse } from 'next';
 import connectToDatabase from '@/lib/mongoose';
 import TrainingDocument from '@/models/TrainingDocument';
@@ -5,7 +6,7 @@ import { OpenAI } from 'openai';
 
 // * initialise openai with api key from environment variables
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY, dangerouslyAllowBrowser: true, 
 });
 
 // * define structure of training documents
