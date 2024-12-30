@@ -46,15 +46,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
     //FIXME
     try {
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-      // * check if the conversation exists
-=======
->>>>>>> Stashed changes
       const conversation = await Conversation.findOne({ key: conversationKey });
-=======
-      const conversation = await Conversation.findOne({ key: key });
->>>>>>> ottojonas/issue5
       if (!conversation) {
         console.error('Conversation not found');
         return res.status(404).json({ error: 'Conversation not found' });

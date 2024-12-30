@@ -7,10 +7,10 @@ let isFirstUserMessageSet = false;
 let isFirstAssistantMessageSet = false;
 
 export const sendMessage = async (
-  text: string,
-  conversationKey: string,
+  text: string, 
+  conversationKey: string, 
   setMessages: React.Dispatch<React.SetStateAction<MessageItem[]>>,
-  setConversations: React.Dispatch<React.SetStateAction<any[]>>
+  setConversations: React.Dispatch<React.SetStateAction<any[]>> 
 ) => {
   if (!text.trim()) {
     console.error("message content is empty");
@@ -34,6 +34,14 @@ export const sendMessage = async (
   setMessages((prevMessages) => [...prevMessages, newMessage]);
 
   try {
+    // * Ensure the conversation exists before saving the message
+    const conversation = await axios.get(`/api/conversations?key=${conversationKey}`);
+    if (!conversation.data) {
+      console.error('Conversation not found');
+      return;
+    }
+
+    // * save message to the backend
     await axios.post("/api/messages", {
       conversationKey: conversationKey,
       message: {
