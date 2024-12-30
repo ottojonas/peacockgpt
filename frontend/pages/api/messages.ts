@@ -4,22 +4,16 @@ import Messages from '@/models/Messages';
 import Conversation from '@/models/Conversation';
 import { v4 as uuidv4 } from 'uuid';
 
-// * main handler function for /api/messages endpoint 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // * connect to mongodb database 
   await connectToDatabase();
 
-  // * handle GET requests
   if (req.method === 'GET') {
     const { conversationKey } = req.query;
-    // * console.log('GET request received with conversationKey:', conversationKey);
-    // * check if conversationKey is provided
     if (!conversationKey) {
       console.error('missing conversationKey');
       return res.status(400).json({ error: 'conversationKey is required' });
     }
     try {
-      // * fetch messages for the selected conversation conversationKey from the database
       const messages = await Messages.find({ conversationKey });
       res.status(200).json(messages);
     } catch (error) {
@@ -32,7 +26,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.status(500).json({ error: 'failed to load messages' });
     }
   } 
-  // * handle POST requests
   else if (req.method === 'POST') {
     const { conversationKey, message } = req.body;
     // * console.log('POST request received with conversationKey:', conversationKey, 'and message:', message);
@@ -54,9 +47,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       console.error('Missing message content');
       return res.status(400).json({ error: 'message content is required' });
     }
-
+    //FIXME
     try {
+<<<<<<< Updated upstream
       // * check if the conversation exists
+=======
+>>>>>>> Stashed changes
       const conversation = await Conversation.findOne({ key: conversationKey });
       if (!conversation) {
         console.error('Conversation not found');

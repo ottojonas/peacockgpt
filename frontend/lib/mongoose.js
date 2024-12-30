@@ -1,4 +1,9 @@
+import { TextEncoder, TextDecoder } from "text-encoding";
+
 import mongoose from "mongoose";
+
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
 
 // * get mongodb uri from environment variables
 const MONGODB_URI = process.env.MONGODB_URI;

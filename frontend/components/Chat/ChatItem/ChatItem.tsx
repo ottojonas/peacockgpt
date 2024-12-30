@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React from "react";
 import GPTLogo from "@/components/icons/GPTLogo";
 import Pencil from "@/components/icons/Pencil";
 import ThumbsUp from "@/components/icons/ThumbsUp";
@@ -6,18 +6,12 @@ import ThumbsDown from "@/components/icons/ThumbsDown";
 import { MessageItem } from "../Chat";
 import ImageSet from "../ImageSet";
 
-// * define the structure of an image object
-interface Image {
-  key: number;
-  url: string;
-}
-
 // * define the props for the ChatItem component
 interface ChatItemProps {
-  item: MessageItem; // * the message item to be displayed
-  sendMessage: (text: string) => void; // * function to send a message
-  inputValue: string; // * the current input value
-  setInputValue: React.Dispatch<React.SetStateAction<string>>; // * function to set the input value
+  item: MessageItem;
+  inputValue: string;
+  setInputValue: React.Dispatch<React.SetStateAction<string>>;
+  sendMessage: (text: string) => void;
 }
 
 // * ChatItem component to display individual chat messages
@@ -31,14 +25,14 @@ const ChatItem: React.FC<ChatItemProps> = ({ item }) => {
       hour: "2-digit",
       minute: "2-digit",
     };
-    return new Intl.DateTimeFormat("en-GB").format(date).split("T")[0];
+    return new Intl.DateTimeFormat("en-GB", options).format(date);
   };
 
   // * current date and time
-  const sentDate = new Date();
+  const sentDate = new Date(item.timestamp);
 
   return (
-    <div className="py-2" key={item.conversationKey} data-testid="chat-item">
+    <div className="py-2" key={item.key} data-testid="chat-item">
       <div className="flex p-2 rounded-md bg-item">
         {/* avatar section */}
         <div className="w-12 shrink-0">
@@ -80,8 +74,9 @@ const ChatItem: React.FC<ChatItemProps> = ({ item }) => {
           <div
             className={`px-3 pb-3 ${
               item.sender === "user" ? "text-white" : "text-white"
-            }`}
-            dangerouslySetInnerHTML={{ __html: item.content }}></div>
+            }`}>
+            {item.text}
+          </div>
           {/* Display images if any */}
           {item.images && <ImageSet images={item.images} />}
         </div>

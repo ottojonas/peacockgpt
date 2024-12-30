@@ -6,7 +6,6 @@ import { formatMessage } from "@/utils/formatMessage";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 
-// * define the structure of a message item
 type MessageItem = {
   key: string;
   conversationKey: string;
@@ -19,17 +18,15 @@ type MessageItem = {
   content: string;
 };
 
-// * define the props for the ChatInput component
 interface Props {
-  sendMessage: (message: string) => void; // function to send a message
-  inputValue: string; // the current input value
-  setInputValue: (value: string) => void; // function to set the input value
-  messages: MessageItem[]; //  array of message items
-  setMessages: React.Dispatch<React.SetStateAction<MessageItem[]>>; // function to update the messages state
-  conversationKey: string; // key of the current conversation
+  sendMessage: (message: string) => void;
+  inputValue: string;
+  setInputValue: (value: string) => void;
+  messages: MessageItem[];
+  setMessages: React.Dispatch<React.SetStateAction<MessageItem[]>>;
+  conversationKey: string;
 }
 
-// * ChatInput component to handle user input and sending messages
 const ChatInput: React.FC<Props> = ({
   sendMessage,
   inputValue,
@@ -38,12 +35,10 @@ const ChatInput: React.FC<Props> = ({
   setInputValue,
   conversationKey,
 }) => {
-  // * handle change in the textarea input
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputValue(event.target.value);
   };
 
-  // * handle key down event in the textarea input
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -51,7 +46,6 @@ const ChatInput: React.FC<Props> = ({
     }
   };
 
-  // * fetch messages when the conversation key changes
   useEffect(() => {
     const fetchMessage = async () => {
       try {
@@ -74,7 +68,6 @@ const ChatInput: React.FC<Props> = ({
     };
   }, [conversationKey]);
 
-  // * handle sending a message
   const handleSendMessage = async () => {
     if (!inputValue.trim()) {
       console.error("message content is empty");
@@ -84,7 +77,6 @@ const ChatInput: React.FC<Props> = ({
     setInputValue("");
   };
 
-  // * hanle regnerating answer
   const handleRegenerateAnswer = async () => {
     try {
       const lastMessage = messages[messages.length - 1];
