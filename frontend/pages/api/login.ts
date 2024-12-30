@@ -22,16 +22,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const token = jwt.sign({ userId: user._id}, SECRET_KEY, {expiresIn: '1h'})
 
-<<<<<<< HEAD
-        // ? return res.status(200).json({ token })
-        // ? return res.status(200).json({ message: 'user signed in successfully'})
-=======
-<<<<<<< Updated upstream
-=======
         return res.status(200).json({ message: 'user signed in successfully'})
->>>>>>> Stashed changes
         return res.status(200).json({ token })
->>>>>>> tests
     } else {
         res.setHeader('allow', ['POST'])
         res.status(405).end(`Method ${req.method} not allowed`)
