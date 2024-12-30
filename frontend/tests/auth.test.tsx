@@ -1,4 +1,5 @@
 import axios from "axios";
+import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import Register from "../pages/register";
 import Login from "../pages/login";
@@ -18,7 +19,7 @@ describe("Auth Tests", () => {
     fireEvent.change(screen.getByPlaceholderText("Password"), {
       target: { value: "password123" },
     });
-    fireEvent.click(screen.getByText("register"));
+    fireEvent.click(screen.getAllByText("register")[1]);
 
     expect(
       await screen.findByText("user registered successfully")

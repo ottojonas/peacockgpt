@@ -6,26 +6,22 @@ import { formatMessage } from "@/utils/formatMessage";
 let isFirstUserMessageSet = false;
 let isFirstAssistantMessageSet = false;
 
-// * function to send message
 export const sendMessage = async (
   text: string, 
   conversationKey: string, 
   setMessages: React.Dispatch<React.SetStateAction<MessageItem[]>>,
   setConversations: React.Dispatch<React.SetStateAction<any[]>> 
 ) => {
-  // * check if message content is empty
   if (!text.trim()) {
     console.error("message content is empty");
     return;
   }
 
-  // * format text in message
   const formattedText = formatMessage(text.trim());
 
-  // * create a new message object for user message
   const newMessage: MessageItem = {
-    key: uuidv4(), // * generate unique key for message
-    conversationKey: conversationKey,
+    key: uuidv4(),
+    conversationKey,
     text: formattedText,
     isUser: true,
     content: formattedText,
@@ -35,7 +31,6 @@ export const sendMessage = async (
     date: new Date().toISOString(),
   };
 
-  // * update the messages state with the new user message
   setMessages((prevMessages) => [...prevMessages, newMessage]);
 
   try {
@@ -59,7 +54,6 @@ export const sendMessage = async (
       },
     });
 
-    // * check if it's the first user message in the conversation
     if (!isFirstUserMessageSet) {
       const updatedConversation = {
         title: newMessage.text.substring(0, 20),
@@ -75,15 +69,11 @@ export const sendMessage = async (
       isFirstUserMessageSet = true;
     }
 
-    // * send the user message to assistant and get response
     const assistantResponse = await axios.post("/api/ask", { question: text.trim() });
-
-    // * format assistants response
     const formattedResponse = formatMessage(assistantResponse.data.answer);
 
-    // * create new message object for assistant message
     const assistantMessage: MessageItem = {
-      key: uuidv4(), // * generate unique key for assistants message
+      key: uuidv4(),
       conversationKey,
       text: formattedResponse,
       isUser: false,
@@ -94,10 +84,8 @@ export const sendMessage = async (
       sender: "assistant",
     };
 
-    // * update the messages state with the new user message
     setMessages((prevMessages) => [...prevMessages, assistantMessage]);
 
-    // * save the assistant's response to the backend
     await axios.post("/api/messages", {
       conversationKey,
       message: {
@@ -110,7 +98,6 @@ export const sendMessage = async (
       },
     });
 
-    // * check if it's the first assistant message in the conversation
     if (!isFirstAssistantMessageSet) {
       const updatedConversation = {
         desc: assistantMessage.text.substring(0, 50),
@@ -126,7 +113,6 @@ export const sendMessage = async (
       isFirstAssistantMessageSet = true;
     }
   } catch (error) {
-    // * handle any errors that occur during the message sending process
     console.error("error sending message:", error);
   }
 };

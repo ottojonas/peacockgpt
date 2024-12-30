@@ -4,12 +4,9 @@ import Messages from '@/models/Messages';
 import Conversation from '@/models/Conversation';
 import { v4 as uuidv4 } from 'uuid';
 
-// * main handler function for /api/messages endpoint 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // * connect to mongodb database 
   await connectToDatabase();
 
-  // * handle GET requests
   if (req.method === 'GET') {
     const { conversationKey } = req.query;
     console.log('conversationKey:', conversationKey)
@@ -29,7 +26,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.status(500).json({ error: 'failed to load messages' });
     }
   } 
-  // * handle POST requests
   else if (req.method === 'POST') {
     const { message, conversationKey } = req.body;
     console.log(conversationKey)
@@ -51,10 +47,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       console.error('Missing message content');
       return res.status(400).json({ error: 'message content is required' });
     }
-
+    //FIXME
     try {
       // * Ensure the conversation exists before saving the message
       const conversation = await Conversation.findOne({ key: conversationKey });
+      // * check if the conversation exists
+      const conversation = await Conversation.findOne({ key: conversationKey });
+
+      const conversation = await Conversation.findOne({ key: key });
+
       if (!conversation) {
         console.error('Conversation not found');
         return res.status(404).json({ error: 'Conversation not found' });
