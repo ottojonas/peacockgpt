@@ -25,13 +25,11 @@ export default function Home() {
   // * effect to fetch messages when the conversation key changes
   useEffect(() => {
     if (conversationKey) {
-      console.log("fetching messages for:", conversationKey);
       const fetchMessages = async () => {
         try {
           const response = await axios.get("/api/messages", {
             params: { conversationKey },
           });
-          console.log("response:", response.data);
           setMessages(response.data);
         } catch (error) {
           console.error("error fetching messages:", error);
