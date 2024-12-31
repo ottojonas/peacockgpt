@@ -2,15 +2,16 @@ import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import { MessageItem } from "../components/Chat/Chat";
 import { formatMessage } from "@/utils/formatMessage";
+import { updateConversation } from "./updateConversation";
 
 let isFirstUserMessageSet = false;
 let isFirstAssistantMessageSet = false;
 
 export const sendMessage = async (
-  text: string, 
-  conversationKey: string, 
+  text: string,
+  conversationKey: string,
   setMessages: React.Dispatch<React.SetStateAction<MessageItem[]>>,
-  setConversations: React.Dispatch<React.SetStateAction<any[]>> 
+  setConversations: React.Dispatch<React.SetStateAction<any[]>>
 ) => {
   if (!text.trim()) {
     console.error("message content is empty");
@@ -34,14 +35,14 @@ export const sendMessage = async (
   setMessages((prevMessages) => [...prevMessages, newMessage]);
 
   try {
-    // * Ensure the conversation exists before saving the message
-    const conversation = await axios.get(`/api/conversations?key=${conversationKey}`);
+    const conversation = await axios.get(
+      `/api/conversations?key=${conversationKey}`
+    );
     if (!conversation.data) {
-      console.error('Conversation not found');
+      console.error("Conversation not found");
       return;
     }
 
-    // * save message to the backend
     await axios.post("/api/messages", {
       conversationKey: conversationKey,
       message: {
@@ -58,7 +59,7 @@ export const sendMessage = async (
       const updatedConversation = {
         title: newMessage.text.substring(0, 20),
       };
-      await axios.put(`api/conversations?key=${conversationKey}`, updatedConversation);
+      await updateConversation(conversationKey, updatedConversation.title, "");
       setConversations((prevConversations) =>
         prevConversations.map((conversation) =>
           conversation.key === conversationKey
@@ -66,10 +67,12 @@ export const sendMessage = async (
             : conversation
         )
       );
-      isFirstUserMessageSet = true;
+      isFirstAssistantMessageSet = true;
     }
 
-    const assistantResponse = await axios.post("/api/ask", { question: text.trim() });
+    const assistantResponse = await axios.post("/api/ask", {
+      question: text.trim(),
+    });
     const formattedResponse = formatMessage(assistantResponse.data.answer);
 
     const assistantMessage: MessageItem = {
@@ -93,16 +96,20 @@ export const sendMessage = async (
         conversationKey: assistantMessage.conversationKey,
         text: assistantMessage.text,
         sender: assistantMessage.sender,
-        content: assistantMessage.text,
+        content: assistantMessage.content,
         date: assistantMessage.date,
       },
     });
 
     if (!isFirstAssistantMessageSet) {
       const updatedConversation = {
-        desc: assistantMessage.text.substring(0, 50),
+        desc: assistantMessage.text.substring(0, 20),
       };
-      await axios.put(`api/conversations?key=${conversationKey}`, updatedConversation);
+      await updateConversation(
+        conversationKey,
+        updatedConversation.title,
+        updatedConversation.desc
+      );
       setConversations((prevConversations) =>
         prevConversations.map((conversation) =>
           conversation.key === conversationKey

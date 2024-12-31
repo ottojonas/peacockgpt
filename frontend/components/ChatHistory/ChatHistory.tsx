@@ -8,8 +8,8 @@ import SearchIcon from "@/components/icons/SearchIcon";
 import PinnedIcon from "@/components/icons/PinnedIcon";
 import ListAllIcon from "@/components/icons/ListAllIcon";
 import { MessageItem } from "../Chat/Chat";
+import { updateConversation } from "@/lib/updateConversation";
 
-// Define the type for conversation items
 type ItemProps = {
   key: string;
   title: string;
@@ -19,7 +19,6 @@ type ItemProps = {
   isPinned: boolean;
 };
 
-// Function to create a new conversation with default values
 const createNewConversation = (): ItemProps => {
   const now = new Date();
   return {
@@ -32,20 +31,25 @@ const createNewConversation = (): ItemProps => {
   };
 };
 
-// Define the props for the ChatHistory component
 type Props = {
   setConversationKey: (key: string) => void;
   setMessages: (messages: MessageItem[]) => void;
 };
 
-// Main ChatHistory component
 const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
   const [conversations, setConversations] = useState<ItemProps[]>([]);
   const [selectedConversation, setSelectedConversation] =
     useState<ItemProps | null>(null);
 
-  // Fetch conversations when the component mounts
   useEffect(() => {
+    const fetchConversations = async () => {
+      try {
+        const response = await axios.get("/api/conversations");
+        setConversations(response.data);
+      } catch (error) {
+        console.error("Error fetching conversations :", error);
+      }
+    };
     fetchConversations();
   }, []);
 
@@ -73,7 +77,6 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
     }
   };
 
-  // Function to fetch conversations from the API
   const fetchConversations = async () => {
     try {
       const response = await axios.get("/api/conversations");
@@ -98,7 +101,6 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
     }
   };
 
-  // Handle click on a conversation item
   const handleConversationClick = async (key: string) => {
     setConversations((prevConversations) =>
       prevConversations.map((conversation) =>
@@ -114,19 +116,18 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
       setSelectedConversation(selectedConversation);
       setConversationKey(selectedConversation.key);
       try {
-        const response = await axios.get('/api/messages', {
-          params: { conversationKey: selectedConversation.key}
-        })
-        setMessages(response.data)
+        const response = await axios.get("/api/messages", {
+          params: { conversationKey: selectedConversation.key },
+        });
+        setMessages(response.data);
       } catch (error) {
-        console.error('Error fetching messages:', error)
+        console.error("Error fetching messages:", error);
       }
     } else {
       console.error("Conversation not found");
     }
   };
 
-  // Handle user pinning conversation
   const handlePinConversation = async (key: string) => {
     const updatedConversations = conversations.map((conversation) =>
       conversation.key === key
@@ -148,7 +149,6 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
     }
   };
 
-  // Handle clearing all chats
   const handleClearAllChats = async () => {
     try {
       await axios.delete("/api/conversations");
@@ -160,7 +160,6 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
     }
   };
 
-  // Function to format the date for display
   const formatDate = (date: string) => {
     const options: Intl.DateTimeFormatOptions = {
       year: "numeric",
@@ -197,7 +196,8 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
         </div>
         <div
           className="grid w-10 h-10 rounded-md bg-brandWhite place-items-center shrink-0"
-          onClick={handleNewConversation}>
+          onClick={handleNewConversation}
+        >
           <PencilSquareIcon className="w-5 h-5 text-brandBlue" />
         </div>
       </div>
@@ -238,7 +238,8 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
       <div className="px-2 py-3 shrink-0">
         <button
           className="flex items-center justify-center w-full py-2 text-sm font-semibold rounded-md bg-card"
-          onClick={handleClearAllChats}>
+          onClick={handleClearAllChats}
+        >
           <Times className="w-5 h-5" />
           <span className="ml-2">Clear All Chats</span>
         </button>
@@ -265,7 +266,8 @@ function Item({
         className={`px-3 py-2 text-sm w-full rounded-md ${
           item.isSelected ? "selected-conversation" : "bg-card"
         }`}
-        onClick={() => onClick(item.key)}>
+        onClick={() => onClick(item.key)}
+      >
         <div className="flex items-center justify-between">
           <h3 className="font-semibold grow line-clamp-1">{item.title}</h3>
           <div className="flex flex-col items-end">
@@ -278,7 +280,8 @@ function Item({
         <p
           className={`line-clamp-2 mt-1 ${
             item.isSelected ? "text-black" : "text-brandGray"
-          }`}>
+          }`}
+        >
           {item.desc}
         </p>
       </div>

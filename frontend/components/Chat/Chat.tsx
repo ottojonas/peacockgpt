@@ -53,6 +53,7 @@ const Chat: React.FC<ChatProps> = ({
       fetchMessages()
     }
   }, [conversationKey, setMessages])
+
   return (
     <div
       className="chat-container"

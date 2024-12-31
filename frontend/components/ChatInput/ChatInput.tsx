@@ -5,6 +5,8 @@ import Refresh from "@/components/icons/Refresh";
 import { formatMessage } from "@/utils/formatMessage";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
+import { updateConversation } from "@/lib/updateConversation";
+import { sendMessage } from "@/lib/sendMessage";
 
 type MessageItem = {
   key: string;
@@ -19,11 +21,17 @@ type MessageItem = {
 };
 
 interface Props {
-  sendMessage: (message: string) => void;
+  sendMessage: (
+    text: string,
+    conversationKey: string,
+    setMessages: React.Dispatch<React.SetStateAction<MessageItem[]>>,
+    setConversations: React.Dispatch<React.SetStateAction<any[]>>
+  ) => void;
   inputValue: string;
   setInputValue: (value: string) => void;
   messages: MessageItem[];
   setMessages: React.Dispatch<React.SetStateAction<MessageItem[]>>;
+  setConversations: React.Dispatch<React.SetStateAction<any[]>>;
   conversationKey: string;
 }
 
@@ -33,6 +41,7 @@ const ChatInput: React.FC<Props> = ({
   messages,
   setMessages,
   setInputValue,
+  setConversations,
   conversationKey,
 }) => {
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -49,11 +58,9 @@ const ChatInput: React.FC<Props> = ({
   useEffect(() => {
     const fetchMessage = async () => {
       try {
-        // * console.log("fetching messages with conversationKey:", conversationKey);
         const response = await axios.get(`/api/messages`, {
           params: { conversationKey: conversationKey },
         });
-        // * console.log(response.data);
       } catch (error) {
         console.error("error loading messages:", error);
       }
@@ -63,9 +70,7 @@ const ChatInput: React.FC<Props> = ({
       fetchMessage();
     }
 
-    return () => {
-      // * console.log("cleanup for conversationKey:", conversationKey);
-    };
+    return () => {};
   }, [conversationKey]);
 
   const handleSendMessage = async () => {
@@ -73,7 +78,12 @@ const ChatInput: React.FC<Props> = ({
       console.error("message content is empty");
       return;
     }
-    sendMessage(inputValue.trim());
+    await sendMessage(
+      inputValue.trim(),
+      conversationKey,
+      setMessages,
+      setConversations
+    );
     setInputValue("");
   };
 
@@ -114,7 +124,8 @@ const ChatInput: React.FC<Props> = ({
           <div className="flex justify-center py-2">
             <button
               className="py-2.5 px-6 rounded-md bg-card flex items-center"
-              onClick={handleRegenerateAnswer}>
+              onClick={handleRegenerateAnswer}
+            >
               <Refresh className="w-5 h-5" />
               <span className="ml-2">Regenerate Answer</span>
             </button>
@@ -134,15 +145,18 @@ const ChatInput: React.FC<Props> = ({
                 right: "16px",
                 top: "50%",
                 transform: "translate(0, -50%)",
-              }}>
+              }}
+            >
               <button
                 className="grid w-10 h-10 text-white rounded-md place-items-center"
-                onClick={() => {}}>
+                onClick={() => {}}
+              >
                 <Mic className="w-5 h-5" />
               </button>
               <button
                 className="grid w-10 h-10 text-black rounded-md place-items-center bg-brandWhite"
-                onClick={handleSendMessage}>
+                onClick={handleSendMessage}
+              >
                 <Send className="w-5 h-5" />
               </button>
             </div>
