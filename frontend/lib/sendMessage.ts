@@ -105,11 +105,7 @@ export const sendMessage = async (
       const updatedConversation = {
         desc: assistantMessage.text.substring(0, 20),
       };
-      await updateConversation(
-        conversationKey,
-        updatedConversation.title,
-        updatedConversation.desc
-      );
+      await updateConversation(conversationKey, "", updatedConversation.desc);
       setConversations((prevConversations) =>
         prevConversations.map((conversation) =>
           conversation.key === conversationKey
@@ -118,6 +114,11 @@ export const sendMessage = async (
         )
       );
       isFirstAssistantMessageSet = true;
+      await updateConversation(
+        conversationKey,
+        conversation.data.title,
+        conversation.data.desc
+      );
     }
   } catch (error) {
     console.error("error sending message:", error);

@@ -9,6 +9,7 @@ import PinnedIcon from "@/components/icons/PinnedIcon";
 import ListAllIcon from "@/components/icons/ListAllIcon";
 import { MessageItem } from "../Chat/Chat";
 import { updateConversation } from "@/lib/updateConversation";
+import { sendMessage } from "@/lib/sendMessage";
 
 // FIXME - lowkey fucked this component up icl
 
@@ -20,6 +21,15 @@ type ItemProps = {
   isSelected: boolean;
   isPinned: boolean;
 };
+
+interface Message {
+  key: string;
+  conversationKey: string;
+  text: string;
+  sender: string;
+  content: string;
+  date: string;
+}
 
 const createNewConversation = (): ItemProps => {
   const now = new Date();
@@ -44,14 +54,6 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
     useState<ItemProps | null>(null);
 
   useEffect(() => {
-    const fetchConversations = async () => {
-      try {
-        const response = await axios.get("/api/conversations");
-        setConversations(response.data);
-      } catch (error) {
-        console.error("Error fetching conversations :", error);
-      }
-    };
     fetchConversations();
   }, []);
 
@@ -82,6 +84,30 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
   const fetchConversations = async () => {
     try {
       const response = await axios.get("/api/conversations");
+      const conversations = response.data;
+
+      for (const conversation of conversations) {
+        const messagesResponse = await axios.get("/api/messages", {
+          params: { conversationKey: conversation.key },
+        });
+        const messages: Message[] = messagesResponse.data;
+
+        const firstAssistantMessage = messages.find(
+          (message: Message) => message.sender === "assistant"
+        );
+
+        if (firstAssistantMessage) {
+          const updatedDescription = firstAssistantMessage.content.substring(
+            0,
+            30
+          );
+          await updateConversation(
+            conversation.key,
+            conversation.title,
+            conversation.desc
+          );
+        }
+      }
       const formattedConversations = response.data.map((conversation: any) => {
         const date = new Date(conversation.date);
         return {

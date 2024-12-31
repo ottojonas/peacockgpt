@@ -77,7 +77,6 @@ export default async function handler(
         updateData,
         { new: true }
       );
-      res.status(200).json(updatedConversation);
 
       if (!updatedConversation) {
         return res.status(404).json({ error: "conversation not found" });

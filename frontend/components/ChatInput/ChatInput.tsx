@@ -5,8 +5,6 @@ import Refresh from "@/components/icons/Refresh";
 import { formatMessage } from "@/utils/formatMessage";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
-import { updateConversation } from "@/lib/updateConversation";
-import { sendMessage } from "@/lib/sendMessage";
 
 type MessageItem = {
   key: string;
@@ -24,14 +22,12 @@ interface Props {
   sendMessage: (
     text: string,
     conversationKey: string,
-    setMessages: React.Dispatch<React.SetStateAction<MessageItem[]>>,
-    setConversations: React.Dispatch<React.SetStateAction<any[]>>
+    setMessages: React.Dispatch<React.SetStateAction<MessageItem[]>>
   ) => void;
   inputValue: string;
   setInputValue: (value: string) => void;
   messages: MessageItem[];
   setMessages: React.Dispatch<React.SetStateAction<MessageItem[]>>;
-  setConversations: React.Dispatch<React.SetStateAction<any[]>>;
   conversationKey: string;
 }
 
@@ -41,7 +37,6 @@ const ChatInput: React.FC<Props> = ({
   messages,
   setMessages,
   setInputValue,
-  setConversations,
   conversationKey,
 }) => {
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -78,12 +73,7 @@ const ChatInput: React.FC<Props> = ({
       console.error("message content is empty");
       return;
     }
-    await sendMessage(
-      inputValue.trim(),
-      conversationKey,
-      setMessages,
-      setConversations
-    );
+    sendMessage(inputValue.trim(), conversationKey, setMessages);
     setInputValue("");
   };
 
