@@ -99,9 +99,7 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
   };
 
   // Handle click on a conversation item
-  const handleConversationClick = (key: string) => {
-    console.log("Selected conversation key:", key);
-    console.log("current conversations state:", conversations);
+  const handleConversationClick = async (key: string) => {
     setConversations((prevConversations) =>
       prevConversations.map((conversation) =>
         conversation.key === key
@@ -113,10 +111,16 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
       (conversation) => conversation.key === key
     );
     if (selectedConversation) {
-      console.log("selected conversation:", selectedConversation);
       setSelectedConversation(selectedConversation);
       setConversationKey(selectedConversation.key);
-      setMessages([]);
+      try {
+        const response = await axios.get('/api/messages', {
+          params: { conversationKey: selectedConversation.key}
+        })
+        setMessages(response.data)
+      } catch (error) {
+        console.error('Error fetching messages:', error)
+      }
     } else {
       console.error("Conversation not found");
     }

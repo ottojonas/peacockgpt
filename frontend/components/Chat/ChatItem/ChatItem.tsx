@@ -75,7 +75,7 @@ const ChatItem: React.FC<ChatItemProps> = ({ item }) => {
             className={`px-3 pb-3 ${
               item.sender === "user" ? "text-white" : "text-white"
             }`}>
-            {item.text}
+            {item.content}
           </div>
           {/* Display images if any */}
           {item.images && <ImageSet images={item.images} />}
