@@ -34,14 +34,14 @@ export const sendMessage = async (
   setMessages((prevMessages) => [...prevMessages, newMessage]);
 
   try {
-    // * Ensure the conversation exists before saving the message
+    // Ensure the conversation exists before saving the message
     const conversation = await axios.get(`/api/conversations?key=${conversationKey}`);
     if (!conversation.data) {
       console.error('Conversation not found');
       return;
     }
 
-    // * save message to the backend
+    // Save message to the backend
     await axios.post("/api/messages", {
       conversationKey: conversationKey,
       message: {
@@ -69,6 +69,7 @@ export const sendMessage = async (
       isFirstUserMessageSet = true;
     }
 
+    // Send assistant message
     const assistantResponse = await axios.post("/api/ask", { question: text.trim() });
     const formattedResponse = formatMessage(assistantResponse.data.answer);
 

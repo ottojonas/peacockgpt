@@ -31,6 +31,7 @@ export default function Home() {
           const response = await axios.get("/api/messages", {
             params: { conversationKey },
           });
+          console.log("response:", response.data);
           setMessages(response.data);
         } catch (error) {
           console.error("error fetching messages:", error);
@@ -75,7 +76,7 @@ export default function Home() {
         conversationKey={conversationKey}
       />
       {/* info component to display additional information */}
-      <Info />
+      {/* <Info /> */}
       <div className="fixed z-50 bottom-4 right-4">
         {/*
         <button

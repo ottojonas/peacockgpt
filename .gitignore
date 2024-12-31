@@ -13,3 +13,6 @@ frontend/.next
 /frontend/dist
 /bugs.todo
 /notes.txt
+frontend/peacockgpt-linux
+frontend/peacockgpt-macos
+frontend/peacockgpt-win.exe

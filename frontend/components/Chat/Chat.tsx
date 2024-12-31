@@ -39,6 +39,22 @@ const Chat: React.FC<ChatProps> = ({
     };
   }, []);
 
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const response = await axios.get("/api/messages", {
+          params: { conversationKey },
+        });
+        setMessages(response.data);
+      } catch (error) {
+        console.error("error fetching messages:", error);
+      }
+    };
+    if (conversationKey) {
+      fetchMessages();
+    }
+  }, [conversationKey, setMessages]);
+
   return (
     <div
       className="chat-container"

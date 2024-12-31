@@ -14,9 +14,7 @@ interface ChatItemProps {
   sendMessage: (text: string) => void;
 }
 
-// * ChatItem component to display individual chat messages
 const ChatItem: React.FC<ChatItemProps> = ({ item }) => {
-  // * function to format the date
   const formatDate = (date: Date) => {
     const options: Intl.DateTimeFormatOptions = {
       year: "2-digit",
@@ -28,13 +26,11 @@ const ChatItem: React.FC<ChatItemProps> = ({ item }) => {
     return new Intl.DateTimeFormat("en-GB", options).format(date);
   };
 
-  // * current date and time
   const sentDate = new Date(item.timestamp);
 
   return (
     <div className="py-2" key={item.key} data-testid="chat-item">
       <div className="flex p-2 rounded-md bg-item">
-        {/* avatar section */}
         <div className="w-12 shrink-0">
           <div className="grid w-11 h-11 place-items-center">
             {item.sender === "user" ? (
@@ -50,7 +46,6 @@ const ChatItem: React.FC<ChatItemProps> = ({ item }) => {
             )}
           </div>
         </div>
-        {/* message content section */}
         <div className="w-full">
           <div className="flex items-center justify-between h-10 px-3 grow text-brandGray">
             <div className="text-sm">{formatDate(sentDate)}</div>
@@ -75,9 +70,8 @@ const ChatItem: React.FC<ChatItemProps> = ({ item }) => {
             className={`px-3 pb-3 ${
               item.sender === "user" ? "text-white" : "text-white"
             }`}>
-            {item.text}
+            {item.content}
           </div>
-          {/* Display images if any */}
           {item.images && <ImageSet images={item.images} />}
         </div>
       </div>
