@@ -12,9 +12,15 @@
     "electron": "electron .",
     "package-win": "electron-packager . PeacockGPT --platform=win32 --arch=x64 --out=dist --overwrite",
     "package-mac": "electron-packager . PeacockGPT --platform=darwin --arch=x64 --out=dist --overwrite",
-    "package-linux": "electron-packager . PeacockGPT --platform=linux --arch=x64 --out=dist --overwrite"
+    "package-linux": "electron-packager . PeacockGPT --platform=linux --arch=x64 --out=dist --overwrite",
+    "pkg": "pkg ."
   },
-  "type": "commonjs",
+  "bin": "index.js",
+  "pkg": {
+    "scripts": ["index.js"],
+    "assets": ["public/**/*"],
+    "targets": ["node16-linux-x64", "node16-macos-x64", "node16-win-x64"]
+  },
   "dependencies": {
     "@types/node": "18.15.11",
     "@types/react": "18.0.33",
