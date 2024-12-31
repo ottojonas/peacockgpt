@@ -10,6 +10,8 @@ import ListAllIcon from "@/components/icons/ListAllIcon";
 import { MessageItem } from "../Chat/Chat";
 import { updateConversation } from "@/lib/updateConversation";
 
+// FIXME - lowkey fucked this component up icl
+
 type ItemProps = {
   key: string;
   title: string;
