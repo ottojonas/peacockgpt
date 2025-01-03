@@ -33,9 +33,9 @@ const Chat: React.FC<ChatProps> = ({
   const [inputValue, setInputValue] = useState<string>("");
 
   useEffect(() => {
-    console.log("chat component mounted");
+    // console.log("chat component mounted");
     return () => {
-      console.log("chat component unmounted");
+      // console.log("chat component unmounted");
     };
   }, []);
   useEffect(() => {
@@ -60,13 +60,7 @@ const Chat: React.FC<ChatProps> = ({
     >
       <div className="max-w-3xl px-4 pt-16 pb-48 mx-auto chat-messages">
         {messages.filter(Boolean).map((item) => (
-          <ChatItem
-            item={item}
-            key={item.key}
-            inputValue={inputValue}
-            setInputValue={setInputValue}
-            sendMessage={sendMessage}
-          />
+          <ChatItem item={item} key={item.key} />
         ))}
       </div>
       <ChatInput

@@ -25,7 +25,7 @@ export default function Home() {
   // * effect to fetch messages when the conversation key changes
   useEffect(() => {
     if (conversationKey) {
-      console.log("fetching messages for:", conversationKey);
+      // console.log("fetching messages for:", conversationKey);
       const fetchMessages = async () => {
         try {
           const response = await axios.get("/api/messages", {
@@ -41,29 +41,38 @@ export default function Home() {
     }
   }, [conversationKey]);
 
+  const handleDeleteConversation = (key: string) => {
+    setConversations((prevConversations) =>
+      prevConversations.filter((conversation) => conversation.key !== key)
+    );
+    setMessages([]);
+    setConversationKey("");
+  };
+
   return (
     <>
-      {/* custom head component for setting meta tags */}
       <CustomHead title="PeacockGPT" />
-      {/* sidebar component for navigation */}
       <Sidebar />
-      {/* chat history component to display list of conversations */}
       <ChatHistory
         setConversationKey={setConversationKey}
         setMessages={setMessages}
+        conversations={conversations}
+        setConversations={setConversations}
       />
-      {/* chat header component */}
-      <ChatHeader />
-      {/* chat component to display chat messages */}
+      <ChatHeader
+        conversationKey={conversationKey}
+        setConversations={setConversations}
+        setMessages={setMessages}
+        onDeleteConversation={handleDeleteConversation}
+      />
       <Chat
-        sendMessage={(text) =>
-          sendMessage(text, conversationKey, setMessages, setConversations)
-        }
         messages={messages}
         setMessages={setMessages}
         conversationKey={conversationKey}
+        sendMessage={(text) =>
+          sendMessage(text, conversationKey, setMessages, setConversations)
+        }
       />
-      {/* chat input component for user input */}
       <ChatInput
         setMessages={setMessages}
         sendMessage={(text) =>
@@ -74,7 +83,6 @@ export default function Home() {
         messages={messages}
         conversationKey={conversationKey}
       />
-      {/* info component to display additional information */}
       <Info />
       <div className="fixed z-50 bottom-4 right-4">
         {/*

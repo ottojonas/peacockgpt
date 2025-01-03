@@ -7,10 +7,10 @@ let isFirstUserMessageSet = false;
 let isFirstAssistantMessageSet = false;
 
 export const sendMessage = async (
-  text: string, 
-  conversationKey: string, 
+  text: string,
+  conversationKey: string,
   setMessages: React.Dispatch<React.SetStateAction<MessageItem[]>>,
-  setConversations: React.Dispatch<React.SetStateAction<any[]>> 
+  setConversations: React.Dispatch<React.SetStateAction<any[]>>
 ) => {
   if (!text.trim()) {
     console.error("message content is empty");
@@ -35,9 +35,11 @@ export const sendMessage = async (
 
   try {
     // * Ensure the conversation exists before saving the message
-    const conversation = await axios.get(`/api/conversations?key=${conversationKey}`);
+    const conversation = await axios.get(
+      `/api/conversations?key=${conversationKey}`
+    );
     if (!conversation.data) {
-      console.error('Conversation not found');
+      console.error("Conversation not found");
       return;
     }
 
@@ -58,7 +60,10 @@ export const sendMessage = async (
       const updatedConversation = {
         title: newMessage.text.substring(0, 20),
       };
-      await axios.put(`api/conversations?key=${conversationKey}`, updatedConversation);
+      await axios.put(
+        `api/conversations?key=${conversationKey}`,
+        updatedConversation
+      );
       setConversations((prevConversations) =>
         prevConversations.map((conversation) =>
           conversation.key === conversationKey
@@ -69,7 +74,9 @@ export const sendMessage = async (
       isFirstUserMessageSet = true;
     }
 
-    const assistantResponse = await axios.post("/api/ask", { question: text.trim() });
+    const assistantResponse = await axios.post("/api/ask", {
+      question: text.trim(),
+    });
     const formattedResponse = formatMessage(assistantResponse.data.answer);
 
     const assistantMessage: MessageItem = {
@@ -100,9 +107,12 @@ export const sendMessage = async (
 
     if (!isFirstAssistantMessageSet) {
       const updatedConversation = {
-        desc: assistantMessage.text.substring(0, 50),
+        desc: assistantMessage.text.substring(0, 30),
       };
-      await axios.put(`api/conversations?key=${conversationKey}`, updatedConversation);
+      await axios.put(
+        `api/conversations?key=${conversationKey}`,
+        updatedConversation
+      );
       setConversations((prevConversations) =>
         prevConversations.map((conversation) =>
           conversation.key === conversationKey

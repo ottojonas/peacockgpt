@@ -2,15 +2,52 @@ import ChatIcon from "../../components/icons/ChatIcon";
 import TrashIcon from "../../components/icons/TrashIcon";
 import SaveIcon from "../../components/icons/SaveIcon";
 import React from "react";
+import axios from "axios";
+import { MessageItem } from "../../components/Chat/Chat";
 
-// TODO
+interface ItemProps {
+  key: string;
+  title: string;
+  desc: string;
+  date: string;
+  isSelected: boolean;
+  isPinned: boolean;
+}
 
-export default function ChatHeader() {
+interface ChatHeaderProps {
+  conversationKey: string;
+  setConversations: React.Dispatch<React.SetStateAction<ItemProps[]>>;
+  setMessages: React.Dispatch<React.SetStateAction<MessageItem[]>>;
+  onDeleteConversation: (conversationKey: string) => void;
+}
+
+export default function ChatHeader({
+  conversationKey,
+  setConversations,
+  setMessages,
+  onDeleteConversation,
+}: ChatHeaderProps) {
+  const handleDeleteConversation = async () => {
+    try {
+      await axios.delete(`/api/conversations?key=${conversationKey}`);
+      setConversations((prevConversations) =>
+        prevConversations.filter(
+          (conversation) => conversation.key !== conversationKey
+        )
+      );
+      setMessages([]);
+      onDeleteConversation(conversationKey);
+    } catch (error) {
+      console.error("Error deleting conversation:", error);
+    }
+  };
+
   return (
     <div className="fixed inset-x-0 top-0 z-10">
       <div
         className="z-10 border-b bg-body border-b-line bg-opacity-30 backdrop-blur-md"
-        style={{ marginLeft: "384px", marginRight: "320px" }}>
+        style={{ marginLeft: "384px", marginRight: "320px" }}
+      >
         <div className="flex items-center justify-between max-w-3xl px-4 py-2 mx-auto">
           <div className="inline-flex items-center">
             <ChatIcon className="w-6 h-6" />
@@ -19,15 +56,16 @@ export default function ChatHeader() {
           <div className="inline-flex items-center space-x-3">
             <button
               className="grid rounded-md w-9 h-9 place-items-center bg-card"
-              onClick={() => {}}>
+              onClick={handleDeleteConversation}
+            >
               <TrashIcon className="w-5 h-5" />
             </button>
-            {/*
+            {/* 
             <button
               className="grid rounded-md w-9 h-9 place-items-center bg-card"
               onClick={() => {}}>
               <SaveIcon className="w-5 h-5" />
-            </button>*/}
+            </button> */}
           </div>
         </div>
       </div>

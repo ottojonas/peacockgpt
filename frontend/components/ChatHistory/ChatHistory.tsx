@@ -36,18 +36,95 @@ const createNewConversation = (): ItemProps => {
 type Props = {
   setConversationKey: (key: string) => void;
   setMessages: (messages: MessageItem[]) => void;
+  conversations: any[];
+  setConversations: React.Dispatch<React.SetStateAction<any[]>>;
 };
 
 // Main ChatHistory component
-const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
-  const [conversations, setConversations] = useState<ItemProps[]>([]);
+const ChatHistory: React.FC<Props> = ({
+  setConversationKey,
+  setMessages,
+  conversations,
+  setConversations,
+}) => {
   const [selectedConversation, setSelectedConversation] =
     useState<ItemProps | null>(null);
 
-  // Fetch conversations when the component mounts
   useEffect(() => {
     fetchConversations();
   }, []);
+
+  const fetchConversations = async () => {
+    try {
+      const response = await axios.get("/api/conversations");
+      const formattedConversations = response.data.map((conversation: any) => {
+        const date = new Date(conversation.date);
+        return {
+          ...conversation,
+          date: isNaN(date.getTime())
+            ? new Date().toISOString()
+            : date.toISOString(),
+          isSelected: false,
+        };
+      });
+      formattedConversations.sort(
+        (a: { date: string }, b: { date: string }) =>
+          new Date(b.date).getTime() - new Date(a.date).getTime()
+      );
+      // console.log("Fetched conversations:", formattedConversations);
+      setConversations(formattedConversations);
+    } catch (error) {
+      console.error("Error fetching conversations:", error);
+    }
+  };
+
+  const handleConversationClick = async (key: string) => {
+    setConversations((prevConversations) =>
+      prevConversations.map((conversation) =>
+        conversation.key === key
+          ? { ...conversation, isSelected: true }
+          : { ...conversation, isSelected: false }
+      )
+    );
+    const selectedConversation = conversations.find(
+      (conversation) => conversation.key === key
+    );
+    if (selectedConversation) {
+      setSelectedConversation(selectedConversation);
+      setConversationKey(selectedConversation.key);
+      try {
+        const response = await axios.get("/api/messages", {
+          params: { conversationKey: selectedConversation.key },
+        });
+        setMessages(response.data);
+      } catch (error) {
+        console.error("Error fetching messages:", error);
+      }
+    } else {
+      console.error("Conversation not found");
+    }
+  };
+
+  const handlePinConversation = async (key: string) => {
+    const updatedConversations = conversations.map((conversation) =>
+      conversation.key === key
+        ? { ...conversation, isPinned: !conversation.isPinned }
+        : conversation
+    );
+    setConversations(updatedConversations);
+    const pinnedConversation = updatedConversations.find(
+      (conversation) => conversation.key === key
+    );
+    if (pinnedConversation) {
+      try {
+        await axios.put(`/api/conversations?key=${key}`, {
+          isPinned: pinnedConversation.isPinned,
+        });
+      } catch (error) {
+        console.error("Error updating pinned state:", error);
+      }
+    }
+  };
 
   const handleNewConversation = async () => {
     const newConversation = createNewConversation();
@@ -73,82 +150,6 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
     }
   };
 
-  // Function to fetch conversations from the API
-  const fetchConversations = async () => {
-    try {
-      const response = await axios.get("/api/conversations");
-      const formattedConversations = response.data.map((conversation: any) => {
-        const date = new Date(conversation.date);
-        return {
-          ...conversation,
-          date: isNaN(date.getTime())
-            ? new Date().toISOString()
-            : date.toISOString(),
-          isSelected: false,
-        };
-      });
-      formattedConversations.sort(
-        (a: { date: string }, b: { date: string }) =>
-          new Date(b.date).getTime() - new Date(a.date).getTime()
-      );
-      console.log("Fetched conversations:", formattedConversations);
-      setConversations(formattedConversations);
-    } catch (error) {
-      console.error("Error fetching conversations:", error);
-    }
-  };
-
-  // Handle click on a conversation item
-  const handleConversationClick = async (key: string) => {
-    setConversations((prevConversations) =>
-      prevConversations.map((conversation) =>
-        conversation.key === key
-          ? { ...conversation, isSelected: true }
-          : { ...conversation, isSelected: false }
-      )
-    );
-    const selectedConversation = conversations.find(
-      (conversation) => conversation.key === key
-    );
-    if (selectedConversation) {
-      setSelectedConversation(selectedConversation);
-      setConversationKey(selectedConversation.key);
-      try {
-        const response = await axios.get('/api/messages', {
-          params: { conversationKey: selectedConversation.key}
-        })
-        setMessages(response.data)
-      } catch (error) {
-        console.error('Error fetching messages:', error)
-      }
-    } else {
-      console.error("Conversation not found");
-    }
-  };
-
-  // Handle user pinning conversation
-  const handlePinConversation = async (key: string) => {
-    const updatedConversations = conversations.map((conversation) =>
-      conversation.key === key
-        ? { ...conversation, isPinned: !conversation.isPinned }
-        : conversation
-    );
-    setConversations(updatedConversations);
-    const pinnedConversation = updatedConversations.find(
-      (conversation) => conversation.key === key
-    );
-    if (pinnedConversation) {
-      try {
-        await axios.put(`/api/conversations?key=${key}`, {
-          isPinned: pinnedConversation.isPinned,
-        });
-      } catch (error) {
-        console.error("Error updating pinned state:", error);
-      }
-    }
-  };
-
-  // Handle clearing all chats
   const handleClearAllChats = async () => {
     try {
       await axios.delete("/api/conversations");
@@ -160,7 +161,6 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
     }
   };
 
-  // Function to format the date for display
   const formatDate = (date: string) => {
     const options: Intl.DateTimeFormatOptions = {
       year: "numeric",
@@ -197,7 +197,8 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
         </div>
         <div
           className="grid w-10 h-10 rounded-md bg-brandWhite place-items-center shrink-0"
-          onClick={handleNewConversation}>
+          onClick={handleNewConversation}
+        >
           <PencilSquareIcon className="w-5 h-5 text-brandBlue" />
         </div>
       </div>
@@ -238,7 +239,8 @@ const ChatHistory: React.FC<Props> = ({ setConversationKey, setMessages }) => {
       <div className="px-2 py-3 shrink-0">
         <button
           className="flex items-center justify-center w-full py-2 text-sm font-semibold rounded-md bg-card"
-          onClick={handleClearAllChats}>
+          onClick={handleClearAllChats}
+        >
           <Times className="w-5 h-5" />
           <span className="ml-2">Clear All Chats</span>
         </button>
@@ -265,7 +267,8 @@ function Item({
         className={`px-3 py-2 text-sm w-full rounded-md ${
           item.isSelected ? "selected-conversation" : "bg-card"
         }`}
-        onClick={() => onClick(item.key)}>
+        onClick={() => onClick(item.key)}
+      >
         <div className="flex items-center justify-between">
           <h3 className="font-semibold grow line-clamp-1">{item.title}</h3>
           <div className="flex flex-col items-end">
@@ -278,7 +281,8 @@ function Item({
         <p
           className={`line-clamp-2 mt-1 ${
             item.isSelected ? "text-black" : "text-brandGray"
-          }`}>
+          }`}
+        >
           {item.desc}
         </p>
       </div>
