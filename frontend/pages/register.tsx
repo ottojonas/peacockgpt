@@ -15,14 +15,11 @@ const Register = () => {
     e.preventDefault();
     try {
       const response = await axios.post("/api/register", { email, password });
+      localStorage.setItem("token", response.data.token);
       alert(response.data.message);
-      router.push("/login");
+      router.push("/");
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        alert(error.response?.data.error || "An error occurred");
-      } else {
-        alert("An unexpected error occurred");
-      }
+      alert(error.response?.data.error || "An error occurred");
     }
   };
 

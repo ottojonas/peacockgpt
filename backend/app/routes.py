@@ -14,10 +14,10 @@ from app.services.document_service import (
 )
 from app.utils.file_utils import extract_content_from_file
 from app.utils.openai_utils import generate_response
-
+from flask_jwt_extended import jwt_required, get_jwt_identity, unset_jwt_cookies
 # * create a Blueprint for the routes
 routes = Blueprint("routes", __name__)
-
+auth_bp = Blueprint('auth', __name__)
 
 # * route to handle account creation and user registration
 @routes.route("/api/register", methods=["POST"])
@@ -55,6 +55,13 @@ def login():
     # TODO implement session or token generation here
     return jsonify({"message": "login successful"}), 200
 
+# * routes to handle user signing out 
+@auth_bp.route('/api/logout', methods = ['POST'])
+@jwt_required()
+def logout():
+    response = jsonify({"message": "logout successful"})
+    unset_jwt_cookies(response)
+    return response, 200
 
 # * route to handle asking a question to the AI
 @routes.route("/api/ask", methods=["POST"])

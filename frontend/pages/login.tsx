@@ -4,25 +4,25 @@ import { useRouter } from "next/router";
 import styles from "../styles/auth.module.css";
 import loginStyles from "../styles/loginform.module.css";
 import { FaUser, FaLock } from "react-icons/fa";
+import { useAuth } from "../context/AuthContenxt";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
+  const { login } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const response = await axios.post("/api/login", { email, password });
+      localStorage.setItem("token", response.data.token);
       alert(response.data.message);
+      login();
       router.push("/");
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        alert(error.response?.data.error || "An error occurred");
-      } else {
-        alert("An unexpected error occurred");
-      }
+      alert(error.response?.data.error || "An error occurred");
     }
   };
 
