@@ -15,10 +15,6 @@ type Props = {};
 export default function Sidebar({}: Props) {
   const { theme, toggleTheme } = useTheme();
 
-  useEffect(() => {
-    document.body.setAttribute("data-theme", theme);
-  }, [theme]);
-
   return (
     <div className="fixed top-0 left-0 z-10 flex flex-col items-center w-16 h-screen pt-4 bg-black">
       <div className="grid w-10 h-10 rounded-full bg-brandWhite shrink-0 place-items-center">

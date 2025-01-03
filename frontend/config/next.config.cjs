@@ -17,6 +17,7 @@ const nextConfig = {
         },
       },
     });
+    return config;
   },
   distDir: "build",
   reactStrictMode: true,

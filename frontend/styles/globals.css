@@ -2,11 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
-.bg-input{
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #111111 18.23%, #111111 100%)
+:root {
+  --bg-color: #111111;
+  --text-color: #f0f0f0;
+}
+
+[data-theme="light"] {
+  --bg-color: #f0f0f0;
+  --text-color: #111111;
+}
+
+[data-theme="dark"] {
+  --bg-color: #111111;
+  --text-color: #f0f0f0;
+}
+
+.bg-input {
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 0%,
+    var(--bg-color) 18.23%,
+    var(--bg-color) 100%
+  );
 }
 
 .selected-conversation {
-    background-color: #f0f0f0;
-    color:#111111
+  background-color: var(--text-color);
+  color: var(--bg-color);
 }
