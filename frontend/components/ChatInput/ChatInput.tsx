@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
-import Send from "@/components/icons/Send";
-import Mic from "@/components/icons/Mic";
-import Refresh from "@/components/icons/Refresh";
-import { formatMessage } from "@/utils/formatMessage";
+import Send from "../../components/icons/Send";
+import Mic from "../../components/icons/Mic";
+import Refresh from "../../components/icons/Refresh";
+import { formatMessage } from "../../utils/formatMessage";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 

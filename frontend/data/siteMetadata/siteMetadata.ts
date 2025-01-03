@@ -1,6 +1,6 @@
 const siteMetadata = {
   title: "PeacockGPT",
-  description: "Chat GPT UI redesign based on a dribble shot",
+  description: "Training Assistant build with OpenAI",
   ogImage: "/blackthornlogo.png",
   url: "https://nextjs-starter-with-tailwind.netlify.app",
   author: "Otto",

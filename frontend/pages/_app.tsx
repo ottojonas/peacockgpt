@@ -1,6 +1,6 @@
 import React from "react";
-import { ThemeProvider } from "@/context/ThemeContext";
-import "@/styles/globals.css";
+import { ThemeProvider } from "../context/ThemeContext";
+import "../styles/globals.css";
 
 import type { AppProps } from "next/app";
 

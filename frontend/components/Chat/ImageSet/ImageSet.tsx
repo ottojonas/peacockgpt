@@ -1,4 +1,4 @@
-import LinkIcon from "@/components/icons/LinkIcon";
+import LinkIcon from "../../../components/icons/LinkIcon";
 import React from "react";
 
 export default function ImageSet({

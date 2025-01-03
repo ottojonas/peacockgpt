@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import ChatItem from "./ChatItem";
-import ChatInput from "@/components/ChatInput";
+import ChatInput from "../ChatInput/ChatInput";
 import axios from "axios";
-import { sendMessage as sendMsg } from "@/lib/sendMessage";
+import { sendMessage as sendMsg } from "../../lib/sendMessage";
 import { v4 as uuidv4 } from "uuid";
 
 export type MessageItem = {
@@ -40,23 +40,24 @@ const Chat: React.FC<ChatProps> = ({
   }, []);
   useEffect(() => {
     const fetchMessages = async () => {
-      try{
-        const response = await axios.get('/api/messages', { 
-          params: {conversationKey}
-        })
-        setMessages(response.data)
+      try {
+        const response = await axios.get("/api/messages", {
+          params: { conversationKey },
+        });
+        setMessages(response.data);
       } catch (error) {
-        console.error('error fetching messages:', error)
+        console.error("error fetching messages:", error);
       }
-    }
+    };
     if (conversationKey) {
-      fetchMessages()
+      fetchMessages();
     }
-  }, [conversationKey, setMessages])
+  }, [conversationKey, setMessages]);
   return (
     <div
       className="chat-container"
-      style={{ marginLeft: "384px", marginRight: "320px" }}>
+      style={{ marginLeft: "384px", marginRight: "320px" }}
+    >
       <div className="max-w-3xl px-4 pt-16 pb-48 mx-auto chat-messages">
         {messages.filter(Boolean).map((item) => (
           <ChatItem

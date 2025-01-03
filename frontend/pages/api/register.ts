@@ -1,6 +1,6 @@
 import {NextApiResponse, NextApiRequest} from 'next'
-import connectToDatabase from '@/lib/mongoose'
-import User from '@/models/User'
+import connectToDatabase from '../../lib/mongoose'
+import User from '../../models/User'
 import bcrypt from 'bcrypt'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

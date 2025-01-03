@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import axios, { AxiosError } from "axios";
 import { useRouter } from "next/router";
-import styles from "@/styles/auth.module.css";
-import forgotPasswordStyles from "@/styles/forgotpassword.module.css";
+import styles from "../styles/auth.module.css";
+import forgotPasswordStyles from "../styles/forgotpassword.module.css";
 import { FaUser, FaLock } from "react-icons/fa";
 
 const ForgotPassword = () => {

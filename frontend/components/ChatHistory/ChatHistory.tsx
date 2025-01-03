@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
-import Options from "@/components/icons/Options";
-import Times from "@/components/icons/Times";
-import PencilSquareIcon from "@/components/icons/PencilSquareIcon";
-import SearchIcon from "@/components/icons/SearchIcon";
-import PinnedIcon from "@/components/icons/PinnedIcon";
-import ListAllIcon from "@/components/icons/ListAllIcon";
+import Options from "../../components/icons/Options";
+import Times from "../../components/icons/Times";
+import PencilSquareIcon from "../../components/icons/PencilSquareIcon";
+import SearchIcon from "../../components/icons/SearchIcon";
+import PinnedIcon from "../../components/icons/PinnedIcon";
+import ListAllIcon from "../../components/icons/ListAllIcon";
 import { MessageItem } from "../Chat/Chat";
 
 // Define the type for conversation items

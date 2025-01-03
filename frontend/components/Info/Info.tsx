@@ -1,10 +1,10 @@
 import React from "react";
-import Options from "@/components/icons/Options";
-import Times from "@/components/icons/Times";
+import Options from "../../components/icons/Options";
+import Times from "../../components/icons/Times";
 import trending from "./trending.json";
-import TrendingIcon from "@/components/icons/TrendingIcon";
-import StarIcon from "@/components/icons/StarIcon";
-import WarningIcon from "@/components/icons/WarningIcon";
+import TrendingIcon from "../../components/icons/TrendingIcon";
+import StarIcon from "../../components/icons/StarIcon";
+import WarningIcon from "../../components/icons/WarningIcon";
 
 // TODO
 

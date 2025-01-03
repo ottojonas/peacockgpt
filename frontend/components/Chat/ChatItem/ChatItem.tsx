@@ -1,8 +1,8 @@
 import React from "react";
-import GPTLogo from "@/components/icons/GPTLogo";
-import Pencil from "@/components/icons/Pencil";
-import ThumbsUp from "@/components/icons/ThumbsUp";
-import ThumbsDown from "@/components/icons/ThumbsDown";
+import GPTLogo from "../../../components/icons/GPTLogo";
+import Pencil from "../../../components/icons/Pencil";
+import ThumbsUp from "../../../components/icons/ThumbsUp";
+import ThumbsDown from "../../../components/icons/ThumbsDown";
 import { MessageItem } from "../Chat";
 import ImageSet from "../ImageSet";
 
@@ -42,7 +42,8 @@ const ChatItem: React.FC<ChatItemProps> = ({ item }) => {
                 className="w-10 h-10 bg-center bg-cover rounded-full"
                 style={{
                   backgroundImage: 'url("/pfpplaceholder.jpg")',
-                }}></div>
+                }}
+              ></div>
             ) : (
               <div className="grid rounded-full w-9 h-9 place-items-center bg-brandWhite">
                 <GPTLogo className="w-6 h-6 text-blue-900" />
@@ -74,7 +75,8 @@ const ChatItem: React.FC<ChatItemProps> = ({ item }) => {
           <div
             className={`px-3 pb-3 ${
               item.sender === "user" ? "text-white" : "text-white"
-            }`}>
+            }`}
+          >
             {item.content}
           </div>
           {/* Display images if any */}

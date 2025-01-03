@@ -5,21 +5,41 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build: css": "postcss config/tailwind.config.js -o styles/global.css",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest",
-    "watch-tests": "jest --watch",
+    "test": "jest --confitg config/jest.config.cjs",
+    "watch-tests": "jest --watch --config config/jest.config.cjs",
     "electron": "electron .",
     "package-win": "electron-packager . PeacockGPT --platform=win32 --arch=x64 --out=dist --overwrite",
     "package-mac": "electron-packager . PeacockGPT --platform=darwin --arch=x64 --out=dist --overwrite",
     "package-linux": "electron-packager . PeacockGPT --platform=linux --arch=x64 --out=dist --overwrite",
     "pkg": "pkg ."
   },
+  "jest": {
+    "setupFilesAfterEnv": [
+      "<rootDir>/config/jest.setup.js"
+    ]
+  },
   "bin": "index.js",
   "pkg": {
-    "scripts": ["index.js"],
-    "assets": ["public/**/*"],
-    "targets": ["node16-linux-x64", "node16-macos-x64", "node16-win-x64"]
+    "scripts": [
+      "index.js"
+    ],
+    "assets": [
+      "public/**/*"
+    ],
+    "targets": [
+      "node16-linux-x64",
+      "node16-macos-x64",
+      "node16-win-x64"
+    ]
+  },
+  "postcss": {
+    "plugins": {
+      "tailwindcss": "config/tailwind.config.js",
+      "autoprefixer": {}
+    }
   },
   "dependencies": {
     "@types/node": "18.15.11",

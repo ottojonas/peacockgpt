@@ -1,11 +1,11 @@
-import GPTLogo from "@/components/icons/GPTLogo";
-import LogoutIcon from "@/components/icons/LogoutIcon";
-import ThemeIcon from "@/components/icons/ThemeIcon";
-import ChatIcon from "@/components/icons/ChatIcon";
-import UsersIcon from "@/components/icons/UsersIcon";
-import DashboardIcon from "@/components/icons/DashboardIcon";
-import SettingsIcon from "@/components/icons/SettingsIcon";
-import { useTheme } from "@/context/ThemeContext";
+import GPTLogo from "../../components/icons/GPTLogo";
+import LogoutIcon from "../../components/icons/LogoutIcon";
+import ThemeIcon from "../../components/icons/ThemeIcon";
+import ChatIcon from "../../components/icons/ChatIcon";
+import UsersIcon from "../../components/icons/UsersIcon";
+import DashboardIcon from "../../components/icons/DashboardIcon";
+import SettingsIcon from "../../components/icons/SettingsIcon";
+import { useTheme } from "../../context/ThemeContext";
 import React, { useEffect } from "react";
 
 type Props = {};

@@ -1,5 +1,5 @@
 import Head from "next/head";
-import siteMetadata from "@/data/siteMetadata";
+import siteMetadata from "../../../data/siteMetadata/siteMetadata";
 import React from 'react'
 interface HeadComponentProps {
   title?: string;

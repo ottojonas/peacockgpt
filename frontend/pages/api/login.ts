@@ -1,6 +1,6 @@
 import {NextApiRequest, NextApiResponse} from 'next'
-import connectToDatabase from '@/lib/mongoose'
-import User from '@/models/User'
+import connectToDatabase from '../../lib/mongoose'
+import User from '../../models/User'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 

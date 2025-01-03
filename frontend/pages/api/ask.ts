@@ -1,7 +1,7 @@
 import 'openai/shims/node'
 import { NextApiRequest, NextApiResponse } from 'next';
-import connectToDatabase from '@/lib/mongoose';
-import TrainingDocument from '@/models/TrainingDocument';
+import connectToDatabase from "../../lib/mongoose"
+import TrainingDocument from "../../models/TrainingDocument";
 import { OpenAI } from 'openai';
 
 // * initialise openai with api key from environment variables
@@ -20,7 +20,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     await connectToDatabase();
 
     // * dynamically import the TrainingDocument model
-    const { default: TrainingDocument } = await import('@/models/TrainingDocument');
+    const { default: TrainingDocument } = await import('../../models/TrainingDocument');
 
     // * handle POST request
     if (req.method === 'POST') {

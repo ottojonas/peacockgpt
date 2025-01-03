@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import axios, { AxiosError } from "axios";
 import { useRouter } from "next/router";
-import styles from "@/styles/auth.module.css";
-import loginStyles from "@/styles/loginform.module.css";
+import styles from "../styles/auth.module.css";
+import loginStyles from "../styles/loginform.module.css";
 import { FaUser, FaLock } from "react-icons/fa";
 
 const Login = () => {

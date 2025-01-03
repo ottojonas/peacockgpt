@@ -1,6 +1,6 @@
-import ChatIcon from "@/components/icons/ChatIcon";
-import TrashIcon from "@/components/icons/TrashIcon";
-import SaveIcon from "@/components/icons/SaveIcon";
+import ChatIcon from "../../components/icons/ChatIcon";
+import TrashIcon from "../../components/icons/TrashIcon";
+import SaveIcon from "../../components/icons/SaveIcon";
 import React from "react";
 
 // TODO

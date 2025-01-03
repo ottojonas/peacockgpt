@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import connectToDatabase from '@/lib/mongoose';
-import Messages from '@/models/Messages';
-import Conversation from '@/models/Conversation';
+import connectToDatabase from '../../lib/mongoose';
+import Messages from '../../models/Messages';
+import Conversation from '../../models/Conversation';
 import { v4 as uuidv4 } from 'uuid';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import { MessageItem } from "../components/Chat/Chat";
-import { formatMessage } from "@/utils/formatMessage";
+import { formatMessage } from "../utils/formatMessage";
 
 let isFirstUserMessageSet = false;
 let isFirstAssistantMessageSet = false;
