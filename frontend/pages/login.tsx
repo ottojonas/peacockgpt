@@ -53,10 +53,10 @@ const Login = () => {
           </div>
 
           <div className={loginStyles["remember-forget"]}>
-            <label>
+           {/* <label>
               <input type="checkbox" />
               Remember Details
-            </label>
+            </label> */}
             <a href="/forgotpassword">Forgot Password?</a>
           </div>
           <button type="submit">Login</button>
