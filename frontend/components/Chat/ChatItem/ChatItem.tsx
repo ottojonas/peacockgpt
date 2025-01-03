@@ -6,17 +6,14 @@ import ThumbsDown from "../../../components/icons/ThumbsDown";
 import { MessageItem } from "../Chat";
 import ImageSet from "../ImageSet";
 
-// * define the props for the ChatItem component
+// Define the props for the ChatItem component
 interface ChatItemProps {
   item: MessageItem;
-  inputValue: string;
-  setInputValue: React.Dispatch<React.SetStateAction<string>>;
-  sendMessage: (text: string) => void;
 }
 
-// * ChatItem component to display individual chat messages
+// ChatItem component to display individual chat messages
 const ChatItem: React.FC<ChatItemProps> = ({ item }) => {
-  // * function to format the date
+  // Function to format the date
   const formatDate = (date: Date) => {
     const options: Intl.DateTimeFormatOptions = {
       year: "2-digit",
@@ -28,13 +25,13 @@ const ChatItem: React.FC<ChatItemProps> = ({ item }) => {
     return new Intl.DateTimeFormat("en-GB", options).format(date);
   };
 
-  // * current date and time
+  // Current date and time
   const sentDate = new Date(item.timestamp);
 
   return (
     <div className="py-2" key={item.key} data-testid="chat-item">
       <div className="flex p-2 rounded-md bg-item">
-        {/* avatar section */}
+        {/* Avatar section */}
         <div className="w-12 shrink-0">
           <div className="grid w-11 h-11 place-items-center">
             {item.sender === "user" ? (
@@ -51,7 +48,7 @@ const ChatItem: React.FC<ChatItemProps> = ({ item }) => {
             )}
           </div>
         </div>
-        {/* message content section */}
+        {/* Message content section */}
         <div className="w-full">
           <div className="flex items-center justify-between h-10 px-3 grow text-brandGray">
             <div className="text-sm">{formatDate(sentDate)}</div>
@@ -76,9 +73,8 @@ const ChatItem: React.FC<ChatItemProps> = ({ item }) => {
             className={`px-3 pb-3 ${
               item.sender === "user" ? "text-white" : "text-white"
             }`}
-          >
-            {item.content}
-          </div>
+            dangerouslySetInnerHTML={{ __html: item.content }}
+          />
           {/* Display images if any */}
           {item.images && <ImageSet images={item.images} />}
         </div>
