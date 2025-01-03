@@ -33,9 +33,9 @@ const Chat: React.FC<ChatProps> = ({
   const [inputValue, setInputValue] = useState<string>("");
 
   useEffect(() => {
-    console.log("chat component mounted");
+    // console.log("chat component mounted");
     return () => {
-      console.log("chat component unmounted");
+      // console.log("chat component unmounted");
     };
   }, []);
   useEffect(() => {
