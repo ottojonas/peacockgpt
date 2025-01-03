@@ -1,4 +1,3 @@
-/** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx}",
@@ -40,6 +39,14 @@ module.exports = {
         brandOrange: {
           DEFAULT: "#cbbca6",
           light: "#f5e6d3",
+        },
+        textColor: {
+          DEFAULT: "#000000",
+          dark: "#ffffff",
+        },
+        textColorDark: {
+          DEFAULT: "#ffffff",
+          dark: "#000000",
         },
       },
     },

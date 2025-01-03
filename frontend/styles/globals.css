@@ -12,21 +12,48 @@
   --text-color: #111111;
 }
 
-[data-theme="dark"] {
-  --bg-color: #111111;
-  --text-color: #f0f0f0;
+@layer base {
+  .bg-body {
+    background-color: var(--bg-color);
+  }
+  .text-text-color {
+    color: var(--text-color);
+  }
+  .bg-body-dark {
+    background-color: #111111;
+  }
+  .text-text-color-dark {
+    color: #f0f0f0;
+  }
+  .bg-text-color {
+    background-color: var(--text-color);
+  }
+  .text-bg-color {
+    color: var(--bg-color);
+  }
 }
 
-.bg-input {
-  background: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0) 0%,
-    var(--bg-color) 18.23%,
-    var(--bg-color) 100%
-  );
+body {
+  @apply bg-body text-text-color;
 }
 
 .selected-conversation {
-  background-color: var(--text-color);
-  color: var(--bg-color);
+  @apply bg-text-color text-bg-color;
+}
+
+.dark body {
+  @apply bg-body-dark text-text-color-dark;
+}
+
+.dark .bg-input {
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 0%,
+    var(--bg-color-dark) 18.23%,
+    var(--bg-color-dark) 100%
+  );
+}
+
+.dark .selected-conversation {
+  @apply bg-text-color-dark text-bg-color-dark;
 }
