@@ -52,11 +52,6 @@ export default function Sidebar({}: Props) {
       <div className="grid w-10 h-10 rounded-full bg-brandWhite shrink-0 place-items-center">
         <GPTLogo className="w-6 h-6 text-blue-900" />
       </div>
-      
-      <div className="fixed top-0 left-0 z-10 flex flex-col items-center w-16 h-screen pt-4 bg-black">
-      <div className="grid w-10 h-10 rounded-full bg-brandWhite shrink-0 place-items-center">
-        <GPTLogo className="w-6 h-6 text-blue-900" />
-      </div>
       <div className="flex flex-col pt-24 space-y-4 grow">
         <button className={`grid w-10 h-10 rounded-md place-items-center ${isActive("/dashboard") ? "text-black bg-brandWhite" : "text-brandGray"}`}>
           <DashboardIcon className="w-5 h-5" />
