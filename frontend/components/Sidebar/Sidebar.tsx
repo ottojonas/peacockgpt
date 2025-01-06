@@ -57,23 +57,37 @@ export default function Sidebar({}: Props) {
         <GPTLogo className="w-6 h-6 text-blue-900" />
       </div>
       <div className="flex flex-col pt-24 space-y-4 grow">
-        <button className={`grid w-10 h-10 rounded-md place-items-center ${isActive("/dashboard") ? "text-black bg-brandWhite" : "text-brandGray"}`}>
+        <button
+          className={`grid w-10 h-10 rounded-md place-items-center ${
+            isActive("/dashboard")
+              ? "text-black bg-brandWhite"
+              : "text-brandGray"
+          }`}
+        >
           <DashboardIcon className="w-5 h-5" />
         </button>
-        <button className={`grid w-10 h-10 rounded-md place-items-center ${isActive("/") ? "text-black bg-brandWhite" : "text-brandGray"}`}>
+        <button
+          className={`grid w-10 h-10 rounded-md place-items-center ${
+            isActive("/") ? "text-black bg-brandWhite" : "text-brandGray"
+          }`}
+        >
           <ChatIcon className="w-5 h-5" />
         </button>
-        <button className={`grid w-10 h-10 rounded-md place-items-center ${isActive("/users") ? "text-black bg-brandWhite" : "text-brandGray"}`}>
+        <button
+          className={`grid w-10 h-10 rounded-md place-items-center ${
+            isActive("/users") ? "text-black bg-brandWhite" : "text-brandGray"
+          }`}
+        >
           <UsersIcon className="w-5 h-5" />
         </button>
-<<<<<<< HEAD
-        <button className={`grid w-10 h-10 rounded-md place-items-center ${isActive("/documents") ? "text-black bg-brandWhite" : "text-brandGray"}`}>
-=======
         <button
-          className="grid w-10 h-10 rounded-md place-items-center text-brandGray"
+          className={`grid w-10 h-10 rounded-md place-items-center ${
+            isActive("/documents")
+              ? "text-black bg-brandWhite"
+              : "text-brandGray"
+          }`}
           onClick={handleSettingsClick}
         >
->>>>>>> adding-documents
           <SettingsIcon className="w-5 h-5" />
         </button>
       </div>
