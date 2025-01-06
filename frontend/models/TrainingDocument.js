@@ -14,6 +14,11 @@ const TrainingDocumentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  isSelected: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
 });
 
 const TrainingDocument =

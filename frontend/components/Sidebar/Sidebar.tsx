@@ -22,19 +22,27 @@ export default function Sidebar({}: Props) {
     document.body.setAttribute("data-theme", theme);
   }, [theme]);
 
+  const handleSettingsClick = () => {
+    router.push("/documents");
+  };
+
   const handleLogout = async () => {
     try {
-      const token = localStorage.getItem('token'); 
+      const token = localStorage.getItem("token");
       if (!token) {
-        throw new Error('No token found')
+        throw new Error("No token found");
       }
-      await axios.post("/api/logout", {}, {
-        headers: {
-          Authorization:  `Bearer ${token}`
+      await axios.post(
+        "/api/logout",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      });
+      );
 
-      localStorage.removeItem("token")
+      localStorage.removeItem("token");
       router.push("/login");
     } catch (error) {
       console.error("Failed to logout:", error);
@@ -56,7 +64,10 @@ export default function Sidebar({}: Props) {
         <button className="grid w-10 h-10 rounded-md place-items-center text-brandGray">
           <UsersIcon className="w-5 h-5" />
         </button>
-        <button className="grid w-10 h-10 rounded-md place-items-center text-brandGray">
+        <button
+          className="grid w-10 h-10 rounded-md place-items-center text-brandGray"
+          onClick={handleSettingsClick}
+        >
           <SettingsIcon className="w-5 h-5" />
         </button>
       </div>

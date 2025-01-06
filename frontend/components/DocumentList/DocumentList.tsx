@@ -1,13 +1,41 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import Options from "../icons/Options";
+import PencilSquareIcon from "../icons/PencilSquareIcon";
+import SearchIcon from "../icons/SearchIcon";
+import { v4 as uuidv4 } from "uuid";
 
-interface Document {
-  id: number;
+type DocumentProps = {
+  key: string;
   title: string;
-}
+  content: string;
+  isSelected: boolean;
+};
 
-const DocumentList: React.FC = () => {
-  const [documents, setDocuments] = useState<Document[]>([]);
+const createNewDocument = (): DocumentProps => {
+  return {
+    key: uuidv4(),
+    title: "New Document",
+    content: "New Document",
+    isSelected: false,
+  };
+};
+
+type Props = {
+  setDocumentKey: (key: string) => void;
+  setContent: (documents: DocumentProps[]) => void;
+  documents: any[];
+  setDocuments: React.Dispatch<React.SetStateAction<any[]>>;
+};
+
+const DocumentList: React.FC<Props> = ({
+  setDocumentKey,
+  setContent,
+  documents,
+  setDocuments,
+}) => {
+  const [selectedDocument, setSelectedDocument] =
+    useState<DocumentProps | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -16,21 +44,53 @@ const DocumentList: React.FC = () => {
 
   const fetchDocuments = async () => {
     try {
-      const repsonse = await axios.get();
-      const formattedDocuments = response.data.map();
-
-      formattedDocuments.sort();
+      const response = await axios.get("/api/documents");
+      const formattedDocuments = response.data.map((document: any) => {
+        return {
+          ...document,
+          title: document.title,
+          content: document.content,
+          isSelected: false,
+        };
+      });
       setDocuments(formattedDocuments);
     } catch (error) {
       console.error("Error fetching documents:", error);
     }
   };
 
-  const handleDocumentClick = async (key: string) => {};
+  const handleDocumentClick = async (key: string) => {
+    setDocuments((prevDocuments) =>
+      prevDocuments.map((document) =>
+        document.key === key
+          ? { ...document, isSelected: true }
+          : { ...document, isSelected: false }
+      )
+    );
+    const selectedDocument = documents.find((document) => document.key === key);
+    if (selectedDocument) {
+      setSelectedDocument(selectedDocument);
+      setDocumentKey(selectedDocument.key);
+      try {
+        const response = await axios.get("api/documents", {
+          params: { documentKey: selectedDocument.key },
+        });
+        setContent(response.data);
+      } catch (error) {
+        console.error("Error fetching document content:", error);
+      }
+    }
+  };
 
   const handleNewDocument = async () => {};
 
-  const handleDeleteDocument = async () => {};
+  const handleDeleteDocument = async () => {
+    try {
+      await axios.delete("/api/documents");
+    } catch (error) {
+      console.error("Error deleting document");
+    }
+  };
 
   const handleEditConversation = async () => {};
 
@@ -41,7 +101,7 @@ const DocumentList: React.FC = () => {
   }
 
   return (
-    <div>
+    <div className="fixed top-0 z-10 flex flex-col h-screen px-2 border-r-2 left-16 w-80 border-r-line bg-body">
       <div className="flex items-center px-3 py-3 shrink-0">
         <h2 className="text-lg font-semibold shrink-0">Documents</h2>
 
@@ -63,7 +123,7 @@ const DocumentList: React.FC = () => {
         </div>
         <div
           className="grid w-10 h-10 rounded-md bg-brandWhite place-items-center shrink-0"
-          onClick={handleNewConversation}
+          onClick={() => {}}
         >
           <PencilSquareIcon className="w-5 h-5 text-brandBlue" />
         </div>
@@ -71,5 +131,6 @@ const DocumentList: React.FC = () => {
     </div>
   );
 };
+
 
 export default DocumentList;
