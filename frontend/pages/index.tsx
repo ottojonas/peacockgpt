@@ -11,6 +11,7 @@ import ChatHistory from "../components/ChatHistory";
 import ChatHeader from "../components/ChatHeader";
 import Chat from "../components/Chat";
 import ChatInput from "../components/ChatInput";
+import DocumentList from "../components/DocumentList/DocumentList";
 import Info from "../components/Info";
 import io from "socket.io-client";
 
@@ -23,6 +24,7 @@ export default function Home() {
   const [messages, setMessages] = useState<MessageItem[]>([]);
   const [conversationKey, setConversationKey] = useState<string>("");
   const [conversations, setConversations] = useState<any[]>([]);
+  const [showDocuments, setShowDocuments] = useState(false);
   const router = useRouter();
   const { isAuthenticated } = useAuth();
 

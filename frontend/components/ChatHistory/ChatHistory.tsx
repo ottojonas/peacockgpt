@@ -171,7 +171,7 @@ const ChatHistory: React.FC<Props> = ({
     };
     return new Intl.DateTimeFormat("en-GB", options).format(new Date(date));
   };
-
+  
   return (
     <div className="fixed top-0 z-10 flex flex-col h-screen px-2 border-r-2 left-16 w-80 border-r-line bg-body">
       <div className="flex items-center px-3 py-3 shrink-0">

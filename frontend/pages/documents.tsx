@@ -1,3 +1,7 @@
+import React from 'react'
+import Sidebar from "../components/Sidebar";
 
-const Documents = () => {};
+const Documents = () => {
+    return; 
+};
 export default Documents;
