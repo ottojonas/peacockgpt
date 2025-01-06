@@ -24,39 +24,50 @@ export default function Sidebar({}: Props) {
 
   const handleLogout = async () => {
     try {
-      const token = localStorage.getItem('token'); 
+      const token = localStorage.getItem("token");
       if (!token) {
-        throw new Error('No token found')
+        throw new Error("No token found");
       }
-      await axios.post("/api/logout", {}, {
-        headers: {
-          Authorization:  `Bearer ${token}`
+      await axios.post(
+        "/api/logout",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      });
+      );
 
-      localStorage.removeItem("token")
+      localStorage.removeItem("token");
       router.push("/login");
     } catch (error) {
       console.error("Failed to logout:", error);
     }
   };
 
+  const isActive = (path: string) => router.pathname === path;
+
   return (
     <div className="fixed top-0 left-0 z-10 flex flex-col items-center w-16 h-screen pt-4 bg-black">
       <div className="grid w-10 h-10 rounded-full bg-brandWhite shrink-0 place-items-center">
         <GPTLogo className="w-6 h-6 text-blue-900" />
       </div>
+      
+      <div className="fixed top-0 left-0 z-10 flex flex-col items-center w-16 h-screen pt-4 bg-black">
+      <div className="grid w-10 h-10 rounded-full bg-brandWhite shrink-0 place-items-center">
+        <GPTLogo className="w-6 h-6 text-blue-900" />
+      </div>
       <div className="flex flex-col pt-24 space-y-4 grow">
-        <button className="grid w-10 h-10 rounded-md place-items-center text-brandGray">
+        <button className={`grid w-10 h-10 rounded-md place-items-center ${isActive("/dashboard") ? "text-black bg-brandWhite" : "text-brandGray"}`}>
           <DashboardIcon className="w-5 h-5" />
         </button>
-        <button className="grid w-10 h-10 text-black rounded-md place-items-center bg-brandWhite">
+        <button className={`grid w-10 h-10 rounded-md place-items-center ${isActive("/") ? "text-black bg-brandWhite" : "text-brandGray"}`}>
           <ChatIcon className="w-5 h-5" />
         </button>
-        <button className="grid w-10 h-10 rounded-md place-items-center text-brandGray">
+        <button className={`grid w-10 h-10 rounded-md place-items-center ${isActive("/users") ? "text-black bg-brandWhite" : "text-brandGray"}`}>
           <UsersIcon className="w-5 h-5" />
         </button>
-        <button className="grid w-10 h-10 rounded-md place-items-center text-brandGray">
+        <button className={`grid w-10 h-10 rounded-md place-items-center ${isActive("/documents") ? "text-black bg-brandWhite" : "text-brandGray"}`}>
           <SettingsIcon className="w-5 h-5" />
         </button>
       </div>
