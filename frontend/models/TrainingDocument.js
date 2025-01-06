@@ -1,6 +1,11 @@
 import mongoose from "mongoose";
 
 const TrainingDocumentSchema = new mongoose.Schema({
+  key: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   title: {
     type: String,
     required: true,
@@ -8,6 +13,11 @@ const TrainingDocumentSchema = new mongoose.Schema({
   content: {
     type: String,
     required: true,
+  },
+  isSelected: {
+    type: Boolean,
+    required: true,
+    default: false,
   },
 });
 

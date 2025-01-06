@@ -22,6 +22,10 @@ export default function Sidebar({}: Props) {
     document.body.setAttribute("data-theme", theme);
   }, [theme]);
 
+  const handleSettingsClick = () => {
+    router.push("/documents");
+  };
+
   const handleLogout = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -62,7 +66,14 @@ export default function Sidebar({}: Props) {
         <button className={`grid w-10 h-10 rounded-md place-items-center ${isActive("/users") ? "text-black bg-brandWhite" : "text-brandGray"}`}>
           <UsersIcon className="w-5 h-5" />
         </button>
+<<<<<<< HEAD
         <button className={`grid w-10 h-10 rounded-md place-items-center ${isActive("/documents") ? "text-black bg-brandWhite" : "text-brandGray"}`}>
+=======
+        <button
+          className="grid w-10 h-10 rounded-md place-items-center text-brandGray"
+          onClick={handleSettingsClick}
+        >
+>>>>>>> adding-documents
           <SettingsIcon className="w-5 h-5" />
         </button>
       </div>
