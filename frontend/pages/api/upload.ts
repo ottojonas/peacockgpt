@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import multer, { Multer } from "multer";
-import nextConnect from "next-connect";
+import multer from "multer";
+import { createRouter } from "next-connect";
 import { v4 as uuidv4 } from "uuid";
 import connectToDatabase from "../../lib/mongoose";
 import TrainingDocument from "../../models/TrainingDocument";
@@ -9,21 +9,15 @@ const upload = multer({
   storage: multer.memoryStorage(),
 });
 
-const apiRoute = nextConnect<NextApiRequest, NextApiResponse>({
-  onError(error, req, res) {
-    res
-      .status(501)
-      .json({ error: `Sorry something happened! ${error.message}` });
-  },
-  onNoMatch(req, res) {
-    res.status(405).json({ error: `Method '${req.method}' Not Allowed` });
-  },
-});
+const apiRoute = createRouter<NextApiRequest, NextApiResponse>();
 
 apiRoute.use(upload.single("file"));
 
 apiRoute.post(
-  async (req: NextApiRequest & { file: Multer.File }, res: NextApiResponse) => {
+  async (
+    req: NextApiRequest & { file: Express.Multer.File },
+    res: NextApiResponse
+  ) => {
     await connectToDatabase();
 
     if (!req.file) {
@@ -53,7 +47,15 @@ apiRoute.post(
   }
 );
 
-export default apiRoute;
+export default apiRoute.handler({
+  onError: (err, req, res) => {
+    console.error(err);
+    res.status(500).end(err.toString());
+  },
+  onNoMatch: (req, res) => {
+    res.status(405).end(`Method ${req.method} Not Allowed`);
+  },
+});
 
 export const config = {
   api: {
