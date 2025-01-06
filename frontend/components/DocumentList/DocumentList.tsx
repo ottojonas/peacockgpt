@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import Options from "../icons/Options";
 import PencilSquareIcon from "../icons/PencilSquareIcon";
@@ -35,9 +35,12 @@ const DocumentList: React.FC<Props> = ({
   documents,
   setDocuments,
 }) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedDocument, setSelectedDocument] =
     useState<DocumentProps | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [newDocumentTitle, setNewDocumentTitle] = useState<string>("");
+  const [newDocumentContent, setNewDocumentContent] = useState<string>("");
 
   useEffect(() => {
     fetchDocuments();
@@ -83,7 +86,20 @@ const DocumentList: React.FC<Props> = ({
     }
   };
 
-  const handleNewDocument = async () => {};
+  const handleNewDocument = async () => {
+    try {
+      const response = await axios.post("/api/documents", {
+        title: newDocumentTitle,
+        content: newDocumentContent,
+      });
+      const newDocument = response.data;
+      setDocuments((prevDocuments) => [...prevDocuments, newDocument]);
+      setNewDocumentTitle("");
+      setNewDocumentContent("");
+    } catch (error) {
+      console.error("Error creating new document:", error);
+    }
+  };
 
   const handleDeleteDocument = async () => {
     try {
@@ -93,16 +109,43 @@ const DocumentList: React.FC<Props> = ({
     }
   };
 
-  const handleEditConversation = async () => {};
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const formData = new FormData();
+      formData.append("file", file);
 
-  const handleSaveDocument = async () => {};
+      try {
+        const response = await axios.post("/api/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        const newDocument = response.data;
+        setDocuments((prevDocuments) => [...prevDocuments, newDocument]);
+      } catch (error) {
+        console.error("Error uploading documents:", error);
+      }
+    }
+  };
+
+  const handleIconClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+  };
 
   if (error) {
     return <div>{error}</div>;
   }
 
   return (
-    <div className="fixed top-0 z-10 flex flex-col h-screen px-2 border-r-2 left-16 w-80 border-r-line bg-body">
+    <div
+      className="fixed top-0 z-10 flex flex-col h-screen px-2 border-r-2 left-16 w-80 border-r-line bg-body"
+      onDragOver={handleDragOver}
+    >
       <div className="flex items-center px-3 py-3 shrink-0">
         <h2 className="text-lg font-semibold shrink-0">
           Document Modification
@@ -126,7 +169,7 @@ const DocumentList: React.FC<Props> = ({
         </div>
         <div
           className="grid w-10 h-10 rounded-md bg-brandWhite place-items-center shrink-0"
-          onClick={() => {}}
+          onClick={handleIconClick}
         >
           <PencilSquareIcon className="w-5 h-5 text-brandBlue" />
         </div>
@@ -144,6 +187,12 @@ const DocumentList: React.FC<Props> = ({
           />
         ))}
       </div>
+      <input
+        type="file"
+        ref={fileInputRef}
+        style={{ display: "none" }}
+        onChange={handleFileChange}
+      />
     </div>
   );
 };
