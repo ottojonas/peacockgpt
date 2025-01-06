@@ -104,7 +104,9 @@ const DocumentList: React.FC<Props> = ({
   return (
     <div className="fixed top-0 z-10 flex flex-col h-screen px-2 border-r-2 left-16 w-80 border-r-line bg-body">
       <div className="flex items-center px-3 py-3 shrink-0">
-        <h2 className="text-lg font-semibold shrink-0">Documents</h2>
+        <h2 className="text-lg font-semibold shrink-0">
+          Document Modification
+        </h2>
 
         <div className="grow"></div>
         <button>
