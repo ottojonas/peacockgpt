@@ -4,8 +4,9 @@ import Options from "../icons/Options";
 import PencilSquareIcon from "../icons/PencilSquareIcon";
 import SearchIcon from "../icons/SearchIcon";
 import { v4 as uuidv4 } from "uuid";
+import ListAllIcon from "../icons/ListAllIcon";
 
-type DocumentProps = {
+export type DocumentProps = {
   key: string;
   title: string;
   content: string;
@@ -23,7 +24,7 @@ const createNewDocument = (): DocumentProps => {
 
 type Props = {
   setDocumentKey: (key: string) => void;
-  setContent: (documents: DocumentProps[]) => void;
+  setContent: (content: string) => void;
   documents: any[];
   setDocuments: React.Dispatch<React.SetStateAction<any[]>>;
 };
@@ -128,9 +129,50 @@ const DocumentList: React.FC<Props> = ({
           <PencilSquareIcon className="w-5 h-5 text-brandBlue" />
         </div>
       </div>
+      <div className="flex items-center px-3 mt-5 mb-1 uppercase shrink">
+        <ListAllIcon className="w-5 h-5" />
+        <span className="ml-2 text-sm font-semibold">Documents</span>
+      </div>
+      <div className="overflow-y-auto grow">
+        {documents.map((document) => (
+          <Document
+            document={document}
+            key={document.key}
+            onClick={handleDocumentClick}
+          />
+        ))}
+      </div>
     </div>
   );
 };
 
-
+function Document({
+  document,
+  onClick,
+}: {
+  document: DocumentProps;
+  onClick: (key: string) => void;
+}) {
+  return (
+    <div className="py-1">
+      <div
+        className={`px-3 py-2 text-sm w-full rounded-md ${
+          document.isSelected ? "selected-conversation" : "bg-card"
+        }`}
+        onClick={() => onClick(document.key)}
+      >
+        <div className="flex items-center justify-between">
+          <h3 className="font-semibold grow line-clamp-1">{document.title}</h3>
+        </div>
+        <p
+          className={`line-clamp-2 mt-1 ${
+            document.isSelected ? "text-black" : "text-brandGray"
+          }`}
+        >
+          Placeholder
+        </p>
+      </div>
+    </div>
+  );
+}
 export default DocumentList;

@@ -1,16 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Sidebar from "../components/Sidebar";
-import io from "socket.io-client";
 import DocumentList from "../components/DocumentList/DocumentList";
 import CustomHead from "../components/common/CustomHead";
-
+import { DocumentProps } from "../components/DocumentList/DocumentList";
 const Documents = () => {
+  const [documents, setDocuments] = useState<DocumentProps[]>([]);
+  const [documentKey, setDocumentKey] = useState<string>("");
+  const [content, setContent] = useState<string>("");
+
   return (
     <>
       <CustomHead title="Document Modification" />
       <Sidebar />
-      <DocumentList />
+      <DocumentList
+        setDocumentKey={setDocumentKey}
+        setContent={setContent}
+        documents={documents}
+        setDocuments={setDocuments}
+      />
     </>
   );
 };
+
 export default Documents;
