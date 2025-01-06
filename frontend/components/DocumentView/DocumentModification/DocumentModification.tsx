@@ -1,6 +1,6 @@
-import React from 'react'
+import React from "react";
 
-const DocumentModification () => {
-    return ()
-} 
-export default DocumentModification
+const DocumentModification = () => {
+  return;
+};
+export default DocumentModification;
