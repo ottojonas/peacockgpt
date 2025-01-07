@@ -23,17 +23,19 @@ const createNewDocument = (): DocumentProps => {
 };
 
 type Props = {
-  setDocumentKey: (key: string) => void;
+  setKey: (key: string) => void;
   setContent: (content: string) => void;
-  documents: any[];
+  documents: DocumentProps[];
   setDocuments: React.Dispatch<React.SetStateAction<any[]>>;
+  setSelectedDocumentKey: (key: string) => void;
 };
 
 const DocumentList: React.FC<Props> = ({
-  setDocumentKey,
+  setKey,
   setContent,
   documents,
   setDocuments,
+  setSelectedDocumentKey,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedDocument, setSelectedDocument] =
@@ -54,7 +56,6 @@ const DocumentList: React.FC<Props> = ({
           ...document,
           title: document.title,
           content: document.content,
-          isSelected: false,
         };
       });
       setDocuments(formattedDocuments);
@@ -64,6 +65,7 @@ const DocumentList: React.FC<Props> = ({
   };
 
   const handleDocumentClick = async (key: string) => {
+    setSelectedDocumentKey(key);
     setDocuments((prevDocuments) =>
       prevDocuments.map((document) =>
         document.key === key
@@ -71,18 +73,21 @@ const DocumentList: React.FC<Props> = ({
           : { ...document, isSelected: false }
       )
     );
+
     const selectedDocument = documents.find((document) => document.key === key);
     if (selectedDocument) {
       setSelectedDocument(selectedDocument);
-      setDocumentKey(selectedDocument.key);
+      setKey(selectedDocument.key);
       try {
-        const response = await axios.get("api/documents", {
-          params: { documentKey: selectedDocument.key },
+        const response = await axios.get("/api/documents", {
+          params: { key: selectedDocument.key },
         });
         setContent(response.data);
       } catch (error) {
-        console.error("Error fetching document content:", error);
+        console.error("Error fetching documents:", error);
       }
+    } else {
+      console.error("Document not found");
     }
   };
 
@@ -109,7 +114,9 @@ const DocumentList: React.FC<Props> = ({
     }
   };
 
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
     if (file) {
       const formData = new FormData();
@@ -220,7 +227,7 @@ function Document({
             document.isSelected ? "text-black" : "text-brandGray"
           }`}
         >
-          Placeholder
+          {document.content}
         </p>
       </div>
     </div>
