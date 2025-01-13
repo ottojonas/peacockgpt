@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
-import DocumentArea from "./DocumentItem/DocumentArea";
+import DocumentArea from "./DocumentArea/DocumentArea";
 
 export type DocumentItem = {
   key: string;
