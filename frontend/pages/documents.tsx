@@ -1,22 +1,34 @@
 import React, { useState } from "react";
+import CustomHead from "../components/common/CustomHead";
 import Sidebar from "../components/Sidebar";
 import DocumentList from "../components/DocumentList/DocumentList";
-import CustomHead from "../components/common/CustomHead";
-import { DocumentProps } from "../components/DocumentList/DocumentList";
-const Documents = () => {
-  const [documents, setDocuments] = useState<DocumentProps[]>([]);
+
+interface DocumentItem {
+  key: string;
+  title: string;
+  content: string;
+  isSelected: boolean;
+}
+
+interface Props {
+  setDocuments: React.Dispatch<React.SetStateAction<DocumentItem[]>>;
+  setDocumentKey: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const Documents: React.FC = () => {
+  const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [documentKey, setDocumentKey] = useState<string>("");
-  const [content, setContent] = useState<string>("");
 
   return (
     <>
-      <CustomHead title="Document Modification" />
+      <CustomHead title="PeacockGPT" />
       <Sidebar />
       <DocumentList
-        setDocumentKey={setDocumentKey}
-        setContent={setContent}
         documents={documents}
         setDocuments={setDocuments}
+        setDocumentKey={setDocumentKey}
+        setContent={() => {}}
+        setSelectedDocument={() => {}}
       />
     </>
   );
