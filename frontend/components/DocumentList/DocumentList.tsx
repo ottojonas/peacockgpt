@@ -32,7 +32,7 @@ interface Props {
 }
 
 const DocumentList: React.FC<Props> = ({
-  documents,
+  documents = [],
   setDocuments,
   setContent,
   setSelectedDocument,

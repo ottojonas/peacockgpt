@@ -15,14 +15,20 @@ interface Props {
   setDocumentKey: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const Documents: React.FC<Props> = ({ setDocuments, setDocumentKey }) => {
+const Documents: React.FC = () => {
+  const [documents, setDocuments] = useState<DocumentItem[]>([]);
+  const [documentKey, setDocumentKey] = useState<string>("");
+
   return (
     <>
       <CustomHead title="PeacockGPT" />
       <Sidebar />
       <DocumentList
+        documents={documents}
         setDocuments={setDocuments}
         setDocumentKey={setDocumentKey}
+        setContent={() => {}}
+        setSelectedDocument={() => {}}
       />
     </>
   );
