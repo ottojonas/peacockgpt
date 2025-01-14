@@ -6,39 +6,74 @@ import Times from "../icons/Times";
 import PencilSquareIcon from "../icons/PencilSquareIcon";
 import SearchIcon from "../icons/SearchIcon";
 import ListAllIcon from "../icons/ListAllIcon";
-import { DocumentItem } from "../Document/Document";
 
-type DocumentProps = {
+type DocumentItem = {
   key: string;
   title: string;
   content: string;
   isSelected: boolean;
 };
 
-type Props = {
-  setDocuments: (documents: DocumentItem[]) => void;
+// const createNewDocument = (): DocumentProps => {
+//   return {
+//     key: uuidv4(),
+//     title: "Placeholder",
+//     content: "Placeholder",
+//     isSelected: true,
+//   };
+// };
+
+interface Props {
+  documents: DocumentItem[];
+  setDocuments: React.Dispatch<React.SetStateAction<DocumentItem[]>>;
+  setContent: (content: DocumentItem[]) => void;
+  setSelectedDocument: (document: DocumentItem) => void;
   setDocumentKey: (key: string) => void;
-};
+}
 
-const createNewDocument = (): DocumentProps => {
-  return {
-    key: uuidv4(),
-    title: "Placeholder",
-    content: "Placeholder",
-    isSelected: true,
-  };
-};
-
-const DocumentList: React.FC<Props> = ({ setDocuments, setDocumentKey }) => {
-  const handleNewDocument = () => {};
+const DocumentList: React.FC<Props> = ({
+  documents = [],
+  setDocuments,
+  setContent,
+  setSelectedDocument,
+  setDocumentKey,
+}) => {
+  useEffect(() => {
+    fetchDocuments();
+  }, []);
 
   const fetchDocuments = async () => {
     try {
       const response = await axios.get("/api/documents");
-      const fetchedDocuments = response.data;
+      const fetchedDocuments: DocumentItem[] = response.data;
       setDocuments(fetchedDocuments);
     } catch (error) {
       console.error("Error fetching documents:", error);
+    }
+  };
+
+  const handleDocumentClick = async (key: string) => {
+    setDocuments((prevDocuments: DocumentItem[]): DocumentItem[] =>
+      prevDocuments.map((doc: DocumentItem) =>
+        doc.key === key
+          ? { ...doc, isSelected: true }
+          : { ...doc, isSelected: false }
+      )
+    );
+    const selectedDocument = documents.find((document) => document.key === key);
+    if (selectedDocument) {
+      setSelectedDocument(selectedDocument);
+      setDocumentKey(selectedDocument.key);
+      try {
+        const response = await axios.get("/api/documents", {
+          params: { documentKey: selectedDocument.key },
+        });
+        setContent(response.data);
+      } catch (error) {
+        console.error("Error fetching content");
+      }
+    } else {
+      console.error("Document not found");
     }
   };
 
@@ -64,7 +99,7 @@ const DocumentList: React.FC<Props> = ({ setDocuments, setDocumentKey }) => {
         </div>
         <div
           className="grid w-10 h-10 rounded-md bg-brandWhite place-items-center shrink-0"
-          onClick={handleNewDocument}
+          // onClick={}
         >
           <PencilSquareIcon className="w-5 h-5 text-brandBlue" />
         </div>
@@ -73,16 +108,26 @@ const DocumentList: React.FC<Props> = ({ setDocuments, setDocumentKey }) => {
         <ListAllIcon className="w-5 h-5" />
         <span className="ml-2 text-sm font-semibold">All</span>
       </div>
-      <div className="grow">{}</div>
+      <div className="overflow-y-auto grow">
+        {documents.map((document) => (
+          <DocumentHistoryItem
+            key={document.key}
+            document={document}
+            onClick={() => {
+              handleDocumentClick(document.key);
+            }}
+          />
+        ))}
+      </div>
     </div>
   );
 };
 
-function Documents({
+function DocumentHistoryItem({
   document,
   onClick,
 }: {
-  document: DocumentProps;
+  document: DocumentItem;
   onClick: (key: string) => void;
 }) {
   return (
