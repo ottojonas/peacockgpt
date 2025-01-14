@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import axios from "axios";
-import { transferableAbortController } from "util";
 import Mic from "../icons/Mic";
 
 type DocumentItem = {
@@ -87,7 +86,6 @@ const DocumentInput: React.FC<Props> = ({
             >
               <button
                 className="grid w-10 h-10 text-white rounded-md place-items-center"
-                onClick={() => {}}
               >
                 <Mic className="w-5 h-5" />
               </button>

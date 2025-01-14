@@ -6,6 +6,7 @@ import Times from "../icons/Times";
 import PencilSquareIcon from "../icons/PencilSquareIcon";
 import SearchIcon from "../icons/SearchIcon";
 import ListAllIcon from "../icons/ListAllIcon";
+import { DocumentItem } from "../Document/Document";
 
 type DocumentProps = {
   key: string;
@@ -16,6 +17,7 @@ type DocumentProps = {
 
 type Props = {
   setDocuments: (documents: DocumentItem[]) => void;
+  setDocumentKey: (key: string) => void;
 };
 
 const createNewDocument = (): DocumentProps => {
@@ -27,11 +29,14 @@ const createNewDocument = (): DocumentProps => {
   };
 };
 
-const DocumentList: React.FC<Props> = ({}) => {
+const DocumentList: React.FC<Props> = ({ setDocuments, setDocumentKey }) => {
   const handleNewDocument = () => {};
 
   const fetchDocuments = async () => {
     try {
+      const response = await axios.get("/api/documents");
+      const fetchedDocuments = response.data;
+      setDocuments(fetchedDocuments);
     } catch (error) {
       console.error("Error fetching documents:", error);
     }
@@ -41,9 +46,6 @@ const DocumentList: React.FC<Props> = ({}) => {
     <div className="fixed top-0 z-10 flex flex-col h-screen px-2 border-r-2 left-16 w-80 border-r-line bg-body">
       <div className="flex items-center px-3 py-3 shrink-0">
         <h2 className="text-lg font-semibold shrink-0">Documents</h2>
-        <div className="grid w-8 h-8 ml-2 text-sm font-semibold text-black rounded-full shrink-0 bg-brandWhite place-items-center">
-          {}
-        </div>
         <div className="grow"></div>
         <button>
           <Options className="w-7 h-7" />
@@ -71,11 +73,39 @@ const DocumentList: React.FC<Props> = ({}) => {
         <ListAllIcon className="w-5 h-5" />
         <span className="ml-2 text-sm font-semibold">All</span>
       </div>
-      <div className="grow"></div>
+      <div className="grow">{}</div>
     </div>
   );
 };
 
-function Documents({}: {}) {}
+function Documents({
+  document,
+  onClick,
+}: {
+  document: DocumentProps;
+  onClick: (key: string) => void;
+}) {
+  return (
+    <div className="py-1">
+      <div
+        className={`px-3 py-2 text-sm w-full rounded-md ${
+          document.isSelected ? "selected-document" : "bg-card"
+        }`}
+        onClick={() => onClick(document.key)}
+      >
+        <div className="flex items-center justify-between">
+          <h3 className="font-semibold grow line-clamp-1">{document.title}</h3>
+        </div>
+        <p
+          className={`line-clamp-2 mt-1 ${
+            document.isSelected ? "text-black" : "text-brandGray"
+          }`}
+        >
+          {document.content}
+        </p>
+      </div>
+    </div>
+  );
+}
 
 export default DocumentList;
