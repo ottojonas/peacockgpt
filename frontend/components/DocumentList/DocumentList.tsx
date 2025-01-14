@@ -108,7 +108,7 @@ const DocumentList: React.FC<Props> = ({
         <ListAllIcon className="w-5 h-5" />
         <span className="ml-2 text-sm font-semibold">All</span>
       </div>
-      <div className="grow">
+      <div className="overflow-y-auto grow">
         {documents.map((document) => (
           <DocumentHistoryItem
             key={document.key}
