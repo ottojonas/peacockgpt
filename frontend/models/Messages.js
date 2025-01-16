@@ -28,6 +28,11 @@ const MessageSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  rating: {
+    type: String,
+    enum: ["good", "bad"],
+    default: null,
+  },
 });
 
 MessageSchema.virtual("conversation", {
