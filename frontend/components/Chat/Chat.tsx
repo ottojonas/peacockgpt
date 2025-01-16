@@ -24,20 +24,13 @@ interface ChatProps {
   sendMessage: (text: string) => void;
 }
 
-const Chat: React.FC<ChatProps> = ({
-  messages,
-  setMessages,
-  conversationKey,
-  sendMessage,
-}) => {
+const Chat: React.FC<ChatProps> = ({ messages, setMessages, conversationKey, sendMessage }) => {
   const [inputValue, setInputValue] = useState<string>("");
 
   useEffect(() => {
-    // console.log("chat component mounted");
-    return () => {
-      // console.log("chat component unmounted");
-    };
+    return () => {};
   }, []);
+
   useEffect(() => {
     const fetchMessages = async () => {
       try {
@@ -53,14 +46,48 @@ const Chat: React.FC<ChatProps> = ({
       fetchMessages();
     }
   }, [conversationKey, setMessages]);
+
+  const handleThumbsUp = async (key: string) => {
+    try {
+      await axios.post("/api/messages/rate", { key, rating: "good" });
+      console.log("Message rated as good");
+    } catch (error) {
+      console.error("Error rating message:", error);
+    }
+  };
+
+  const handleThumbsDown = async (key: string) => {
+    try {
+      await axios.post("/api/messages/rate", { key, rating: "bad" });
+      console.log("Message rated as bad");
+      // Regenerate response
+      const response = await axios.post("/api/ask", { question: messages.find((msg) => msg.key === key)?.text });
+      const newMessage = response.data.answer;
+      const formattedAnswer = formatMessage(newMessage);
+
+      const newMessageItem: MessageItem = {
+        key: uuidv4(),
+        conversationKey,
+        text: formattedAnswer,
+        isUser: false,
+        sender: "assistant",
+        content: formattedAnswer,
+        images: [],
+        timestamp: new Date().toISOString(),
+        date: new Date().toISOString(),
+      };
+
+      setMessages((prevMessages) => [...prevMessages, newMessageItem]);
+    } catch (error) {
+      console.error("Error regenerating response:", error);
+    }
+  };
+
   return (
-    <div
-      className="chat-container"
-      style={{ marginLeft: "384px", marginRight: "320px" }}
-    >
+    <div className="chat-container" style={{ marginLeft: "384px", marginRight: "320px" }}>
       <div className="max-w-3xl px-4 pt-16 pb-48 mx-auto chat-messages">
         {messages.filter(Boolean).map((item) => (
-          <ChatItem item={item} key={item.key} />
+          <ChatItem item={item} key={item.key} onThumbsUp={handleThumbsUp} onThumbsDown={handleThumbsDown} />
         ))}
       </div>
       <ChatInput

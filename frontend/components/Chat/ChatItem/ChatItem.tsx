@@ -6,14 +6,17 @@ import ThumbsDown from "../../../components/icons/ThumbsDown";
 import { MessageItem } from "../Chat";
 import ImageSet from "../ImageSet";
 
-// Define the props for the ChatItem component
 interface ChatItemProps {
   item: MessageItem;
+  onThumbsUp: (key: string) => void;
+  onThumbsDown: (key: string) => void;
 }
 
-// ChatItem component to display individual chat messages
-const ChatItem: React.FC<ChatItemProps> = ({ item }) => {
-  // Function to format the date
+const ChatItem: React.FC<ChatItemProps> = ({
+  item,
+  onThumbsUp,
+  onThumbsDown,
+}) => {
   const formatDate = (date: Date) => {
     const options: Intl.DateTimeFormatOptions = {
       year: "2-digit",
@@ -25,13 +28,11 @@ const ChatItem: React.FC<ChatItemProps> = ({ item }) => {
     return new Intl.DateTimeFormat("en-GB", options).format(date);
   };
 
-  // Current date and time
   const sentDate = new Date(item.timestamp);
 
   return (
     <div className="py-2" key={item.key} data-testid="chat-item">
       <div className="flex p-2 rounded-md bg-item">
-        {/* Avatar section */}
         <div className="w-12 shrink-0">
           <div className="grid w-11 h-11 place-items-center">
             {item.sender === "user" ? (
@@ -48,22 +49,21 @@ const ChatItem: React.FC<ChatItemProps> = ({ item }) => {
             )}
           </div>
         </div>
-        {/* Message content section */}
         <div className="w-full">
           <div className="flex items-center justify-between h-10 px-3 grow text-brandGray">
             <div className="text-sm">{formatDate(sentDate)}</div>
-            {item.isUser ? (
-              <div className="inline-flex items-center">
-                <button className="grid rounded-md w-7 h-7 place-items-center">
-                  <Pencil className="w-5 h-5" />
-                </button>
-              </div>
-            ) : (
+            {item.sender !== "user" && (
               <div className="inline-flex items-center space-x-2">
-                <button className="grid rounded-md w-7 h-7 place-items-center">
+                <button
+                  className="grid rounded-md w-7 h-7 place-items-center"
+                  onClick={() => onThumbsUp(item.key)}
+                >
                   <ThumbsUp className="w-5 h-5" />
                 </button>
-                <button className="grid rounded-md w-7 h-7 place-items-center">
+                <button
+                  className="grid rounded-md w-7 h-7 place-items-center"
+                  onClick={() => onThumbsDown(item.key)}
+                >
                   <ThumbsDown className="w-5 h-5" />
                 </button>
               </div>
@@ -75,7 +75,6 @@ const ChatItem: React.FC<ChatItemProps> = ({ item }) => {
             }`}
             dangerouslySetInnerHTML={{ __html: item.content }}
           />
-          {/* Display images if any */}
           {item.images && <ImageSet images={item.images} />}
         </div>
       </div>
