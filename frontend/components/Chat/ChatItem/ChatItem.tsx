@@ -9,8 +9,8 @@ import ImageSet from "../ImageSet";
 // Define the props for the ChatItem component
 interface ChatItemProps {
   item: MessageItem;
-  onThumbsUp: () => void;
-  onThumbsDown: () => void;
+  onThumbsUp: (key: string) => void;
+  onThumbsDown: (key: string) => void;
 }
 
 // ChatItem component to display individual chat messages
@@ -62,10 +62,16 @@ const ChatItem: React.FC<ChatItemProps> = ({ item }) => {
               </div>
             ) : (
               <div className="inline-flex items-center space-x-2">
-                <button className="grid rounded-md w-7 h-7 place-items-center">
+                <button
+                  className="grid rounded-md w-7 h-7 place-items-center"
+                  onClick={() => onThumbsUp(item.key)}
+                >
                   <ThumbsUp className="w-5 h-5" />
                 </button>
-                <button className="grid rounded-md w-7 h-7 place-items-center">
+                <button
+                  className="grid rounded-md w-7 h-7 place-items-center"
+                  onClick={() => onThumbsDown(item.key)}
+                >
                   <ThumbsDown className="w-5 h-5" />
                 </button>
               </div>
