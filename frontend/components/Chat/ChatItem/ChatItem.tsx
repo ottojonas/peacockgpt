@@ -9,6 +9,8 @@ import ImageSet from "../ImageSet";
 // Define the props for the ChatItem component
 interface ChatItemProps {
   item: MessageItem;
+  onThumbsUp: () => void;
+  onThumbsDown: () => void;
 }
 
 // ChatItem component to display individual chat messages
