@@ -53,6 +53,16 @@ const Chat: React.FC<ChatProps> = ({
       fetchMessages();
     }
   }, [conversationKey, setMessages]);
+
+  const handleThumbsUp = async (key: string) => {
+    try {
+      await axios.post("/api/messages/rate", { key, rating: "good" });
+      console.log("Message rated as good");
+    } catch (error) {
+      console.error("Error rating message:", error);
+    }
+  };
+
   return (
     <div
       className="chat-container"
