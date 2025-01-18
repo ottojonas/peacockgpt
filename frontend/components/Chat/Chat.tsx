@@ -4,6 +4,7 @@ import ChatInput from "../ChatInput/ChatInput";
 import axios from "axios";
 import { sendMessage as sendMsg } from "../../lib/sendMessage";
 import { v4 as uuidv4 } from "uuid";
+import { formatMessage } from "../../utils/formatMessage";
 
 export type MessageItem = {
   key: string;
@@ -24,7 +25,12 @@ interface ChatProps {
   sendMessage: (text: string) => void;
 }
 
-const Chat: React.FC<ChatProps> = ({ messages, setMessages, conversationKey, sendMessage }) => {
+const Chat: React.FC<ChatProps> = ({
+  messages,
+  setMessages,
+  conversationKey,
+  sendMessage,
+}) => {
   const [inputValue, setInputValue] = useState<string>("");
 
   useEffect(() => {
@@ -61,7 +67,9 @@ const Chat: React.FC<ChatProps> = ({ messages, setMessages, conversationKey, sen
       await axios.post("/api/messages/rate", { key, rating: "bad" });
       console.log("Message rated as bad");
       // Regenerate response
-      const response = await axios.post("/api/ask", { question: messages.find((msg) => msg.key === key)?.text });
+      const response = await axios.post("/api/ask", {
+        question: messages.find((msg) => msg.key === key)?.text,
+      });
       const newMessage = response.data.answer;
       const formattedAnswer = formatMessage(newMessage);
 
@@ -84,10 +92,18 @@ const Chat: React.FC<ChatProps> = ({ messages, setMessages, conversationKey, sen
   };
 
   return (
-    <div className="chat-container" style={{ marginLeft: "384px", marginRight: "320px" }}>
+    <div
+      className="chat-container"
+      style={{ marginLeft: "384px", marginRight: "320px" }}
+    >
       <div className="max-w-3xl px-4 pt-16 pb-48 mx-auto chat-messages">
         {messages.filter(Boolean).map((item) => (
-          <ChatItem item={item} key={item.key} onThumbsUp={handleThumbsUp} onThumbsDown={handleThumbsDown} />
+          <ChatItem
+            item={item}
+            key={item.key}
+            onThumbsUp={handleThumbsUp}
+            onThumbsDown={handleThumbsDown}
+          />
         ))}
       </div>
       <ChatInput
