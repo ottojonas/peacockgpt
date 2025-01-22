@@ -58,6 +58,13 @@ const Chat: React.FC<ChatProps> = ({
     try {
       await axios.post("/api/messages/rate", { key, rating: "good" });
       console.log("Message rated as good");
+
+      // update message state
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg.key === key ? { ...msg, rating: "good" } : msg
+        )
+      );
     } catch (error) {
       console.error("Error rating message:", error);
     }
@@ -67,6 +74,14 @@ const Chat: React.FC<ChatProps> = ({
     try {
       await axios.post("/api/messages/rate", { key, rating: "bad" });
       console.log("Message rated as bad");
+
+      // update message state
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg.key === key ? { ...msg, rating: "bad" } : msg
+        )
+      );
+
       // Regenerate response
       const response = await axios.post("/api/ask", {
         question: messages.find((msg) => msg.key === key)?.text,

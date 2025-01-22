@@ -201,6 +201,7 @@ def new_message():
             sender=data["sender"],
             content=data["content"],
             timestamp=datetime.datetime.utcnow(),
+            rating="good",
         )
         db.session.add(message)
         db.session.commit()
