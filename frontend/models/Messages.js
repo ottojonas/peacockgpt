@@ -31,7 +31,7 @@ const MessageSchema = new mongoose.Schema({
   rating: {
     type: String,
     enum: ["good", "bad"],
-    default: null,
+    default: "good",
   },
 });
 
