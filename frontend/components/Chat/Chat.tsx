@@ -16,6 +16,7 @@ export type MessageItem = {
   timestamp: string;
   date: string;
   content: string;
+  rating: string;
 };
 
 interface ChatProps {
@@ -83,6 +84,7 @@ const Chat: React.FC<ChatProps> = ({
         images: [],
         timestamp: new Date().toISOString(),
         date: new Date().toISOString(),
+        rating: "good",
       };
 
       setMessages((prevMessages) => [...prevMessages, newMessageItem]);
