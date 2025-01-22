@@ -256,7 +256,7 @@ def update_conversation(key):
 # * route to ratre message
 @routes.route("/api/messages/rate", methods=["POST"])
 def rate_message():
-    data = response.json
+    data = request.json
     if not data or "key" not in data or "rating" not in data:
         return jsonify({"error": "key and rating are required"}), 400
 
