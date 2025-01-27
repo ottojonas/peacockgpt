@@ -16,8 +16,11 @@ export default async function handler(
     }
 
     try {
+      console.log("Recieved request body: ", req.body);
+      console.log("Recieved key:", key);
       const message = await Messages.findOne({ key });
       if (!message) {
+        console.log("Message not found for key:", key);
         return res.status(404).json({ error: "Message not found" });
       }
 
