@@ -148,6 +148,14 @@ export const sendMessage = async (
       );
       isFirstAssistantMessageSet = true;
     }
+
+    if (assistantMessage.rating === "bad") {
+      setMessages((prevMessages) =>
+        prevMessages.filter((msg) => msg.key !== assistantMessage.key)
+      );
+
+      await axios.post("/api/badResponses", assistantMessage);
+    }
   } catch (error) {
     console.error("Error sending assistant message to backend: ", error);
   }
