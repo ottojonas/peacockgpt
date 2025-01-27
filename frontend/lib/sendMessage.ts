@@ -29,6 +29,7 @@ export const sendMessage = async (
     timestamp: new Date().toISOString(),
     sender: "user",
     date: new Date().toISOString(),
+    rating: "good",
   };
 
   setMessages((prevMessages) => [...prevMessages, newMessage]);
@@ -89,6 +90,7 @@ export const sendMessage = async (
       timestamp: new Date().toISOString(),
       content: formattedResponse,
       sender: "assistant",
+      rating: "good",
     };
 
     setMessages((prevMessages) => [...prevMessages, assistantMessage]);
