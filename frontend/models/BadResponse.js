@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
-import Conversation from "./Conversation";
 
-const MessageSchema = new mongoose.Schema({
+const BadResponseSchema = new mongoose.Schema({
   key: {
     type: String,
     required: true,
@@ -12,21 +11,33 @@ const MessageSchema = new mongoose.Schema({
     ref: "Conversation",
     required: true,
   },
-  sender: {
+  text: {
     type: String,
+    required: true,
+  },
+  isUser: {
+    type: Boolean,
     required: true,
   },
   content: {
     type: String,
     required: true,
   },
+  images: {
+    type: [String],
+    required: false,
+  },
   timestamp: {
     type: Date,
     default: Date.now,
   },
-  images: {
+  sender: {
     type: String,
-    required: false,
+    required: true,
+  },
+  date: {
+    type: Date,
+    required: true,
   },
   rating: {
     type: String,
@@ -35,12 +46,8 @@ const MessageSchema = new mongoose.Schema({
   },
 });
 
-MessageSchema.virtual("conversation", {
-  ref: "Conversation",
-  localField: "conversationKey",
-  foreignField: "key",
-  justOne: true,
-});
+const BadResponse =
+  mongoose.models.BadResponse ||
+  mongoose.model("BadResponse", BadResponseSchema);
 
-export default mongoose.models.Message ||
-  mongoose.model("Message", MessageSchema);
+export default BadResponse;

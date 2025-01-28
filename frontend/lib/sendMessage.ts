@@ -29,12 +29,13 @@ export const sendMessage = async (
     timestamp: new Date().toISOString(),
     sender: "user",
     date: new Date().toISOString(),
+    rating: "good",
   };
 
   setMessages((prevMessages) => [...prevMessages, newMessage]);
 
   try {
-    // * Ensure the conversation exists before saving the message
+    // Ensure the conversation exists before saving the message
     const conversation = await axios.get(
       `/api/conversations?key=${conversationKey}`
     );
@@ -43,18 +44,27 @@ export const sendMessage = async (
       return;
     }
 
-    // * save message to the backend
-    await axios.post("/api/messages", {
+    // Save message to the backend
+    const response = await axios.post("/api/messages", {
       conversationKey: conversationKey,
       message: {
         key: newMessage.key,
         conversationKey: newMessage.conversationKey,
         text: newMessage.text,
         sender: newMessage.sender,
-        content: newMessage.text,
+        content: newMessage.content,
         date: newMessage.date,
+        rating: "good",
       },
     });
+
+    const savedMessage = response.data;
+
+    setMessages((prevMessages) =>
+      prevMessages.map((msg) =>
+        msg.key === newMessage.key ? { ...msg, key: savedMessage.key } : msg
+      )
+    );
 
     if (!isFirstUserMessageSet) {
       const updatedConversation = {
@@ -73,7 +83,11 @@ export const sendMessage = async (
       );
       isFirstUserMessageSet = true;
     }
+  } catch (error) {
+    console.error("Error sending message to backend: ", error);
+  }
 
+  try {
     const assistantResponse = await axios.post("/api/ask", {
       question: text.trim(),
     });
@@ -89,11 +103,12 @@ export const sendMessage = async (
       timestamp: new Date().toISOString(),
       content: formattedResponse,
       sender: "assistant",
+      rating: "good",
     };
 
     setMessages((prevMessages) => [...prevMessages, assistantMessage]);
 
-    await axios.post("/api/messages", {
+    const response = await axios.post("/api/messages", {
       conversationKey,
       message: {
         key: assistantMessage.key,
@@ -102,8 +117,19 @@ export const sendMessage = async (
         sender: assistantMessage.sender,
         content: assistantMessage.text,
         date: assistantMessage.date,
+        rating: "good",
       },
     });
+
+    const savedAssistantMessage = response.data;
+
+    setMessages((prevMessages) =>
+      prevMessages.map((msg) =>
+        msg.key === assistantMessage.key
+          ? { ...msg, key: savedAssistantMessage.key }
+          : msg
+      )
+    );
 
     if (!isFirstAssistantMessageSet) {
       const updatedConversation = {
@@ -122,7 +148,15 @@ export const sendMessage = async (
       );
       isFirstAssistantMessageSet = true;
     }
+
+    if (assistantMessage.rating === "bad") {
+      setMessages((prevMessages) =>
+        prevMessages.filter((msg) => msg.key !== assistantMessage.key)
+      );
+
+      await axios.post("/api/badResponses", assistantMessage);
+    }
   } catch (error) {
-    console.error("error sending message:", error);
+    console.error("Error sending assistant message to backend: ", error);
   }
 };

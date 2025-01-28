@@ -16,6 +16,7 @@ export type MessageItem = {
   timestamp: string;
   date: string;
   content: string;
+  rating: string;
 };
 
 interface ChatProps {
@@ -57,6 +58,13 @@ const Chat: React.FC<ChatProps> = ({
     try {
       await axios.post("/api/messages/rate", { key, rating: "good" });
       console.log("Message rated as good");
+
+      // update message state
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg.key === key ? { ...msg, rating: "good" } : msg
+        )
+      );
     } catch (error) {
       console.error("Error rating message:", error);
     }
@@ -64,8 +72,26 @@ const Chat: React.FC<ChatProps> = ({
 
   const handleThumbsDown = async (key: string) => {
     try {
+      const message = messages.find((msg) => msg.key === key);
+      if (!message) {
+        console.error("Message not found");
+        return;
+      }
       await axios.post("/api/messages/rate", { key, rating: "bad" });
       console.log("Message rated as bad");
+
+      // update message state
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg.key === key ? { ...msg, rating: "bad" } : msg
+        )
+      );
+
+      setMessages((prevMessages) =>
+        prevMessages.filter((msg) => msg.key !== key)
+      );
+
+      await axios.post("/api/badResponses", message);
       // Regenerate response
       const response = await axios.post("/api/ask", {
         question: messages.find((msg) => msg.key === key)?.text,
@@ -83,9 +109,15 @@ const Chat: React.FC<ChatProps> = ({
         images: [],
         timestamp: new Date().toISOString(),
         date: new Date().toISOString(),
+        rating: "good",
       };
 
       setMessages((prevMessages) => [...prevMessages, newMessageItem]);
+
+      await axios.post("/api/messages", {
+        conversationKey: message.conversationKey,
+        message: newMessageItem,
+      });
     } catch (error) {
       console.error("Error regenerating response:", error);
     }

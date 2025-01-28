@@ -42,3 +42,4 @@ class Message(db.Model):
     date = db.Column(db.DateTime, nullable=False)
     is_user = db.Column(db.Boolean, nullable=False)
     date = db.Column(db.DateTime, nullable=False)
+    ratinf = db.Column(db.String, nullable=True)

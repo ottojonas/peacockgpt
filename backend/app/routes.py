@@ -15,9 +15,11 @@ from app.services.document_service import (
 from app.utils.file_utils import extract_content_from_file
 from app.utils.openai_utils import generate_response
 from flask_jwt_extended import jwt_required, get_jwt_identity, unset_jwt_cookies
+
 # * create a Blueprint for the routes
 routes = Blueprint("routes", __name__)
-auth_bp = Blueprint('auth', __name__)
+auth_bp = Blueprint("auth", __name__)
+
 
 # * route to handle account creation and user registration
 @routes.route("/api/register", methods=["POST"])
@@ -55,13 +57,15 @@ def login():
     # TODO implement session or token generation here
     return jsonify({"message": "login successful"}), 200
 
-# * routes to handle user signing out 
-@auth_bp.route('/api/logout', methods = ['POST'])
+
+# * routes to handle user signing out
+@auth_bp.route("/api/logout", methods=["POST"])
 @jwt_required()
 def logout():
     response = jsonify({"message": "logout successful"})
     unset_jwt_cookies(response)
     return response, 200
+
 
 # * route to handle asking a question to the AI
 @routes.route("/api/ask", methods=["POST"])
@@ -197,6 +201,7 @@ def new_message():
             sender=data["sender"],
             content=data["content"],
             timestamp=datetime.datetime.utcnow(),
+            rating="good",
         )
         db.session.add(message)
         db.session.commit()
@@ -247,3 +252,22 @@ def update_conversation(key):
             jsonify({"error": "failed to update conversation", "message": str(e)}),
             500,
         )
+
+
+# * route to ratre message
+@routes.route("/api/messages/rate", methods=["POST"])
+def rate_message():
+    data = request.json
+    if not data or "key" not in data or "rating" not in data:
+        return jsonify({"error": "key and rating are required"}), 400
+
+    try:
+        message = Message.query._filter_by(id=data["key"]).first()
+        if not message:
+            return jsonify({"error": "message not found"}), 404
+        message.rating = data["rating"]
+        db.session.commit()
+        return jsonify({"message": "message rated successfully"})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "failed to rate message", "message": str(e)}), 500
