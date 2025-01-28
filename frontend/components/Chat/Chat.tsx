@@ -113,6 +113,11 @@ const Chat: React.FC<ChatProps> = ({
       };
 
       setMessages((prevMessages) => [...prevMessages, newMessageItem]);
+
+      await axios.post("/api/messages", {
+        conversationKey: message.conversationKey,
+        message: newMessageItem,
+      });
     } catch (error) {
       console.error("Error regenerating response:", error);
     }
