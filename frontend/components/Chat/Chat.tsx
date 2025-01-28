@@ -72,6 +72,11 @@ const Chat: React.FC<ChatProps> = ({
 
   const handleThumbsDown = async (key: string) => {
     try {
+      const message = messages.find((msg) => msg.key === key);
+      if (!message) {
+        console.error("Message not found");
+        return;
+      }
       await axios.post("/api/messages/rate", { key, rating: "bad" });
       console.log("Message rated as bad");
 
@@ -82,6 +87,11 @@ const Chat: React.FC<ChatProps> = ({
         )
       );
 
+      setMessages((prevMessages) =>
+        prevMessages.filter((msg) => msg.key !== key)
+      );
+
+      await axios.post("/api/badResponses", message);
       // Regenerate response
       const response = await axios.post("/api/ask", {
         question: messages.find((msg) => msg.key === key)?.text,
