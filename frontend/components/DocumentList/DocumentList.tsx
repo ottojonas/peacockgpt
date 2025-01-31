@@ -1,25 +1,15 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 import Options from "../icons/Options";
-import PencilSquareIcon from "../icons/PencilSquareIcon";
 import SearchIcon from "../icons/SearchIcon";
-import { v4 as uuidv4 } from "uuid";
-import ListAllIcon from "../icons/ListAllIcon";
+import PencilSquareIcon from "../icons/PencilSquareIcon";
 
 export type DocumentProps = {
   key: string;
   title: string;
   content: string;
   isSelected: boolean;
-};
-
-const createNewDocument = (): DocumentProps => {
-  return {
-    key: uuidv4(),
-    title: "New Document",
-    content: "New Document",
-    isSelected: false,
-  };
 };
 
 type Props = {
@@ -36,128 +26,26 @@ const DocumentList: React.FC<Props> = ({
   setDocuments,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [selectedDocument, setSelectedDocument] =
-    useState<DocumentProps | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [newDocumentTitle, setNewDocumentTitle] = useState<string>("");
   const [newDocumentContent, setNewDocumentContent] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchDocuments();
-  }, []);
-
-  const fetchDocuments = async () => {
-    try {
-      const response = await axios.get("/api/documents");
-      const formattedDocuments = response.data.map((document: any) => {
-        return {
-          ...document,
-          title: document.title,
-          content: document.content,
-          isSelected: false,
-        };
-      });
-      setDocuments(formattedDocuments);
-    } catch (error) {
-      console.error("Error fetching documents:", error);
-    }
-  };
-
-  const handleDocumentClick = async (key: string) => {
-    setDocuments((prevDocuments) =>
-      prevDocuments.map((document) =>
-        document.key === key
-          ? { ...document, isSelected: true }
-          : { ...document, isSelected: false }
-      )
-    );
-    const selectedDocument = documents.find((document) => document.key === key);
-    if (selectedDocument) {
-      setSelectedDocument(selectedDocument);
-      setDocumentKey(selectedDocument.key);
-      try {
-        const response = await axios.get("api/documents", {
-          params: { documentKey: selectedDocument.key },
-        });
-        setContent(response.data);
-      } catch (error) {
-        console.error("Error fetching document content:", error);
-      }
-    }
-  };
-
-  const handleNewDocument = async () => {
-    try {
-      const response = await axios.post("/api/documents", {
-        title: newDocumentTitle,
-        content: newDocumentContent,
-      });
-      const newDocument = response.data;
-      setDocuments((prevDocuments) => [...prevDocuments, newDocument]);
-      setNewDocumentTitle("");
-      setNewDocumentContent("");
-    } catch (error) {
-      console.error("Error creating new document:", error);
-    }
-  };
-
-  const handleDeleteDocument = async () => {
-    try {
-      await axios.delete("/api/documents");
-    } catch (error) {
-      console.error("Error deleting document");
-    }
-  };
-
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      try {
-        const response = await axios.post("/api/upload", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-        const newDocument = response.data;
-        setDocuments((prevDocuments) => [...prevDocuments, newDocument]);
-      } catch (error) {
-        console.error("Error uploading documents:", error);
-      }
-    }
-  };
-
-  const handleIconClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-  };
+  const fetchDocuments = async () => {};
 
   if (error) {
     return <div>{error}</div>;
   }
-
   return (
-    <div
-      className="fixed top-0 z-10 flex flex-col h-screen px-2 border-r-2 left-16 w-80 border-r-line bg-body"
-      onDragOver={handleDragOver}
-    >
-      <div className="flex items-center px-3 py-3 shrink-0">
-        <h2 className="text-lg font-semibold shrink-0">
-          Document Modification
-        </h2>
-
+    <div className="fixed top-0 z-10 flex flex-col h-screen px-2 border-r-2 left-16 w-80 border-r-line bg-body">
+      <div className="flex items-center px-3 py-3 shring-0">
+        <h2 className="text-lg font-semibold shrink-0">Documents</h2>
         <div className="grow"></div>
         <button>
           <Options className="w-7 h-7" />
         </button>
       </div>
       <div className="flex px-3 space-x-2 shrink-0">
-        <div className="relative h-10 rounded-md grow bg-card">
+        <div className="relative h-10 rounded-md bg-card">
           <input
             className="w-full h-10 pl-4 pr-10 rounded-md bg-card"
             spellCheck={false}
@@ -167,37 +55,16 @@ const DocumentList: React.FC<Props> = ({
             <SearchIcon className="w-5 h-5 text-brandGray" />
           </div>
         </div>
-        <div
-          className="grid w-10 h-10 rounded-md bg-brandWhite place-items-center shrink-0"
-          onClick={handleIconClick}
-        >
-          <PencilSquareIcon className="w-5 h-5 text-brandBlue" />
+        <div className="grid w-10 h-10 rounded-md bg-brandWhite place-items-center shrink-0">
+          <PencilSquareIcon className="w-5 h-5" />
         </div>
       </div>
-      <div className="flex items-center px-3 mt-5 mb-1 uppercase shrink">
-        <ListAllIcon className="w-5 h-5" />
-        <span className="ml-2 text-sm font-semibold">Documents</span>
-      </div>
-      <div className="overflow-y-auto grow">
-        {documents.map((document) => (
-          <Document
-            document={document}
-            key={document.key}
-            onClick={handleDocumentClick}
-          />
-        ))}
-      </div>
-      <input
-        type="file"
-        ref={fileInputRef}
-        style={{ display: "none" }}
-        onChange={handleFileChange}
-      />
     </div>
   );
 };
 
-function Document({
+// * Document item to show each document stored seperately
+function DocumentItem({
   document,
   onClick,
 }: {
@@ -220,10 +87,11 @@ function Document({
             document.isSelected ? "text-black" : "text-brandGray"
           }`}
         >
-          Placeholder
+          {document.content}
         </p>
       </div>
     </div>
   );
 }
+
 export default DocumentList;

@@ -12,7 +12,7 @@ export type MessageItem = {
   isUser: boolean;
   sender: string;
   text: string;
-  images: { key: number; url: string }[];
+  images: { key: number; url: string }[]; 
   timestamp: string;
   date: string;
   content: string;
