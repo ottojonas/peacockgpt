@@ -1,9 +1,11 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 import axios from "axios";
 import { useEffect } from "react";
+
 interface User {
   id: string;
   email: string;
+  password: string;
 }
 
 interface AuthContextType {

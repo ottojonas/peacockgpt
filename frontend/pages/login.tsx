@@ -16,10 +16,11 @@ const Login = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      console.log({ email, password });
       const response = await axios.post("/api/login", { email, password });
       localStorage.setItem("token", response.data.token);
       alert(response.data.message);
-      login();
+      login(email, password);
       router.push("/");
     } catch (error) {
       alert(error.response?.data.error || "An error occurred");
@@ -53,7 +54,7 @@ const Login = () => {
           </div>
 
           <div className={loginStyles["remember-forget"]}>
-           {/* <label>
+            {/* <label>
               <input type="checkbox" />
               Remember Details
             </label> */}
