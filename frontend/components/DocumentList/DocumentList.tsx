@@ -30,7 +30,25 @@ const DocumentList: React.FC<Props> = ({
   const [newDocumentContent, setNewDocumentContent] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
 
-  const fetchDocuments = async () => {};
+  useEffect(() => {
+    fetchDocuments();
+  }, []);
+
+  const fetchDocuments = async () => {
+    try {
+      const response = await axios.get("/api/documents");
+      const fetchedDocuments = response.data.map((documents: any) => {
+        return {
+          ...document,
+          title: document.title,
+          isSelected: false,
+        };
+      });
+      setDocuments(fetchedDocuments);
+    } catch (error) {
+      console.error("Error fetching documents: ", error);
+    }
+  };
 
   if (error) {
     return <div>{error}</div>;
@@ -58,6 +76,15 @@ const DocumentList: React.FC<Props> = ({
         <div className="grid w-10 h-10 rounded-md bg-brandWhite place-items-center shrink-0">
           <PencilSquareIcon className="w-5 h-5" />
         </div>
+      </div>
+      <div className="grow">
+        {documents.map((document) => (
+          <DocumentItem
+            document={document}
+            key={document.key}
+            onClick={() => {}}
+          />
+        ))}
       </div>
     </div>
   );
