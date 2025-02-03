@@ -22,6 +22,57 @@ routes = Blueprint("routes", __name__)
 auth_bp = Blueprint("auth", __name__)
 
 
+@routes.route("/api/initial-data", methods=["GET"])
+@jwt_required()
+def get_initial_data():
+    user_id = get_jwt_identity()
+
+    try:
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({"error": "User not found "}), 404
+        conversations = Conversation.query.fileter_by(use_id=user_id).all()
+        messages = Message.query.filter_by(user_id=user_id).all()
+        conversations_data = [
+            {
+                "id": conversation.id,
+                "title": conversation.title,
+                "desc": conversation.desc,
+                "date": conversation.data.isoformat(),
+                "isSelected": conversation.isSelected,
+                "isPinned": conversation.isPinned,
+                "userId": conversation.user_id,
+            }
+            for conversation in conversations
+        ]
+        messages_data = [
+            {
+                "id": message.id,
+                "conversationKey": message.conversationKey,
+                "sender": message.sender,
+                "content": message.content,
+                "timestamp": message.timestamp.isoformat(),
+                "userId": message.user_id,
+            }
+            for message in messages
+        ]
+        return (
+            jsonify(
+                {
+                    "user": {"id": user.id, "email": user.email},
+                    "conversations": conversations_data,
+                    "messages": messages_data,
+                }
+            ),
+            200,
+        )
+    except Exception as e:
+        return (
+            jsonify({"error": "failed to fetch initial data", "message": str(e)}),
+            500,
+        )
+
+
 # * route to handle account creation and user registration
 @routes.route("/api/register", methods=["POST"])
 def register():
