@@ -10,7 +10,8 @@ export const sendMessage = async (
   text: string,
   conversationKey: string,
   setMessages: React.Dispatch<React.SetStateAction<MessageItem[]>>,
-  setConversations: React.Dispatch<React.SetStateAction<any[]>>
+  setConversations: React.Dispatch<React.SetStateAction<any[]>>,
+  userId: string
 ) => {
   if (!text.trim()) {
     console.error("message content is empty");
@@ -54,6 +55,7 @@ export const sendMessage = async (
         content: newMessage.text,
         date: newMessage.date,
       },
+      userId,
     });
 
     if (!isFirstUserMessageSet) {
@@ -103,6 +105,7 @@ export const sendMessage = async (
         content: assistantMessage.text,
         date: assistantMessage.date,
       },
+      userId,
     });
 
     if (!isFirstAssistantMessageSet) {
