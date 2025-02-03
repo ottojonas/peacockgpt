@@ -28,6 +28,11 @@ const MessageSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
 });
 
 MessageSchema.virtual("conversation", {

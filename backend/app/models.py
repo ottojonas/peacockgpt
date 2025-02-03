@@ -29,6 +29,7 @@ class Conversation(db.Model):
     key = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     date = db.Column(db.DateTime, nullable=False)
+    user_id = db.Column(db.integer, db.ForeignKey("user.id"), nullabale=False)
     messages = db.relationship("Message", backref="conversation", lazy=True)
 
 
@@ -42,3 +43,4 @@ class Message(db.Model):
     date = db.Column(db.DateTime, nullable=False)
     is_user = db.Column(db.Boolean, nullable=False)
     date = db.Column(db.DateTime, nullable=False)
+    user_id = db.Colunm(db.Integer, db.ForeignKey("user.id"), nullable=False)
