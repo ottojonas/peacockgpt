@@ -24,7 +24,7 @@ export default function Home() {
   const [conversationKey, setConversationKey] = useState<string>("");
   const [conversations, setConversations] = useState<any[]>([]);
   const router = useRouter();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   useEffect(() => {
     if (!isAuthenticated) router.push("/login");
@@ -69,6 +69,7 @@ export default function Home() {
         setMessages={setMessages}
         conversations={conversations}
         setConversations={setConversations}
+        userId={user.id}
       />
       <ChatHeader
         conversationKey={conversationKey}
@@ -81,20 +82,33 @@ export default function Home() {
         setMessages={setMessages}
         conversationKey={conversationKey}
         sendMessage={(text) =>
-          sendMessage(text, conversationKey, setMessages, setConversations)
+          sendMessage(
+            text,
+            conversationKey,
+            setMessages,
+            setConversations,
+            user.id
+          )
         }
       />
       <ChatInput
         setMessages={setMessages}
         sendMessage={(text) =>
-          sendMessage(text, conversationKey, setMessages, setConversations)
+          sendMessage(
+            text,
+            conversationKey,
+            setMessages,
+            setConversations,
+            user.id
+          )
         }
         inputValue={inputValue}
         setInputValue={setInputValue}
         messages={messages}
         conversationKey={conversationKey}
       />
-      <Info />
+      {/*
+      <Info /> */}
       <div className="fixed z-50 bottom-4 right-4">
         {/*
         <button
