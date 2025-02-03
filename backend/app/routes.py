@@ -42,7 +42,7 @@ def get_initial_data():
                 "isSelected": conversation.isSelected,
                 "isPinned": conversation.isPinned,
                 "userId": conversation.user_id,
-            }
+            } 
             for conversation in conversations
         ]
         messages_data = [
