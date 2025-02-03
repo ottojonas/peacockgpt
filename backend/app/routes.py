@@ -15,9 +15,11 @@ from app.services.document_service import (
 from app.utils.file_utils import extract_content_from_file
 from app.utils.openai_utils import generate_response
 from flask_jwt_extended import jwt_required, get_jwt_identity, unset_jwt_cookies
+
 # * create a Blueprint for the routes
 routes = Blueprint("routes", __name__)
-auth_bp = Blueprint('auth', __name__)
+auth_bp = Blueprint("auth", __name__)
+
 
 # * route to handle account creation and user registration
 @routes.route("/api/register", methods=["POST"])
@@ -55,13 +57,15 @@ def login():
     # TODO implement session or token generation here
     return jsonify({"message": "login successful"}), 200
 
-# * routes to handle user signing out 
-@auth_bp.route('/api/logout', methods = ['POST'])
+
+# * routes to handle user signing out
+@auth_bp.route("/api/logout", methods=["POST"])
 @jwt_required()
 def logout():
     response = jsonify({"message": "logout successful"})
     unset_jwt_cookies(response)
     return response, 200
+
 
 # * route to handle asking a question to the AI
 @routes.route("/api/ask", methods=["POST"])
@@ -172,10 +176,17 @@ def create_conversation():
 # * route to get all conversations
 @routes.route("/api/conversations", methods=["GET"])
 def get_conversations():
-    conversations = Conversation.query.all()
+    user_id = request.args.get("userId")
+    if not user_id:
+        return jsonify({"error": "userId is required."}), 400
+    conversations = Conversation.query.filter_by(user_id=user_id).all()
     return jsonify(
         [
-            {"id": conv.id, "title": conv.title, "date": conv.date.isoformat()}
+            {
+                "id": conv.id,
+                "title": conv.title,
+                "date": conv.date.isoformat(),
+            }
             for conv in conversations
         ]
     )
@@ -186,13 +197,14 @@ def get_conversations():
 def new_message():
     data = request.json
     if not data or not all(
-        key in data for key in ("conversationKey", "sender", "content")
+        key in data for key in ("userId", "conversationKey", "sender", "content")
     ):
         return jsonify({"error": "missing required fields"}), 400
     try:
         # * create a new message object and save it to the database
         conversation_key = data["conversationKey"]
         message = Message(
+            user_id=data["userId"],
             conversationKey=conversation_key,
             sender=data["sender"],
             content=data["content"],
@@ -209,8 +221,9 @@ def new_message():
 # * route to get messages for a specific conversation
 @routes.route("/api/messages", methods=["GET"])
 def get_messages():
+    user_id = request.args.get("userId")
     conversationKey = request.args.get("conversationKey")
-    if not conversationKey:
+    if not user_id or not conversationKey:
         return jsonify({"error": "conversationKey is required"}), 400
 
     messages = Message.query.filter_by(conversationKey=conversationKey).all()
