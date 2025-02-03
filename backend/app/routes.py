@@ -1,6 +1,7 @@
 # * Define API routes.
 import datetime
 
+from icecream import ic
 from flask import Blueprint, jsonify, request
 
 from app import db
@@ -150,7 +151,7 @@ def create_conversation():
     data = request.json
     if not data or not all(
         key in data
-        for key in ("key", "title", "desc", "date", "isSelected", "isPinned")
+        for key in ("key", "title", "desc", "date", "isSelected", "isPinned", "userId")
     ):
         return jsonify({"error": "missing required fields"}), 400
     try:
@@ -162,14 +163,15 @@ def create_conversation():
             date=datetime.datetime.fromisoformat(data["date"]),
             isSelected=data["isSelected"],
             isPinned=data["isPinned"],
+            userId=data["userId"],
         )
         db.session.add(conversation)
         db.session.commit()
-        print(f"conversation saved: {conversation}")
+        ic(f"conversation saved: {conversation}")
         return jsonify({"id": conversation.id}), 201
     except Exception as e:
         db.session.rollback()
-        print(f"error saving conversation: {e}")
+        ic(f"error saving conversation: {e}")
         return jsonify({"error": "Failed to save conversation", "message": str(e)}), 500
 
 
