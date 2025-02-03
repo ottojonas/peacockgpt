@@ -30,9 +30,28 @@ export default function Home() {
     if (!isAuthenticated) router.push("/login");
   }, [isAuthenticated, router]);
 
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      const fetchInitialData = async () => {
+        try {
+          const response = await axios.get("/api/initial-data", {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          });
+          console.log("initial data: ", response.data);
+        } catch (error) {
+          console.error("error fetching initial data: ", error);
+        }
+      };
+      fetchInitialData();
+    }
+  }, [isAuthenticated, user]);
+
   if (!isAuthenticated) {
     return null;
   }
+
   // * effect to fetch messages when the conversation key changes
   useEffect(() => {
     if (conversationKey) {
