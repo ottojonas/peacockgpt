@@ -38,6 +38,7 @@ type Props = {
   setMessages: (messages: MessageItem[]) => void;
   conversations: any[];
   setConversations: React.Dispatch<React.SetStateAction<any[]>>;
+  userId: string;
 };
 
 // Main ChatHistory component
@@ -46,6 +47,7 @@ const ChatHistory: React.FC<Props> = ({
   setMessages,
   conversations,
   setConversations,
+  userId,
 }) => {
   const [selectedConversation, setSelectedConversation] =
     useState<ItemProps | null>(null);
@@ -94,7 +96,7 @@ const ChatHistory: React.FC<Props> = ({
       setConversationKey(selectedConversation.key);
       try {
         const response = await axios.get("/api/messages", {
-          params: { conversationKey: selectedConversation.key },
+          params: { conversationKey: selectedConversation.key, userId },
         });
         setMessages(response.data);
       } catch (error) {
@@ -117,7 +119,7 @@ const ChatHistory: React.FC<Props> = ({
     );
     if (pinnedConversation) {
       try {
-        await axios.put(`/api/conversations?key=${key}`, {
+        await axios.put(`/api/conversations?key=${key}&userId=${userId}`, {
           isPinned: pinnedConversation.isPinned,
         });
       } catch (error) {
@@ -134,7 +136,7 @@ const ChatHistory: React.FC<Props> = ({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(newConversation),
+        body: JSON.stringify({ ...newConversation, userId }),
       });
       const data = await response.json();
       const updatedConversation = { ...newConversation, key: data.key };
@@ -152,7 +154,7 @@ const ChatHistory: React.FC<Props> = ({
 
   const handleClearAllChats = async () => {
     try {
-      await axios.delete("/api/conversations");
+      await axios.delete(`/api/conversations?userId=${userId}`);
       setConversations([]);
       setSelectedConversation(null);
       setMessages([]);
