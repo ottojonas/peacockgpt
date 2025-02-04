@@ -56,6 +56,7 @@
     "marked": "^15.0.4",
     "mongoose": "^8.9.0",
     "next": "^13.3.0",
+    "next-auth": "^4.24.11",
     "openai": "^4.77.0",
     "postcss": "8.4.21",
     "punycode": "^2.3.1",
