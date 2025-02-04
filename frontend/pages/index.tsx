@@ -27,7 +27,9 @@ export default function Home() {
   const { isAuthenticated, user } = useAuth();
 
   useEffect(() => {
-    if (!isAuthenticated) router.push("/login");
+    if (!isAuthenticated) {
+      router.push("/login");
+    }
   }, [isAuthenticated, router]);
 
   useEffect(() => {
@@ -47,10 +49,6 @@ export default function Home() {
       fetchInitialData();
     }
   }, [isAuthenticated, user]);
-
-  if (!isAuthenticated) {
-    return null;
-  }
 
   // * effect to fetch messages when the conversation key changes
   useEffect(() => {
@@ -79,6 +77,19 @@ export default function Home() {
     setConversationKey("");
   };
 
+  if (!isAuthenticated) {
+    return null;
+  }
+
+  if (!user) {
+    return (
+      <div>
+        <h2>ERROR: USER NOT FOUND lol?</h2>
+      </div>
+    );
+  }
+
+  // ! FIXME
   return (
     <>
       <CustomHead title="PeacockGPT" />

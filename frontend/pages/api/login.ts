@@ -36,9 +36,11 @@ export default async function handler(
       "Set-Cookie",
       `token=${token}; HttpOnly; Path=/; Max-Age=3600`
     );
-    return res
-      .status(200)
-      .json({ message: "User signed in successfully", token });
+    return res.status(200).json({
+      message: "User signed in successfully",
+      token,
+      user: { id: user._id, email: user.email },
+    });
   } else {
     res.setHeader("Allow", ["POST"]);
     res.status(405).end(`Method ${req.method} not allowed`);
