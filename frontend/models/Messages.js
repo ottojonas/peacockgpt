@@ -33,6 +33,11 @@ const MessageSchema = new mongoose.Schema({
     enum: ["good", "bad"],
     default: "good",
   },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
 });
 
 MessageSchema.virtual("conversation", {
