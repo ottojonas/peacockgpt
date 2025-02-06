@@ -24,7 +24,7 @@ def send_message():
     if not conversation_key or not content:
         return jsonify({"error": "invalid data"}), 400
 
-    message = {"conversationKey": conversation_key, "content": "content"}
+    message = {"conversationKey": conversation_key, "content": content}
     socketio.emit("new_message", message, broadcast=True)
     return jsonify(message), 200
 
@@ -46,4 +46,4 @@ def get_documents():
 
 
 if __name__ == "__main__":
-    socketio.run(app, debug=True, host="0.0.0.0", port=5000)
+    socketio.run(app, debug=True, host="0.0.0.0", port=5000, allow_unsafe_werkzeug=True)
