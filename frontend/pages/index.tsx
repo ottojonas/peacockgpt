@@ -16,7 +16,10 @@ import Info from "../components/Info";
 import io from "socket.io-client";
 
 // * initialise socket connection
-const socket = io("http://localhost:5000");
+const socket = io("https://peacockgpt.onrender.com", {
+  transports: ["websocket", "polling"],
+  withCredentials: true,
+});
 
 export default function Home() {
   const [inputValue, setInputValue] = useState<string>("");
@@ -33,8 +36,8 @@ export default function Home() {
       router.push("/login");
     } else {
       axios.get("/api/conversations").then((response) => {
-        setConversations(response.data.conversations); 
-      })
+        setConversations(response.data.conversations);
+      });
     }
   }, [isAuthenticated, router]);
 
