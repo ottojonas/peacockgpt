@@ -176,11 +176,12 @@ def create_conversation():
 
 # * route to get all conversations
 @routes.route("/api/conversations", methods=["GET"])
+@jwt_required()
 def get_conversations():
-    userId = request.args.get("userId")
-    if not userId:
+    user_id = request.args.get("userId")
+    if not user_id:
         return jsonify({"error": "userId is required"}), 400
-    conversations = Conversation.query.filter_by(userId=userId)
+    conversations = Conversation.query.filter_by(userId=user_id).all()
     return jsonify(
         [
             {
