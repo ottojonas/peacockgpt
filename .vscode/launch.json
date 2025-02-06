@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/otto.jonas/Documents/projects/peacocksalt-projects/peacockgpt/frontend",
-      "program": "c:/Users/otto.jonas/Documents/projects/peacocksalt-projects/peacockgpt/frontend/build/Debug/outDebug",
+      "cwd": "c:/Users/otto.jonas/Documents/projects/peacocksalt-projects/peacockgpt/backend/app",
+      "program": "c:/Users/otto.jonas/Documents/projects/peacocksalt-projects/peacockgpt/backend/app/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

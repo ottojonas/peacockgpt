@@ -11,3 +11,4 @@ python-dotenv==1.0.1
 setuptools==75.2.0
 celery==5.2.7
 python-docx==0.8.11
+flask_jwt_extended == 4.4.4
