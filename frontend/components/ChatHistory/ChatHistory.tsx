@@ -9,7 +9,6 @@ import PinnedIcon from "../../components/icons/PinnedIcon";
 import ListAllIcon from "../../components/icons/ListAllIcon";
 import { MessageItem } from "../Chat/Chat";
 
-// Define the type for conversation items
 type ItemProps = {
   key: string;
   title: string;
@@ -19,7 +18,6 @@ type ItemProps = {
   isPinned: boolean;
 };
 
-// Function to create a new conversation with default values
 const createNewConversation = (): ItemProps => {
   const now = new Date();
   return {
@@ -32,7 +30,6 @@ const createNewConversation = (): ItemProps => {
   };
 };
 
-// Define the props for the ChatHistory component
 type Props = {
   setConversationKey: (key: string) => void;
   setMessages: (messages: MessageItem[]) => void;
@@ -40,11 +37,10 @@ type Props = {
   setConversations: React.Dispatch<React.SetStateAction<any[]>>;
 };
 
-// Main ChatHistory component
 const ChatHistory: React.FC<Props> = ({
   setConversationKey,
   setMessages,
-  conversations,
+  conversations = [],
   setConversations,
 }) => {
   const [selectedConversation, setSelectedConversation] =
@@ -71,7 +67,6 @@ const ChatHistory: React.FC<Props> = ({
         (a: { date: string }, b: { date: string }) =>
           new Date(b.date).getTime() - new Date(a.date).getTime()
       );
-      // console.log("Fetched conversations:", formattedConversations);
       setConversations(formattedConversations);
     } catch (error) {
       console.error("Error fetching conversations:", error);
@@ -138,7 +133,7 @@ const ChatHistory: React.FC<Props> = ({
       });
       const data = await response.json();
       const updatedConversation = { ...newConversation, key: data.key };
-      setConversations((prevConversations) => [
+      setConversations((prevConversations = []) => [
         ...prevConversations.map((conv) => ({ ...conv, isSelected: false })),
         updatedConversation,
       ]);
@@ -171,7 +166,7 @@ const ChatHistory: React.FC<Props> = ({
     };
     return new Intl.DateTimeFormat("en-GB", options).format(new Date(date));
   };
-  
+
   return (
     <div className="fixed top-0 z-10 flex flex-col h-screen px-2 border-r-2 left-16 w-80 border-r-line bg-body">
       <div className="flex items-center px-3 py-3 shrink-0">
@@ -249,7 +244,6 @@ const ChatHistory: React.FC<Props> = ({
   );
 };
 
-// Component to render each conversation item
 function Item({
   item,
   onClick,
