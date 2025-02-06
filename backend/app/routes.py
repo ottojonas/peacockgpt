@@ -150,7 +150,7 @@ def create_conversation():
     data = request.json
     if not data or not all(
         key in data
-        for key in ("key", "title", "desc", "date", "isSelected", "isPinned")
+        for key in ("key", "title", "desc", "date", "isSelected", "isPinned", "userId")
     ):
         return jsonify({"error": "missing required fields"}), 400
     try:
@@ -162,6 +162,7 @@ def create_conversation():
             date=datetime.datetime.fromisoformat(data["date"]),
             isSelected=data["isSelected"],
             isPinned=data["isPinned"],
+            userId=data["userId"],
         )
         db.session.add(conversation)
         db.session.commit()
@@ -176,10 +177,18 @@ def create_conversation():
 # * route to get all conversations
 @routes.route("/api/conversations", methods=["GET"])
 def get_conversations():
-    conversations = Conversation.query.all()
+    userId = request.args.get("userId")
+    if not userId:
+        return jsonify({"error": "userId is required"}), 400
+    conversations = Conversation.query.filter_by(userId=userId)
     return jsonify(
         [
-            {"id": conv.id, "title": conv.title, "date": conv.date.isoformat()}
+            {
+                "id": conv.id,
+                "title": conv.title,
+                "date": conv.date.isoformat(),
+                "userId": conv.userId,
+            }
             for conv in conversations
         ]
     )
