@@ -29,7 +29,13 @@ export default function Home() {
   const { isAuthenticated } = useAuth();
 
   useEffect(() => {
-    if (!isAuthenticated) router.push("/login");
+    if (!isAuthenticated) {
+      router.push("/login");
+    } else {
+      axios.get("/api/conversations").then((response) => {
+        setConversations(response.data.conversations); 
+      })
+    }
   }, [isAuthenticated, router]);
 
   if (!isAuthenticated) {
