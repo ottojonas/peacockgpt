@@ -9,7 +9,7 @@
     "build: css": "postcss config/tailwind.config.js -o styles/global.css",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest --confitg config/jest.config.cjs",
+    "test": "jest --config config/jest.config.cjs",
     "watch-tests": "jest --watch --config config/jest.config.cjs",
     "electron": "electron .",
     "package-win": "electron-packager . PeacockGPT --platform=win32 --arch=x64 --out=dist --overwrite",
