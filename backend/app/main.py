@@ -6,8 +6,8 @@ from flask_cors import CORS
 from flask_socketio import SocketIO, emit
 
 app = create_app()
-CORS(app, resources={r"/*": {"origins": "https://peacockgpt.vercel.app"}})
-socketio = SocketIO(app, cors_allowed_origins="https://peacockgpt.vercel.app")
+CORS(app, resources={r"/*": {"origins": "*"}})
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 
 @app.route("/api/messages", methods=["GET"])
