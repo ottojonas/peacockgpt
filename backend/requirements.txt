@@ -10,3 +10,4 @@ pypdf==5.1.0
 python-dotenv==1.0.1
 setuptools==75.2.0
 celery==5.2.7
+python-docx==0.8.11
