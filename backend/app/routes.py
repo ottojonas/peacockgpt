@@ -54,8 +54,21 @@ def login():
     if user is None or not user.check_password(password):
         return jsonify({"error": "invalid email or password"}), 401
 
+    conversations = Conversation.query.filter_by(user_id=user.id).all()
+    conversations_data = [
+        {
+            "key": conv.key,
+            "title": conv.title,
+            "data": conv.data.isoformat(),
+        }
+        for conv in conversations
+    ]
+
     # TODO implement session or token generation here
-    return jsonify({"message": "login successful"}), 200
+    return (
+        jsonify({"message": "login successful", "conversations": conversations_data}),
+        200,
+    )
 
 
 # * routes to handle user signing out
