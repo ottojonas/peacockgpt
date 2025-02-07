@@ -17,3 +17,6 @@ frontend/.next
 /frontend/peacockgpt-macos
 /frontend/peacockgpt-linux
 /wakawaka.txt
+/scripts
+/frontend/tests
+/backend/tests
