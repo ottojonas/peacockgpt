@@ -14,3 +14,4 @@ python-docx==0.8.11
 flask_jwt_extended == 4.4.4
 gevent==22.10.2
 gunicorn
+flask_pymongo
