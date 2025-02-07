@@ -1,0 +1,10 @@
+build:
+  languages:
+    - nodejs
+    - python
+  buildpacks:
+    - heroku/nodejs
+    - heroku/python
+  paths:
+    - frontend
+    - backend
