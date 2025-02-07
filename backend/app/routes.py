@@ -1,7 +1,7 @@
 # * Define API routes.
 import datetime
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, make_response
 
 from app import db
 from app.models import Conversation, Message, User
@@ -78,17 +78,26 @@ def login():
     access_token = create_access_token(identity=user.id)
     refresh_token = create_refresh_token(identity=user.id)
 
-    return (
+    response = make_response(
         jsonify(
             {
                 "message": "login successful",
-                "conversations": conversations_data,
                 "access_token": access_token,
                 "refresh_token": refresh_token,
             }
         ),
         200,
     )
+
+    response.set_cookie(
+        "__vercel_live_token",
+        value=access_token,
+        httponly=True,
+        secure=True,
+        samesite="None",
+    )
+
+    return response
 
 
 # * routes to handle user signing out
