@@ -12,6 +12,6 @@ setuptools==75.2.0
 celery==5.2.7
 python-docx==0.8.11
 flask_jwt_extended == 4.4.4
-gevent==23.1.0
+gevent==24.11.1
 gunicorn
 flask_pymongo
