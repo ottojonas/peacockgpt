@@ -6,11 +6,12 @@ import sys
 
 sys.setrecursionlimit(1500)
 
-from app import create_app
-from app.services.document_service import get_all_documents
 from flask import jsonify, request
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit
+
+from app import create_app
+from app.services.document_service import get_all_documents
 
 app = create_app()
 CORS(app, resources={r"/*": {"origins": "*"}})
