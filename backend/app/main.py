@@ -10,6 +10,11 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 
+@app.route("/", methods=["GET"])
+def index():
+    return "Welcome to PeacockGPT! :)", 200
+
+
 @app.route("/api/messages", methods=["GET"])
 def get_messages():
     pass
