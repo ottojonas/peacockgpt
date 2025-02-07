@@ -32,6 +32,11 @@ def dns_query():
     return jsonify({"message": "DNS query recieved"}), 200
 
 
+@routes.route("/", methods=["GET"])
+def index():
+    return jsonify({"message": "welcome to the app"})
+
+
 # * route to handle account creation and user registration
 @routes.route("/api/register", methods=["POST"])
 def register():
