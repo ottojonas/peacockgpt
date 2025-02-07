@@ -23,6 +23,9 @@
       "<rootDir>/frontend/config/jest.setup.js"
     ]
   },
+  "engines": {
+    "node": ">=14.0.0"
+  },
   "bin": "frontend/index.js",
   "pkg": {
     "scripts": [
