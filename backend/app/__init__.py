@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 import os
 
 mongo = PyMongo()
+db = PyMongo()
 
 
 def create_app():

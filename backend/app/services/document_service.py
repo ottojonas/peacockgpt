@@ -1,7 +1,7 @@
 # * Handles document ingestion and processing.
 import os
 
-from app import db
+from app import mongo
 from app.models import TrainingDocument
 from sqlalchemy.orm import Session
 
@@ -24,8 +24,8 @@ def save_document(file):
 
 def add_document_to_db(title, content):
     document = TrainingDocument(title=title, content=content)
-    db.session.add(document)
-    db.session.commit()
+    mongo.session.add(document)
+    mongo.session.commit()
     return document
 
 
@@ -38,7 +38,7 @@ def get_all_documents():
 
 
 def delete_document(doc_id):
-    session = db.session
+    session = mongo.session
     document = session.get(TrainingDocument, doc_id)
     if document:
         session.delete(document)
