@@ -14,11 +14,22 @@ from app.services.document_service import (
 )
 from app.utils.file_utils import extract_content_from_file
 from app.utils.openai_utils import generate_response
-from flask_jwt_extended import jwt_required, get_jwt_identity, unset_jwt_cookies, create_access_token, create_refresh_token
+from flask_jwt_extended import (
+    jwt_required,
+    get_jwt_identity,
+    unset_jwt_cookies,
+    create_access_token,
+    create_refresh_token,
+)
 
 # * create a Blueprint for the routes
 routes = Blueprint("routes", __name__)
 auth_bp = Blueprint("auth", __name__)
+
+
+@routes.route("/dns-query", methods=["POST"])
+def dns_query():
+    return jsonify({"message": "DNS query recieved"}), 200
 
 
 # * route to handle account creation and user registration
