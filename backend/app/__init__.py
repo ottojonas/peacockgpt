@@ -11,7 +11,7 @@ db = SQLAlchemy()
 def create_app():
     app = Flask(__name__)
     load_dotenv()
-    app.config["JWT_SECRET_KEY"] = os.getend("JWT_SECRET_KEY")
+    app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
     jwt = JWTManager(app)
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///conversations.db"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
