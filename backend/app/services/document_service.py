@@ -5,7 +5,7 @@ from app import mongo
 from app.models import TrainingDocument
 from sqlalchemy.orm import Session
 
-UPLOAD_FOLDER = "backend/app/services/document_service.py"
+UPLOAD_FOLDER = "backend/app/services/documents"
 ALLOWED_EXTENSIONS = {"pdf", "docx", "txt"}
 
 
@@ -14,7 +14,7 @@ def allowed_file(filename):
 
 
 def save_document(file):
-    directory = "backend/app/services/document_services.py"
+    directory = UPLOAD_FOLDER
     if not os.path.exists(directory):
         os.makedirs(directory)
     file_path = os.path.join(directory, file.filename)
