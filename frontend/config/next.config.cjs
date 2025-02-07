@@ -29,6 +29,7 @@ const nextConfig = {
     ];
   },
   assetPrefix: process.env.NODE_ENV === "production" ? "/static" : "",
+  basePath: process.env.NODE_ENV === "production" ? "/static" : "",
 };
 
 module.exports = nextConfig;

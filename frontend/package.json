@@ -15,7 +15,8 @@
     "package-win": "electron-packager . PeacockGPT --platform=win32 --arch=x64 --out=dist --overwrite",
     "package-mac": "electron-packager . PeacockGPT --platform=darwin --arch=x64 --out=dist --overwrite",
     "package-linux": "electron-packager . PeacockGPT --platform=linux --arch=x64 --out=dist --overwrite",
-    "pkg": "pkg ."
+    "pkg": "pkg .", 
+    "heroki-postbuild": "npm run build"
   },
   "jest": {
     "setupFilesAfterEnv": [
