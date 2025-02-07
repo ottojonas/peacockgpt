@@ -1,7 +1,4 @@
 import gevent.monkey
-
-gevent.monkey.patch_all()
-
 import sys
 
 sys.setrecursionlimit(1500)
