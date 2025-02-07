@@ -1,6 +1,6 @@
-from gevent import monkey
+import gevent.monkey
 
-monkey.patch_all()
+gevent.monkey.patch_all()
 
 from app import create_app
 from app.services.document_service import get_all_documents
