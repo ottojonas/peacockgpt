@@ -13,7 +13,7 @@ def create_app():
     load_dotenv()
     app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
     jwt = JWTManager(app)
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///conversations.db"
+    app.config["MONGODB_URI"] = os.getenv("MONGODB_URI")
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.init_app(app)
 
