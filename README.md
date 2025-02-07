@@ -1,4 +1,3 @@
-````markdown
 # PeacockGPT
 
 **PeacockGPT** is an AI-powered assistant designed to help new and temporary employees navigate our company’s internal systems with ease. Leveraging advanced GPT technology, PeacockGPT provides quick answers, step-by-step guidance, and contextual support to ensure you can complete your daily tasks confidently and efficiently.
@@ -53,7 +52,6 @@ Whether you’re trying to locate documentation, learn how to use a particular s
    git clone https://github.com/ottojonas/peacockgpt.git
    cd peacockgpt
    ```
-````
 
 2. **Create and Activate a Virtual Environment:**
 
@@ -123,33 +121,33 @@ PeacockGPT can be accessed in several ways depending on your needs:
 
 PeacockGPT is designed to support you throughout your workday. Here are a few common scenarios:
 
-- **Onboarding and System Access:**  
-  _Example:_ “How do I log into the internal email system?”  
+- **Onboarding and System Access:**
+  _Example:_ “How do I log into the internal email system?”
   _Response:_ Provides a step-by-step guide, including troubleshooting tips if you experience issues.
 
-- **Troubleshooting:**  
-  _Example:_ “I can’t access the timekeeping system—what should I do?”  
+- **Troubleshooting:**
+  _Example:_ “I can’t access the timekeeping system—what should I do?”
   _Response:_ Offers diagnostic steps, common issues, and instructions for contacting IT support if necessary.
 
-- **Learning Procedures:**  
-  _Example:_ “What is the process for submitting a project report?”  
+- **Learning Procedures:**
+  _Example:_ “What is the process for submitting a project report?”
   _Response:_ Details the required steps, links to official documentation, and tips for efficiency.
 
-- **Finding Documentation:**  
-  _Example:_ “Where can I find the user manual for the new CRM?”  
+- **Finding Documentation:**
+  _Example:_ “Where can I find the user manual for the new CRM?”
   _Response:_ Supplies a direct link and a summary of the contents.
 
 ---
 
 ## FAQ
 
-**Q: Do I need technical expertise to use PeacockGPT?**  
+**Q: Do I need technical expertise to use PeacockGPT?**
 _A:_ No, PeacockGPT is built for users of all technical backgrounds.
 
-**Q: How often is the information updated?**  
+**Q: How often is the information updated?**
 _A:_ The system is maintained regularly to reflect the latest updates in company procedures and policies.
 
-**Q: What if my question isn’t answered?**  
+**Q: What if my question isn’t answered?**
 _A:_ If you encounter an unanswered query, refer to the official documentation or contact IT support directly.
 
 ---
@@ -158,16 +156,16 @@ _A:_ If you encounter an unanswered query, refer to the official documentation o
 
 We welcome contributions to improve PeacockGPT! To contribute:
 
-1. **Fork the Repository:**  
+1. **Fork the Repository:**
    Click the “Fork” button on GitHub to create your own copy.
 
-2. **Create a New Branch:**  
+2. **Create a New Branch:**
    Use a descriptive name for your feature or bug fix.
 
-3. **Commit and Push Your Changes:**  
+3. **Commit and Push Your Changes:**
    Ensure your code follows our style guidelines.
 
-4. **Submit a Pull Request:**  
+4. **Submit a Pull Request:**
    Provide a detailed description of your changes for review.
 
 ---
@@ -180,7 +178,7 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## Support
 
-If you have any questions, issues, or need further assistance, please contact our support team at [support@company.com](mailto:support@company.com).
+If you have any questions, issues, or need further assistance, please contact our support team at [ottobjonas@outlook.com](mailto:ottobjonas@outlook.com).
 
 ---
 
