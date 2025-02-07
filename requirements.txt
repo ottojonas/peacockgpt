@@ -13,5 +13,5 @@ celery==5.2.7
 python-docx==0.8.11
 flask_jwt_extended == 4.4.4
 gevent==24.11.1
-gunicorn
-flask_pymongo
+gunicorn==23.0.0
+flask_pymongo==2.3.0
