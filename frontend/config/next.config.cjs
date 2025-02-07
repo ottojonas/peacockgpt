@@ -24,7 +24,7 @@ const nextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: "https://peacockgpt.onrender.com/api/:path", // proxy to flask backend hopefully
+        destination: "https://peacockgpt.onrender.com/:path", // proxy to flask backend hopefully
       },
     ];
   },
