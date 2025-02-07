@@ -16,7 +16,7 @@ import Info from "../components/Info";
 import io from "socket.io-client";
 
 // * initialise socket connection
-const socket = io("https://peacockgpt.onrender.com", {
+const socket = io("https://git.heroku.com/peacockgpt.git", {
   transports: ["websocket", "polling"],
   withCredentials: true,
 });
