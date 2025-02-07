@@ -37,7 +37,7 @@ export default async function handler(
 
       res.setHeader(
         "Set-Cookie",
-        `token=${token}; HttpOnly; Path=/; Max-Age=3600`
+        `token=${token}; HttpOnly; Path=/; Max-Age=3600; SameSite=None; Secure`
       );
       return res
         .status(200)
