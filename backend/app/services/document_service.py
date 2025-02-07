@@ -1,8 +1,8 @@
 # * Handles document ingestion and processing.
 import os
 
-from app import mongo
-from app.models import TrainingDocument
+from .. import mongo
+from ..models import TrainingDocument
 from sqlalchemy.orm import Session
 
 UPLOAD_FOLDER = "backend/app/services/documents"

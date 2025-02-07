@@ -13,7 +13,7 @@ def create_app():
     app = Flask(__name__)
     load_dotenv()
     app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
-    jwt = JWTManager(app)
+    JWTManager(app)
     app.config["MONGO_URI"] = os.getenv("MONGODB_URI")
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     mongo.init_app(app)
