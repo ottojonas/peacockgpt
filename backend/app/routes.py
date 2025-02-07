@@ -14,7 +14,7 @@ from app.services.document_service import (
 )
 from app.utils.file_utils import extract_content_from_file
 from app.utils.openai_utils import generate_response
-from flask_jwt_extended import jwt_required, get_jwt_identity, unset_jwt_cookies
+from flask_jwt_extended import jwt_required, get_jwt_identity, unset_jwt_cookies, create_access_token, create_refresh_token
 
 # * create a Blueprint for the routes
 routes = Blueprint("routes", __name__)
@@ -64,9 +64,18 @@ def login():
         for conv in conversations
     ]
 
-    # TODO implement session or token generation here
+    access_token = create_access_token(identity=user.id)
+    refresh_token = create_refresh_token(identity=user.id)
+
     return (
-        jsonify({"message": "login successful", "conversations": conversations_data}),
+        jsonify(
+            {
+                "message": "login successful",
+                "conversations": conversations_data,
+                "access_token": access_token,
+                "refresh_token": refresh_token,
+            }
+        ),
         200,
     )
 
