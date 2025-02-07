@@ -1,4 +1,7 @@
-# * Entry point for the backend application.
+from gevent import monkey
+
+monkey.patch_all()
+
 from app import create_app
 from app.services.document_service import get_all_documents
 from flask import jsonify, request
