@@ -2,6 +2,10 @@ import gevent.monkey
 
 gevent.monkey.patch_all()
 
+import sys
+
+sys.setrecursionlimit(1500)
+
 from app import create_app
 from app.services.document_service import get_all_documents
 from flask import jsonify, request
