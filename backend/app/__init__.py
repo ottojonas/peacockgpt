@@ -1,11 +1,11 @@
 # * Initialize the Flask/Django app.
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
+from flask_pymongo import PyMongo
 from flask_jwt_extended import JWTManager
 from dotenv import load_dotenv
 import os
 
-db = SQLAlchemy()
+mongo = PyMongo()
 
 
 def create_app():
@@ -13,9 +13,9 @@ def create_app():
     load_dotenv()
     app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
     jwt = JWTManager(app)
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("MONGODB_URI")
+    app.config["MONGO_URI"] = os.getenv("MONGODB_URI")
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    db.init_app(app)
+    mongo.init_app(app)
 
     from .routes import routes
 

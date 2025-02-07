@@ -3,7 +3,7 @@ import datetime
 
 from flask import Blueprint, jsonify, request, make_response
 
-from app import db
+from app import mongo
 from app.models import Conversation, Message, User
 from app.services.document_service import (
     add_document_to_db,
@@ -45,8 +45,8 @@ def register():
 
     user = User(email=email)
     user.set_password(password)
-    db.session.add(user)
-    db.session.commit()
+    mongo.session.add(user)
+    mongo.session.commit()
 
     return jsonify({"message": "user registered successfully"}), 201
 
@@ -84,6 +84,7 @@ def login():
                 "message": "login successful",
                 "access_token": access_token,
                 "refresh_token": refresh_token,
+                "conversations": conversations_data,
             }
         ),
         200,
@@ -168,7 +169,7 @@ def list_documents():
 # * route to get a specific document by its ID
 @routes.route("/documents/<int:doc_id>", methods=["GET"])
 def get_document(doc_id):
-    document = get_document_by_id(db.session, doc_id)
+    document = get_document_by_id(mongo.session, doc_id)
     if document:
         return jsonify(
             {"id": document.id, "title": document.title, "content": document.content}
@@ -179,7 +180,7 @@ def get_document(doc_id):
 # * route to delete a specific document by its ID
 @routes.route("/documents/<int:doc_id>", methods=["DELETE"])
 def delete_document_route(doc_id):
-    document = get_document_by_id(db.session, doc_id)
+    document = get_document_by_id(mongo.session, doc_id)
     if document:
         delete_document(doc_id)
         return jsonify({"message": "Document deleted successfully"}), 200
@@ -205,12 +206,12 @@ def create_conversation():
             isSelected=data["isSelected"],
             isPinned=data["isPinned"],
         )
-        db.session.add(conversation)
-        db.session.commit()
+        mongo.session.add(conversation)
+        mongo.session.commit()
         print(f"conversation saved: {conversation}")
         return jsonify({"id": conversation.id}), 201
     except Exception as e:
-        db.session.rollback()
+        mongo.session.rollback()
         print(f"error saving conversation: {e}")
         return jsonify({"error": "Failed to save conversation", "message": str(e)}), 500
 
@@ -245,11 +246,11 @@ def new_message():
             timestamp=datetime.datetime.utcnow(),
             rating="good",
         )
-        db.session.add(message)
-        db.session.commit()
+        mongo.session.add(message)
+        mongo.session.commit()
         return jsonify({"id": message.id}), 201
     except Exception as e:
-        db.session.rollback()
+        mongo.session.rollback()
         return jsonify({"error": "failed to save message", "message": str(e)}), 500
 
 
@@ -286,10 +287,10 @@ def update_conversation(key):
         if not conversation:
             return jsonify({"error": "conversation not found"}), 404
         conversation.isPinned = data["isPinned"]
-        db.session.commit()
+        mongo.session.commit()
         return jsonify({"message": "conversation updated successfully"})
     except Exception as e:
-        db.session.rollback()
+        mongo.session.rollback()
         return (
             jsonify({"error": "failed to update conversation", "message": str(e)}),
             500,
@@ -308,8 +309,8 @@ def rate_message():
         if not message:
             return jsonify({"error": "message not found"}), 404
         message.rating = data["rating"]
-        db.session.commit()
+        mongo.session.commit()
         return jsonify({"message": "message rated successfully"})
     except Exception as e:
-        db.session.rollback()
+        mongo.session.rollback()
         return jsonify({"error": "failed to rate message", "message": str(e)}), 500
