@@ -3,17 +3,17 @@ import datetime
 
 from flask import Blueprint, jsonify, request, make_response
 
-from app import mongo
-from app.models import Conversation, Message, User
-from app.services.document_service import (
+from . import mongo
+from .models import Conversation, Message, User
+from .services.document_service import (
     add_document_to_db,
     delete_document,
     get_all_documents,
     get_document_by_id,
     save_document,
 )
-from app.utils.file_utils import extract_content_from_file
-from app.utils.openai_utils import generate_response
+from .utils.file_utils import extract_content_from_file
+from .utils.openai_utils import generate_response
 from flask_jwt_extended import (
     jwt_required,
     get_jwt_identity,
