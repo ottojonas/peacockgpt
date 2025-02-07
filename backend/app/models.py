@@ -1,14 +1,15 @@
-# * Define database models.
-from werkzeug.security import check_password_hash, generate_password_hash
+from pymongo import MongoClient
+from werkzeug.security import generate_password_hash, check_password_hash
+import os
 
-from . import db
+client = MongoClient(os.getenv("MONGODB_URI"))
+db = client.get_default_database()
 
 
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(128), nullable=False)
-    conversations = db.relationship("Conversation", backref="user", lazy=True)
+class User:
+    def __init__(self, email, password_hash):
+        self.email = email
+        self.password_hash = password_hash
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -16,32 +17,57 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    @staticmethod
+    def find_by_email(email):
+        return db.users.find_one({"email": email})
 
-class TrainingDocument(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
-    content = db.Column(db.Text, nullable=False)
-
-    def __repr__(self):
-        return f"<TrainingDocument {self.title}>"
-
-
-class Conversation(db.Model):
-    key = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
-    date = db.Column(db.DateTime, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    messages = db.relationship("Message", backref="conversation", lazy=True)
+    @staticmethod
+    def save(user):
+        db.users.insert_one(user.__dict__)
 
 
-class Message(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    conversationKey = db.Column(
-        db.Integer, db.ForeignKey("conversation.key"), nullable=False
-    )
-    text = db.Column(db.Text, nullable=False)
-    is_user = db.Column(db.Boolean, nullable=False)
-    date = db.Column(db.DateTime, nullable=False)
-    is_user = db.Column(db.Boolean, nullable=False)
-    date = db.Column(db.DateTime, nullable=False)
-    ratinf = db.Column(db.String, nullable=True)
+class TrainingDocument:
+    def __init__(self, title, content):
+        self.title = title
+        self.content = content
+
+    @staticmethod
+    def find_all():
+        return list(db.training_documents.find())
+
+    @staticmethod
+    def save(document):
+        db.training_documents.insert_one(document.__dict__)
+
+
+class Conversation:
+    def __init__(self, key, title, date, user_id):
+        self.key = key
+        self.title = title
+        self.date = date
+        self.user_id = user_id
+
+    @staticmethod
+    def find_by_key(key):
+        return db.conversations.find_one({"key": key})
+
+    @staticmethod
+    def save(conversation):
+        db.conversations.insert_one(conversation.__dict__)
+
+
+class Message:
+    def __init__(self, conversation_key, text, is_user, date, rating=None):
+        self.conversation_key = conversation_key
+        self.text = text
+        self.is_user = is_user
+        self.date = date
+        self.rating = rating
+
+    @staticmethod
+    def find_by_id(message_id):
+        return db.messages.find_one({"_id": message_id})
+
+    @staticmethod
+    def save(message):
+        db.messages.insert_one(message.__dict__)
