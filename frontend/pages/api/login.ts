@@ -13,39 +13,32 @@ export default async function handler(
     const { email, password } = req.body;
 
     if (!email || !password) {
-      console.error("Email and password are required");
       return res.status(400).json({ error: "Email and password are required" });
     }
 
-    try {
-      await connectToDatabase();
+    await connectToDatabase();
 
-      const user = await User.findOne({ email });
-      if (!user || !(await bcrypt.compare(password, user.password))) {
-        console.error("Invalid email or password");
-        return res.status(401).json({ error: "Invalid email or password" });
-      }
-
-      const userSecretKey = crypto.randomBytes(64).toString("hex");
-
-      user.secretKey = userSecretKey;
-      await user.save();
-
-      const token = jwt.sign({ id: user._id }, userSecretKey, {
-        expiresIn: "1h",
-      });
-
-      res.setHeader(
-        "Set-Cookie",
-        `token=${token}; HttpOnly; Path=/; Max-Age=3600; SameSite=None; Secure`
-      );
-      return res
-        .status(200)
-        .json({ message: "User signed in successfully", token });
-    } catch (error) {
-      console.error("Error during login:", error);
-      res.status(500).json({ error: "Internal server error" });
+    const user = await User.findOne({ email });
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      return res.status(401).json({ error: "Invalid email or password" });
     }
+
+    const userSecretKey = crypto.randomBytes(64).toString("hex");
+
+    user.secretKey = userSecretKey;
+    await user.save();
+
+    const token = jwt.sign({ id: user._id }, userSecretKey, {
+      expiresIn: "1h",
+    });
+
+    res.setHeader(
+      "Set-Cookie",
+      `token=${token}; HttpOnly; Path=/; Max-Age=3600`
+    );
+    return res
+      .status(200)
+      .json({ message: "User signed in successfully", token });
   } else {
     res.setHeader("Allow", ["POST"]);
     res.status(405).end(`Method ${req.method} not allowed`);

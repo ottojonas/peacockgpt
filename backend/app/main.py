@@ -1,23 +1,13 @@
-import gevent.monkey
-import sys
-
-sys.setrecursionlimit(1500)
-
+# * Entry point for the backend application.
+from app import create_app
+from app.services.document_service import get_all_documents
 from flask import jsonify, request
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit
 
-from app import create_app
-from app.services.document_service import get_all_documents
-
 app = create_app()
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
-
-
-@app.route("/", methods=["GET"])
-def index():
-    return "Welcome to PeacockGPT! :)", 200
 
 
 @app.route("/api/messages", methods=["GET"])
@@ -34,8 +24,8 @@ def send_message():
     if not conversation_key or not content:
         return jsonify({"error": "invalid data"}), 400
 
-    message = {"conversationKey": conversation_key, "content": content}
-    socketio.emit("new_message", message, broadcast=True)
+    message = {"conversationKey": conversation_key, "content": "content"}
+    socketio.emir("new_message", message, broadcast=True)
     return jsonify(message), 200
 
 

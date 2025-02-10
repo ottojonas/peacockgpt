@@ -2,6 +2,10 @@
 
 **PeacockGPT** is an AI-powered assistant designed to help new and temporary employees navigate our company’s internal systems with ease. Leveraging advanced GPT technology, PeacockGPT provides quick answers, step-by-step guidance, and contextual support to ensure you can complete your daily tasks confidently and efficiently.
 
+## Screenshot
+
+![peacock_thumbnail](assets/peacock_thumbnail.jpg)
+
 ---
 
 ## Table of Contents

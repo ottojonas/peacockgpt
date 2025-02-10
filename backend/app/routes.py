@@ -1,40 +1,24 @@
 # * Define API routes.
 import datetime
 
-from flask import Blueprint, jsonify, request, make_response
+from flask import Blueprint, jsonify, request
 
-from . import mongo
-from .models import Conversation, Message, User
-from .services.document_service import (
+from app import db
+from app.models import Conversation, Message, User
+from app.services.document_service import (
     add_document_to_db,
     delete_document,
     get_all_documents,
     get_document_by_id,
     save_document,
 )
-from .utils.file_utils import extract_content_from_file
-from .utils.openai_utils import generate_response
-from flask_jwt_extended import (
-    jwt_required,
-    get_jwt_identity,
-    unset_jwt_cookies,
-    create_access_token,
-    create_refresh_token,
-)
+from app.utils.file_utils import extract_content_from_file
+from app.utils.openai_utils import generate_response
+from flask_jwt_extended import jwt_required, get_jwt_identity, unset_jwt_cookies
 
 # * create a Blueprint for the routes
 routes = Blueprint("routes", __name__)
 auth_bp = Blueprint("auth", __name__)
-
-
-@routes.route("/dns-query", methods=["POST"])
-def dns_query():
-    return jsonify({"message": "DNS query recieved"}), 200
-
-
-@routes.route("/", methods=["GET"])
-def index():
-    return jsonify({"message": "welcome to the app"})
 
 
 # * route to handle account creation and user registration
@@ -50,8 +34,8 @@ def register():
 
     user = User(email=email)
     user.set_password(password)
-    mongo.session.add(user)
-    mongo.session.commit()
+    db.session.add(user)
+    db.session.commit()
 
     return jsonify({"message": "user registered successfully"}), 201
 
@@ -80,30 +64,11 @@ def login():
         for conv in conversations
     ]
 
-    access_token = create_access_token(identity=user.id)
-    refresh_token = create_refresh_token(identity=user.id)
-
-    response = make_response(
-        jsonify(
-            {
-                "message": "login successful",
-                "access_token": access_token,
-                "refresh_token": refresh_token,
-                "conversations": conversations_data,
-            }
-        ),
+    # TODO implement session or token generation here
+    return (
+        jsonify({"message": "login successful", "conversations": conversations_data}),
         200,
     )
-
-    response.set_cookie(
-        "__vercel_live_token",
-        value=access_token,
-        httponly=True,
-        secure=True,
-        samesite="None",
-    )
-
-    return response
 
 
 # * routes to handle user signing out
@@ -174,7 +139,7 @@ def list_documents():
 # * route to get a specific document by its ID
 @routes.route("/documents/<int:doc_id>", methods=["GET"])
 def get_document(doc_id):
-    document = get_document_by_id(mongo.session, doc_id)
+    document = get_document_by_id(db.session, doc_id)
     if document:
         return jsonify(
             {"id": document.id, "title": document.title, "content": document.content}
@@ -185,7 +150,7 @@ def get_document(doc_id):
 # * route to delete a specific document by its ID
 @routes.route("/documents/<int:doc_id>", methods=["DELETE"])
 def delete_document_route(doc_id):
-    document = get_document_by_id(mongo.session, doc_id)
+    document = get_document_by_id(db.session, doc_id)
     if document:
         delete_document(doc_id)
         return jsonify({"message": "Document deleted successfully"}), 200
@@ -211,12 +176,12 @@ def create_conversation():
             isSelected=data["isSelected"],
             isPinned=data["isPinned"],
         )
-        mongo.session.add(conversation)
-        mongo.session.commit()
+        db.session.add(conversation)
+        db.session.commit()
         print(f"conversation saved: {conversation}")
         return jsonify({"id": conversation.id}), 201
     except Exception as e:
-        mongo.session.rollback()
+        db.session.rollback()
         print(f"error saving conversation: {e}")
         return jsonify({"error": "Failed to save conversation", "message": str(e)}), 500
 
@@ -251,11 +216,11 @@ def new_message():
             timestamp=datetime.datetime.utcnow(),
             rating="good",
         )
-        mongo.session.add(message)
-        mongo.session.commit()
+        db.session.add(message)
+        db.session.commit()
         return jsonify({"id": message.id}), 201
     except Exception as e:
-        mongo.session.rollback()
+        db.session.rollback()
         return jsonify({"error": "failed to save message", "message": str(e)}), 500
 
 
@@ -292,10 +257,10 @@ def update_conversation(key):
         if not conversation:
             return jsonify({"error": "conversation not found"}), 404
         conversation.isPinned = data["isPinned"]
-        mongo.session.commit()
+        db.session.commit()
         return jsonify({"message": "conversation updated successfully"})
     except Exception as e:
-        mongo.session.rollback()
+        db.session.rollback()
         return (
             jsonify({"error": "failed to update conversation", "message": str(e)}),
             500,
@@ -314,8 +279,8 @@ def rate_message():
         if not message:
             return jsonify({"error": "message not found"}), 404
         message.rating = data["rating"]
-        mongo.session.commit()
+        db.session.commit()
         return jsonify({"message": "message rated successfully"})
     except Exception as e:
-        mongo.session.rollback()
+        db.session.rollback()
         return jsonify({"error": "failed to rate message", "message": str(e)}), 500

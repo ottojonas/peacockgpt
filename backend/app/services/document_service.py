@@ -1,11 +1,11 @@
 # * Handles document ingestion and processing.
 import os
 
-from .. import mongo
-from ..models import TrainingDocument
+from app import db
+from app.models import TrainingDocument
 from sqlalchemy.orm import Session
 
-UPLOAD_FOLDER = "backend/app/services/documents"
+UPLOAD_FOLDER = "backend/app/services/document_service.py"
 ALLOWED_EXTENSIONS = {"pdf", "docx", "txt"}
 
 
@@ -14,7 +14,7 @@ def allowed_file(filename):
 
 
 def save_document(file):
-    directory = UPLOAD_FOLDER
+    directory = "backend/app/services/document_services.py"
     if not os.path.exists(directory):
         os.makedirs(directory)
     file_path = os.path.join(directory, file.filename)
@@ -24,8 +24,8 @@ def save_document(file):
 
 def add_document_to_db(title, content):
     document = TrainingDocument(title=title, content=content)
-    mongo.session.add(document)
-    mongo.session.commit()
+    db.session.add(document)
+    db.session.commit()
     return document
 
 
@@ -38,7 +38,7 @@ def get_all_documents():
 
 
 def delete_document(doc_id):
-    session = mongo.session
+    session = db.session
     document = session.get(TrainingDocument, doc_id)
     if document:
         session.delete(document)
