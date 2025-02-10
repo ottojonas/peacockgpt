@@ -1,6 +1,6 @@
 docx==0.2.4
 fitz==0.0.1.dev2
-Flask==2.2.5
+Flask==3.1.0
 flask_cors==5.0.0
 flask_socketio==5.4.1
 flask_sqlalchemy==3.1.1
@@ -10,8 +10,3 @@ pypdf==5.1.0
 python-dotenv==1.0.1
 setuptools==75.2.0
 celery==5.2.7
-python-docx==0.8.11
-flask_jwt_extended == 4.4.4
-gevent==24.11.1
-gunicorn==23.0.0
-flask_pymongo==2.3.0

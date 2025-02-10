@@ -4,35 +4,31 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "cd frontend && next dev",
-    "build": "cd frontend && next build",
-    "build:css": "cd frontend && postcss config/tailwind.config.js -o styles/global.css",
-    "start": "cd frontend && next start",
-    "lint": "cd frontend && next lint",
-    "test": "cd frontend && jest --config config/jest.config.cjs",
-    "watch-tests": "cd frontend && jest --watch --config config/jest.config.cjs",
-    "electron": "cd frontend && electron .",
-    "package-win": "cd frontend && electron-packager . PeacockGPT --platform=win32 --arch=x64 --out=dist --overwrite",
-    "package-mac": "cd frontend && electron-packager . PeacockGPT --platform=darwin --arch=x64 --out=dist --overwrite",
-    "package-linux": "cd frontend && electron-packager . PeacockGPT --platform=linux --arch=x64 --out=dist --overwrite",
-    "pkg": "cd frontend && pkg .",
-    "heroku-postbuild": "npm run build"
+    "dev": "next dev",
+    "build": "next build",
+    "build: css": "postcss config/tailwind.config.js -o styles/global.css",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "jest --confitg config/jest.config.cjs",
+    "watch-tests": "jest --watch --config config/jest.config.cjs",
+    "electron": "electron .",
+    "package-win": "electron-packager . PeacockGPT --platform=win32 --arch=x64 --out=dist --overwrite",
+    "package-mac": "electron-packager . PeacockGPT --platform=darwin --arch=x64 --out=dist --overwrite",
+    "package-linux": "electron-packager . PeacockGPT --platform=linux --arch=x64 --out=dist --overwrite",
+    "pkg": "pkg ."
   },
   "jest": {
     "setupFilesAfterEnv": [
-      "<rootDir>/frontend/config/jest.setup.js"
+      "<rootDir>/config/jest.setup.js"
     ]
   },
-  "engines": {
-    "node": ">=14.0.0"
-  },
-  "bin": "frontend/index.js",
+  "bin": "index.js",
   "pkg": {
     "scripts": [
-      "frontend/index.js"
+      "index.js"
     ],
     "assets": [
-      "frontend/public/**/*"
+      "public/**/*"
     ],
     "targets": [
       "node16-linux-x64",
@@ -42,7 +38,7 @@
   },
   "postcss": {
     "plugins": {
-      "tailwindcss": "frontend/config/tailwind.config.js",
+      "tailwindcss": "config/tailwind.config.js",
       "autoprefixer": {}
     }
   },

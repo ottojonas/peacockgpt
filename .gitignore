@@ -1,22 +1,16 @@
-/.env
-/.todo
-/data/training-documents
-/data/annotated-documents
-/frontend/node_modules
-/frontend/package-lock.json
-/frontend/.gitignore
-/data/peacockgpt.db
+# backend
+/backend/app/__pycache__
+/backend/app/services/__pycache__
+/backend/app/utils/__pycache__
+/backend/tests/__pycache__
+
+# data
+/data
+
+# frontend 
 /frontend/build
-backend/venv
-/frontend/.env.local
-frontend/.next
-/frontend/dist
-/bugs.todo
-/notes.txt
-/frontend/peacockgpt-win.exe
-/frontend/peacockgpt-macos
-/frontend/peacockgpt-linux
-/wakawaka.txt
-/scripts
-/frontend/tests
-/backend/tests
+/frontend/node_modules
+
+# miscellaneous 
+/.vscode
+/.env

@@ -24,12 +24,11 @@ const nextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: "https://git.heroku.com/peacockgpt.git/:path", // proxy to flask backend hopefully
+        destination: "http://localhost:5000/:path*", // proxy to flask backend hopefully
       },
     ];
   },
   assetPrefix: process.env.NODE_ENV === "production" ? "/static" : "",
-  basePath: process.env.NODE_ENV === "production" ? "/static" : "",
 };
 
 module.exports = nextConfig;

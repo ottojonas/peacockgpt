@@ -16,10 +16,7 @@ import Info from "../components/Info";
 import io from "socket.io-client";
 
 // * initialise socket connection
-const socket = io("https://git.heroku.com/peacockgpt.git", {
-  transports: ["websocket", "polling"],
-  withCredentials: true,
-});
+const socket = io("http://localhost:5000");
 
 export default function Home() {
   const [inputValue, setInputValue] = useState<string>("");
@@ -36,31 +33,10 @@ export default function Home() {
       router.push("/login");
     } else {
       axios.get("/api/conversations").then((response) => {
-        setConversations(response.data.conversations);
-      });
+        setConversations(response.data.conversations); 
+      })
     }
   }, [isAuthenticated, router]);
-
-  useEffect(() => {
-    socket.on("connect", () => {
-      console.log("Connected to WebSocket server");
-    });
-
-    socket.on("disconnect", () => {
-      console.log("Disconnected from WebSocket server");
-    });
-
-    socket.on("message", (message) => {
-      console.log("Received message:", message);
-      // Handle the received message
-    });
-
-    return () => {
-      socket.off("connect");
-      socket.off("disconnect");
-      socket.off("message");
-    };
-  }, []);
 
   if (!isAuthenticated) {
     return null;
