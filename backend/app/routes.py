@@ -29,6 +29,12 @@ def register():
     password = data.get("password")
     if not email or not password:
         return jsonify({"error": "email and password are required"}), 400
+    if not email.endswith("@peacocksalt.co.uk"):
+        return jsonify(
+            {
+                "error": "email must be within the intranet, please try again or contact ottobjonas@outlook.com"
+            }
+        )
     if User.query.filter_by(email=email).first():
         return jsonify({"error": "email already registered"}), 400
 

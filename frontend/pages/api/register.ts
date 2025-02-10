@@ -16,6 +16,12 @@ export default async function handler(
       return res.status(400).json({ error: "Email and password are required" });
     }
 
+    if (!email.endsWith("@peacocksalt.co.uk")) {
+      return res
+        .status(400)
+        .json({ error: "Email must be a @peacocksalt.co.uk address" });
+    }
+
     await connectToDatabase();
 
     const existingUser = await User.findOne({ email });
