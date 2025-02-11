@@ -8,6 +8,7 @@ import SearchIcon from "../../components/icons/SearchIcon";
 import PinnedIcon from "../../components/icons/PinnedIcon";
 import ListAllIcon from "../../components/icons/ListAllIcon";
 import { MessageItem } from "../Chat/Chat";
+import { useAuth } from "../../context/AuthContext";
 
 type ItemProps = {
   key: string;
@@ -45,6 +46,7 @@ const ChatHistory: React.FC<Props> = ({
 }) => {
   const [selectedConversation, setSelectedConversation] =
     useState<ItemProps | null>(null);
+  const { userId } = useAuth();
 
   useEffect(() => {
     fetchConversations();
@@ -146,8 +148,15 @@ const ChatHistory: React.FC<Props> = ({
   };
 
   const handleClearAllChats = async () => {
+    if (!userId) {
+      console.error("User not authenticated");
+      return;
+    }
+
     try {
-      await axios.delete("/api/conversations");
+      await axios.delete("/api/conversations", {
+        params: { user_id: userId },
+      });
       setConversations([]);
       setSelectedConversation(null);
       setMessages([]);

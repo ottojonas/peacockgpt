@@ -1,6 +1,6 @@
 import React from "react";
 import { ThemeProvider } from "../context/ThemeContext";
-import { AuthProvider } from "../context/AuthContenxt";
+import { AuthProvider } from "../context/AuthContext";
 import "../styles/globals.css";
 
 import type { AppProps } from "next/app";

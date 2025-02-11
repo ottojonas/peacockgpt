@@ -212,6 +212,25 @@ def get_conversations():
     )
 
 
+# * route to delete conversations
+@routes.route("/api/conversations", methods=["DELETE"])
+def delete_user_conversations():
+    user_id = request.args.get("user_id")
+    if not user_id:
+        return jsonify({"error": "user_id is required"})
+    try:
+        mongo.db.conversations.delete_many({"user_id": user_id})
+        mongo.db.messages.delete_many({"user_id": user_id})
+        return jsonify({"message": "User conversations and messages deleted"}), 200
+    except Exception as e:
+        return (
+            jsonify(
+                {"error": "Failed to delete user conversations", "message": str(e)}
+            ),
+            500,
+        )
+
+
 # * route to create a new message
 @routes.route("/api/messages", methods=["POST"])
 def new_message():
