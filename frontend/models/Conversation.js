@@ -28,6 +28,9 @@ const ConversationSchema = new mongoose.Schema({
     required: true,
     default: false,
   },
+	user_id: {
+		type: mongoose.Schema.ObjectId, ref: 'User', required: true, 
+	}
 });
 
 export default mongoose.models.Conversation ||

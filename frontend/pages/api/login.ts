@@ -38,7 +38,7 @@ export default async function handler(
     );
     return res
       .status(200)
-      .json({ message: "User signed in successfully", token });
+      .json({ message: "User signed in successfully", token, userId: user._id });
   } else {
     res.setHeader("Allow", ["POST"]);
     res.status(405).end(`Method ${req.method} not allowed`);
