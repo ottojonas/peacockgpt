@@ -175,7 +175,8 @@ def delete_document_route(doc_id):
 @routes.route("/api/conversations", methods=["POST"])
 def create_conversation():
     data = request.json
-    if not data or not all(
+    user_id = data.get('user_id')
+    if not user_id or not all(
         key in data
         for key in ("key", "title", "desc", "date", "isSelected", "isPinned")
     ):
@@ -189,6 +190,7 @@ def create_conversation():
             "date": datetime.datetime.fromisoformat(data["date"]),
             "isSelected": data["isSelected"],
             "isPinned": data["isPinned"],
+            "user_id": user_id
         }
         mongo.db.conversations.insert_one(conversation)
         return jsonify({"id": str(conversation["_id"])}), 201
@@ -199,7 +201,10 @@ def create_conversation():
 # * route to get all conversations
 @routes.route("/api/conversations", methods=["GET"])
 def get_conversations():
-    conversations = mongo.db.conversations.find()
+    user_id = request.args.get('user_id')
+    if not user_id: 
+        return jsonify({ "error": "user_id is required"}), 400
+    conversations = mongo.db.conversations.find({"user_id": user_id})
     return jsonify(
         [
             {
@@ -278,13 +283,16 @@ def get_messages():
 # * route to update conversation
 @routes.route("/api/conversations/<string:key>", methods=["PUT"])
 def update_conversation(key):
+    user_id = request.json.get('user_id')
+    if not user_id: 
+        return jsonify({ "error": "user_id is required"}), 400
     data = request.json
     if not data or "isPinned" not in data:
         return jsonify({"error": "missing required fields"}), 400
     try:
         # * find conversation by key and update pinned state
         result = mongo.db.conversations.update_one(
-            {"key": key}, {"$set": {"isPinned": data["isPinned"]}}
+                {"key": key, "user_id": user_id}, {"$set": {"isPinned": data["isPinned"]}}
         )
         if result.matched_count == 0:
             return jsonify({"error": "conversation not found"}), 404
