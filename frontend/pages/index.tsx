@@ -3,7 +3,7 @@ import { MessageItem } from "../components/Chat/Chat";
 import { v4 as uuidv4 } from "uuid";
 import { sendMessage } from "../lib/sendMessage";
 import { useRouter } from "next/router";
-import { useAuth } from "../context/AuthContenxt";
+import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import Sidebar from "../components/Sidebar";
 import CustomHead from "../components/common/CustomHead";
@@ -26,14 +26,16 @@ export default function Home() {
   const [conversations, setConversations] = useState<any[]>([]);
   const [showDocuments, setShowDocuments] = useState(false);
   const router = useRouter();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, userId } = useAuth();
 
   useEffect(() => {
     if (!isAuthenticated) {
       router.push("/login");
     } else {
-      axios.get("/api/conversations").then((response) => {
-        setConversations(response.data.conversations); 
+      axios.get("/api/conversations", {
+	      params: { user_id: userId }
+      }).then((response) => {
+        setConversations(response.data); 
       })
     }
   }, [isAuthenticated, router]);
@@ -83,6 +85,7 @@ export default function Home() {
         setConversations={setConversations}
         setMessages={setMessages}
         onDeleteConversation={handleDeleteConversation}
+	userId={userId}
       />
       <Chat
         messages={messages}

@@ -19,6 +19,7 @@ interface ChatHeaderProps {
   setConversations: React.Dispatch<React.SetStateAction<ItemProps[]>>;
   setMessages: React.Dispatch<React.SetStateAction<MessageItem[]>>;
   onDeleteConversation: (conversationKey: string) => void;
+  userId: string; 
 }
 
 export default function ChatHeader({
@@ -26,10 +27,13 @@ export default function ChatHeader({
   setConversations,
   setMessages,
   onDeleteConversation,
+  userId, 
 }: ChatHeaderProps) {
   const handleDeleteConversation = async () => {
     try {
-      await axios.delete(`/api/conversations?key=${conversationKey}`);
+      await axios.delete(`/api/conversations?key=${conversationKey}`, {
+	      params: { user_id: userId}
+      });
       setConversations((prevConversations) =>
         prevConversations.filter(
           (conversation) => conversation.key !== conversationKey
