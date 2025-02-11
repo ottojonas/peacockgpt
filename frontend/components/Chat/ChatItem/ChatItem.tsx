@@ -55,13 +55,17 @@ const ChatItem: React.FC<ChatItemProps> = ({
             {item.sender !== "user" && (
               <div className="inline-flex items-center space-x-2">
                 <button
-                  className="grid rounded-md w-7 h-7 place-items-center"
+                  className={`grid rounded-md w-7 h-7 place-items-center ${
+                    item.rating === "good" ? "bg-blue-500" : ""
+                  }`}
                   onClick={() => onThumbsUp(item.key)}
                 >
                   <ThumbsUp className="w-5 h-5" />
                 </button>
                 <button
-                  className="grid rounded-md w-7 h-7 place-items-center"
+                  className={`grid rounded-md w-7 h-7 place-items-center ${
+                    item.rating === "bad" ? "bg-red-500" : ""
+                  }`}
                   onClick={() => onThumbsDown(item.key)}
                 >
                   <ThumbsDown className="w-5 h-5" />
