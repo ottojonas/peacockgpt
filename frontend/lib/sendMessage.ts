@@ -56,6 +56,7 @@ export const sendMessage = async (
         date: newMessage.date,
         rating: "good",
       },
+      user_id: userId
     });
 
     const savedMessage = response.data;

@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import styles from "../styles/auth.module.css";
 import loginStyles from "../styles/loginform.module.css";
 import { FaUser, FaLock } from "react-icons/fa";
-import { useAuth } from "../context/AuthContenxt";
+import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -19,7 +19,7 @@ const Login = () => {
       const response = await axios.post("/api/login", { email, password });
       localStorage.setItem("token", response.data.token);
       alert(response.data.message);
-      login();
+      login(response.data.userId);
       router.push("/");
     } catch (error) {
       alert(error.response?.data.error || "An error occurred");
@@ -53,7 +53,7 @@ const Login = () => {
           </div>
 
           <div className={loginStyles["remember-forget"]}>
-           {/* <label>
+            {/* <label>
               <input type="checkbox" />
               Remember Details
             </label> */}

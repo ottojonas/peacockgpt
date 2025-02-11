@@ -12,7 +12,11 @@ export default async function handler(
   const { key } = req.query;
   if (req.method === "GET") {
     try {
-      const conversations = await Conversation.find({});
+      const { user_id } = req.query;
+      if (!user_id) {
+        return res.status(400).json({ error: "user_id is required" });
+      }
+      const conversations = await Conversation.find({ user_id });
       res.status(200).json(conversations);
     } catch (error) {
       console.error("Error loading conversations:", error);
@@ -22,13 +26,14 @@ export default async function handler(
   // * handle POST request
   else if (req.method === "POST") {
     try {
-      const { title, desc, date, isSelected, isPinned } = req.body;
+      const { title, desc, date, isSelected, isPinned, user_id } = req.body;
       const key = uuidv4();
       if (
         !key ||
         !title ||
         !desc ||
         !date ||
+        !user_id ||
         isSelected === undefined ||
         isPinned === undefined
       ) {
@@ -42,6 +47,7 @@ export default async function handler(
         date,
         isSelected,
         isPinned,
+        user_id,
       });
       await newConversation.save();
       res
@@ -56,15 +62,16 @@ export default async function handler(
   // * handle DELETE request
   else if (req.method === "DELETE") {
     try {
-      // * delete all conversations and messages from database
-      await Conversation.deleteMany({});
-      await Messages.deleteMany({});
-      // * response with a success message
+      const { user_id } = req.query;
+      if (!user_id) {
+        return res.status(400).json({ error: "user_id is required" });
+      }
+      await Conversation.deleteMany({ user_id });
+      await Messages.deleteMany({ user_id });
       res
         .status(200)
-        .json({ message: "All conversations and messages deleted" });
+        .json({ message: "User conversations and messages deleted" });
     } catch (error) {
-      // * handle errors during deletion
       console.error("Error deleting conversations and messages:", error);
       res
         .status(500)
@@ -73,14 +80,17 @@ export default async function handler(
   } else if (req.method === "PUT") {
     try {
       const { key } = req.query;
-      const { isPinned, title, desc } = req.body;
+      const { isPinned, title, desc, user_id } = req.body;
+      if (!user_id) {
+        return res.status(400).json({ error: "user_id is required" });
+      }
       const updateData: any = {};
       if (isPinned !== undefined) updateData.isPinned = isPinned;
       if (title !== undefined) updateData.title = title;
       if (desc !== undefined) updateData.desc = desc;
 
       const updatedConversation = await Conversation.findOneAndUpdate(
-        { key },
+        { key, user_id },
         updateData,
         { new: true }
       );
@@ -91,8 +101,8 @@ export default async function handler(
 
       res.status(200).json(updatedConversation);
     } catch (error) {
-      console.error("error updating conversation:", error);
-      res.status(500).json({ error: "failed to update conversation" });
+      console.error("Error updating conversation:", error);
+      res.status(500).json({ error: "Failed to update conversation" });
     }
   }
   // * handle unsupported requests

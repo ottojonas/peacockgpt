@@ -8,6 +8,7 @@ import SearchIcon from "../../components/icons/SearchIcon";
 import PinnedIcon from "../../components/icons/PinnedIcon";
 import ListAllIcon from "../../components/icons/ListAllIcon";
 import { MessageItem } from "../Chat/Chat";
+import { useAuth } from "../../context/AuthContext";
 
 type ItemProps = {
   key: string;
@@ -16,9 +17,10 @@ type ItemProps = {
   date: string;
   isSelected: boolean;
   isPinned: boolean;
+  user_id: string;
 };
 
-const createNewConversation = (): ItemProps => {
+const createNewConversation = (userId: string): ItemProps => {
   const now = new Date();
   return {
     key: uuidv4(),
@@ -27,6 +29,7 @@ const createNewConversation = (): ItemProps => {
     date: now.toISOString(),
     isSelected: true,
     isPinned: false,
+    user_id: userId,
   };
 };
 
@@ -45,6 +48,7 @@ const ChatHistory: React.FC<Props> = ({
 }) => {
   const [selectedConversation, setSelectedConversation] =
     useState<ItemProps | null>(null);
+  const { userId } = useAuth();
 
   useEffect(() => {
     fetchConversations();
@@ -52,7 +56,9 @@ const ChatHistory: React.FC<Props> = ({
 
   const fetchConversations = async () => {
     try {
-      const response = await axios.get("/api/conversations");
+      const response = await axios.get("/api/conversations", {
+        params: { user_id: userId },
+      });
       const formattedConversations = response.data.map((conversation: any) => {
         const date = new Date(conversation.date);
         return {
@@ -122,7 +128,7 @@ const ChatHistory: React.FC<Props> = ({
   };
 
   const handleNewConversation = async () => {
-    const newConversation = createNewConversation();
+    const newConversation = createNewConversation(userId);
     try {
       const response = await fetch("/api/conversations", {
         method: "POST",
@@ -132,7 +138,7 @@ const ChatHistory: React.FC<Props> = ({
         body: JSON.stringify(newConversation),
       });
       const data = await response.json();
-      const updatedConversation = { ...newConversation, key: data.key };
+      const updatedConversation = { ...newConversation, user_id: userId };
       setConversations((prevConversations = []) => [
         ...prevConversations.map((conv) => ({ ...conv, isSelected: false })),
         updatedConversation,
@@ -146,8 +152,15 @@ const ChatHistory: React.FC<Props> = ({
   };
 
   const handleClearAllChats = async () => {
+    if (!userId) {
+      console.error("User not authenticated");
+      return;
+    }
+
     try {
-      await axios.delete("/api/conversations");
+      await axios.delete("/api/conversations", {
+        params: { user_id: userId },
+      });
       setConversations([]);
       setSelectedConversation(null);
       setMessages([]);

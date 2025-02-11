@@ -10,3 +10,5 @@ pypdf==5.1.0
 python-dotenv==1.0.1
 setuptools==75.2.0
 celery==5.2.7
+flask_pymongo==2.3.0
+flask_jwt_extended==4.4.4
