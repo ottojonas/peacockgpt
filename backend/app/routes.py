@@ -6,6 +6,7 @@ from app.utils.file_utils import extract_content_from_file
 from app.utils.openai_utils import generate_response
 from flask_jwt_extended import jwt_required, unset_jwt_cookies
 from app.services.document_service import save_document
+from icecream import ic
 
 # * create a Blueprint for the routes
 routes = Blueprint("routes", __name__)
@@ -171,11 +172,10 @@ def delete_document_route(doc_id):
     return jsonify({"error": "Document not found"}), 404
 
 
-# * route to create a new conversation
 @routes.route("/api/conversations", methods=["POST"])
 def create_conversation():
     data = request.json
-    user_id = data.get('user_id')
+    user_id = data.get("user_id")
     if not user_id or not all(
         key in data
         for key in ("key", "title", "desc", "date", "isSelected", "isPinned")
@@ -190,7 +190,7 @@ def create_conversation():
             "date": datetime.datetime.fromisoformat(data["date"]),
             "isSelected": data["isSelected"],
             "isPinned": data["isPinned"],
-            "user_id": user_id
+            "user_id": user_id,
         }
         mongo.db.conversations.insert_one(conversation)
         return jsonify({"id": str(conversation["_id"])}), 201
@@ -201,9 +201,9 @@ def create_conversation():
 # * route to get all conversations
 @routes.route("/api/conversations", methods=["GET"])
 def get_conversations():
-    user_id = request.args.get('user_id')
-    if not user_id: 
-        return jsonify({ "error": "user_id is required"}), 400
+    user_id = request.args.get("user_id")
+    if not user_id:
+        return jsonify({"error": "user_id is required"}), 400
     conversations = mongo.db.conversations.find({"user_id": user_id})
     return jsonify(
         [
@@ -214,6 +214,26 @@ def get_conversations():
             }
             for conv in conversations
         ]
+    )
+
+
+@routes.route("/api/conversations/<string:key>", methods=["GET"])
+def get_conversation_by_key(key):
+    ic(f"fetching conversation with key: {key}")
+    conversation = mongo.db.conversations.find_one({"key": key})
+    if not conversation:
+        print(f"conversation with {key} not found")
+        return jsonify({"error": "conversation not found"}), 404
+    return jsonify(
+        {
+            "id": str(conversation["_id"]),
+            "title": conversation["title"],
+            "desc": conversation["desc"],
+            "date": conversation["date"].isoformat(),
+            "isSelected": conversation["isSelected"],
+            "isPinned": conversation["isPinned"],
+            "user_id": conversation["user_id"],
+        }
     )
 
 
@@ -283,16 +303,16 @@ def get_messages():
 # * route to update conversation
 @routes.route("/api/conversations/<string:key>", methods=["PUT"])
 def update_conversation(key):
-    user_id = request.json.get('user_id')
-    if not user_id: 
-        return jsonify({ "error": "user_id is required"}), 400
+    user_id = request.json.get("user_id")
+    if not user_id:
+        return jsonify({"error": "user_id is required"}), 400
     data = request.json
     if not data or "isPinned" not in data:
         return jsonify({"error": "missing required fields"}), 400
     try:
         # * find conversation by key and update pinned state
         result = mongo.db.conversations.update_one(
-                {"key": key, "user_id": user_id}, {"$set": {"isPinned": data["isPinned"]}}
+            {"key": key, "user_id": user_id}, {"$set": {"isPinned": data["isPinned"]}}
         )
         if result.matched_count == 0:
             return jsonify({"error": "conversation not found"}), 404

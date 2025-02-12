@@ -25,7 +25,7 @@ def send_message():
         return jsonify({"error": "invalid data"}), 400
 
     message = {"conversationKey": conversation_key, "content": "content"}
-    socketio.emir("new_message", message, broadcast=True)
+    socketio.emit("new_message", message, broadcast=True)
     return jsonify(message), 200
 
 

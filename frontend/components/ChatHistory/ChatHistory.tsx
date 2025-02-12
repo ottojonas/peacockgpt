@@ -51,8 +51,10 @@ const ChatHistory: React.FC<Props> = ({
   const { userId } = useAuth();
 
   useEffect(() => {
-    fetchConversations();
-  }, []);
+    if (userId) {
+      fetchConversations();
+    }
+  }, [userId]);
 
   const fetchConversations = async () => {
     try {

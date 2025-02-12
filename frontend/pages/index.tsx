@@ -32,11 +32,16 @@ export default function Home() {
     if (!isAuthenticated) {
       router.push("/login");
     } else {
-      axios.get("/api/conversations", {
-	      params: { user_id: userId }
-      }).then((response) => {
-        setConversations(response.data); 
-      })
+      axios
+        .get("/api/conversations", {
+          params: { user_id: userId },
+        })
+        .then((response) => {
+          if (response.data.length === 0) {
+            setConversations([]);
+          }
+          setConversations(response.data);
+        });
     }
   }, [isAuthenticated, router]);
 
@@ -85,7 +90,7 @@ export default function Home() {
         setConversations={setConversations}
         setMessages={setMessages}
         onDeleteConversation={handleDeleteConversation}
-	userId={userId}
+        userId={userId}
       />
       <Chat
         messages={messages}

@@ -56,7 +56,7 @@ const Chat: React.FC<ChatProps> = ({
 
   const handleThumbsUp = async (key: string) => {
     try {
-      await axios.post("/api/messages/rate", { key, rating: "good" });
+      await axios.post("/api/message/rate", { key, rating: "good" });
       console.log("Message rated as good");
 
       // update message state
@@ -77,7 +77,7 @@ const Chat: React.FC<ChatProps> = ({
         console.error("Message not found");
         return;
       }
-      await axios.post("/api/messages/rate", { key, rating: "bad" });
+      await axios.post("/api/message/rate", { key, rating: "bad" });
       console.log("Message rated as bad");
 
       // update message state
@@ -151,4 +151,3 @@ const Chat: React.FC<ChatProps> = ({
 };
 
 export default Chat;
-

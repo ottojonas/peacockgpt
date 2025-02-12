@@ -35,10 +35,11 @@ export const sendMessage = async (
   setMessages((prevMessages) => [...prevMessages, newMessage]);
 
   try {
-    // Ensure the conversation exists before saving the message
+    console.log("checking conversation with key:", conversationKey);
     const conversation = await axios.get(
-      `/api/conversations?key=${conversationKey}`
+      `/api/conversations/${conversationKey}`
     );
+
     if (!conversation.data) {
       console.error("Conversation not found");
       return;
@@ -56,11 +57,10 @@ export const sendMessage = async (
         date: newMessage.date,
         rating: "good",
       },
-      user_id: userId
     });
 
     const savedMessage = response.data;
-
+    console.log("user message saved: ", savedMessage);
     setMessages((prevMessages) =>
       prevMessages.map((msg) =>
         msg.key === newMessage.key ? { ...msg, key: savedMessage.key } : msg
@@ -72,7 +72,7 @@ export const sendMessage = async (
         title: newMessage.text.substring(0, 20),
       };
       await axios.put(
-        `api/conversations?key=${conversationKey}`,
+        `/api/conversations/${conversationKey}`,
         updatedConversation
       );
       setConversations((prevConversations) =>
@@ -137,7 +137,7 @@ export const sendMessage = async (
         desc: assistantMessage.text.substring(0, 30),
       };
       await axios.put(
-        `api/conversations?key=${conversationKey}`,
+        `api/conversations/${conversationKey}`,
         updatedConversation
       );
       setConversations((prevConversations) =>
