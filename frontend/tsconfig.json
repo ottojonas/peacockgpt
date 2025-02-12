@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
+    "target": "es6",
+    "types": [
+      "@testing-library/jest-dom"
+    ],
     "lib": [
       "dom",
       "dom.iterable",
@@ -7,23 +11,51 @@
     ],
     "allowJs": true,
     "skipLibCheck": true,
-    "strict": false,
+    "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
-    "incremental": true,
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "incremental": true,
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
+    }
   },
   "include": [
     "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx"
+    "components/**/*.ts",
+    "components/**/*.tsx",
+    "config/**/*.ts",
+    "config/**/*.tsx",
+    "context/**/*.ts",
+    "context/**/*.tsx",
+    "data/**/*.ts",
+    "data/**/*.tsx",
+    "lib/**/*.ts",
+    "lib/**/*.tsx",
+    "models/**/*.ts",
+    "models/**/*.tsx",
+    "pages/**/*.ts",
+    "pages/**/*.tsx",
+    "styles/**/*.ts",
+    "styles/**/*.tsx",
+    "tests/**/*.ts",
+    "tests/**/*.tsx",
+    "types/**/*.ts",
+    "types/**/*.tsx",
+    "utils/**/*.ts",
+    "utils/**/*.tsx"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    ".next",
+    "build"
   ]
 }
