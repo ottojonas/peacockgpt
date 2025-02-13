@@ -34,7 +34,7 @@ export default function Home() {
     } else {
       axios
         .get("/api/conversations", {
-          params: { user_id: userId },
+          params: { user_id: userId ?? "" },
         })
         .then((response) => {
           setConversations(response.data);
@@ -81,13 +81,14 @@ export default function Home() {
         setMessages={setMessages}
         conversations={conversations}
         setConversations={setConversations}
+        userId={userId ?? ""}
       />
       <ChatHeader
         conversationKey={conversationKey}
         setConversations={setConversations}
         setMessages={setMessages}
         onDeleteConversation={handleDeleteConversation}
-        userId={userId}
+        userId={userId ?? ""}
       />
       <Chat
         messages={messages}
@@ -99,7 +100,7 @@ export default function Home() {
             conversationKey,
             setMessages,
             setConversations,
-            userId
+            userId ?? ""
           )
         }
       />
@@ -111,7 +112,7 @@ export default function Home() {
             conversationKey,
             setMessages,
             setConversations,
-            userId
+            userId ?? ""
           )
         }
         inputValue={inputValue}
