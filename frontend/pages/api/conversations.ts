@@ -8,16 +8,21 @@ export default async function handler(
   res: NextApiResponse
 ) {
   await connectToDatabase();
-
-  const { key } = req.query;
   if (req.method === "GET") {
     try {
-      const { user_id } = req.query;
+      const { user_id, key } = req.query;
+      if (key) {
+        const conversation = await Conversation.findOne({ key });
+        if (!conversation) {
+          return res.status(400).json({ error: "conversation not found" });
+        }
+        return res.status(200).json(conversation);
+      }
       if (!user_id) {
         return res.status(400).json({ error: "user_id is required" });
       }
       const conversations = await Conversation.find({ user_id });
-      res.status(200).json(conversations);
+      return res.status(200).json(conversations);
     } catch (error) {
       console.error("Error loading conversations:", error);
       res.status(500).json({ error: "Failed to load conversations" });
@@ -90,7 +95,7 @@ export default async function handler(
       if (desc !== undefined) updateData.desc = desc;
 
       const updatedConversation = await Conversation.findOneAndUpdate(
-        { key, user_id },
+        { key },
         updateData,
         { new: true }
       );
