@@ -38,6 +38,7 @@ type Props = {
   setMessages: (messages: MessageItem[]) => void;
   conversations: any[];
   setConversations: React.Dispatch<React.SetStateAction<any[]>>;
+  userId: string;
 };
 
 const ChatHistory: React.FC<Props> = ({
@@ -45,10 +46,10 @@ const ChatHistory: React.FC<Props> = ({
   setMessages,
   conversations = [],
   setConversations,
+  userId,
 }) => {
   const [selectedConversation, setSelectedConversation] =
     useState<ItemProps | null>(null);
-  const { userId } = useAuth();
 
   useEffect(() => {
     fetchConversations();
