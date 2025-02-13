@@ -10,7 +10,8 @@ export const sendMessage = async (
   text: string,
   conversationKey: string,
   setMessages: React.Dispatch<React.SetStateAction<MessageItem[]>>,
-  setConversations: React.Dispatch<React.SetStateAction<any[]>>
+  setConversations: React.Dispatch<React.SetStateAction<any[]>>,
+  userId: string
 ) => {
   if (!text.trim()) {
     console.error("message content is empty");
@@ -56,7 +57,7 @@ export const sendMessage = async (
         date: newMessage.date,
         rating: "good",
       },
-      user_id: userId
+      user_id: userId,
     });
 
     const savedMessage = response.data;

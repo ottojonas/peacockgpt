@@ -32,11 +32,13 @@ export default function Home() {
     if (!isAuthenticated) {
       router.push("/login");
     } else {
-      axios.get("/api/conversations", {
-	      params: { user_id: userId }
-      }).then((response) => {
-        setConversations(response.data); 
-      })
+      axios
+        .get("/api/conversations", {
+          params: { user_id: userId ?? "" },
+        })
+        .then((response) => {
+          setConversations(response.data);
+        });
     }
   }, [isAuthenticated, router]);
 
@@ -79,26 +81,39 @@ export default function Home() {
         setMessages={setMessages}
         conversations={conversations}
         setConversations={setConversations}
+        userId={userId ?? ""}
       />
       <ChatHeader
         conversationKey={conversationKey}
         setConversations={setConversations}
         setMessages={setMessages}
         onDeleteConversation={handleDeleteConversation}
-	userId={userId}
+        userId={userId ?? ""}
       />
       <Chat
         messages={messages}
         setMessages={setMessages}
         conversationKey={conversationKey}
         sendMessage={(text) =>
-          sendMessage(text, conversationKey, setMessages, setConversations)
+          sendMessage(
+            text,
+            conversationKey,
+            setMessages,
+            setConversations,
+            userId ?? ""
+          )
         }
       />
       <ChatInput
         setMessages={setMessages}
         sendMessage={(text) =>
-          sendMessage(text, conversationKey, setMessages, setConversations)
+          sendMessage(
+            text,
+            conversationKey,
+            setMessages,
+            setConversations,
+            userId ?? ""
+          )
         }
         inputValue={inputValue}
         setInputValue={setInputValue}

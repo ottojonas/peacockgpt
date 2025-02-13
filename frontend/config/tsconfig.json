@@ -30,12 +30,32 @@
   },
   "include": [
     "next-env.d.ts",
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "**/*.tsx",
-    "**/*.ts"
+    "components/**/*.ts",
+    "components/**/*.tsx",
+    "config/**/*.ts",
+    "config/**/*.tsx",
+    "context/**/*.ts",
+    "context/**/*.tsx",
+    "data/**/*.ts",
+    "data/**/*.tsx",
+    "lib/**/*.ts",
+    "lib/**/*.tsx",
+    "models/**/*.ts",
+    "models/**/*.tsx",
+    "pages/**/*.ts",
+    "pages/**/*.tsx",
+    "styles/**/*.ts",
+    "styles/**/*.tsx",
+    "tests/**/*.ts",
+    "tests/**/*.tsx",
+    "types/**/*.ts",
+    "types/**/*.tsx",
+    "utils/**/*.ts",
+    "utils/**/*.tsx"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    ".next",
+    "build"
   ]
 }
