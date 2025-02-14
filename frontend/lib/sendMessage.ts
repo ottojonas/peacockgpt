@@ -2,6 +2,7 @@ import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import { MessageItem } from "../components/Chat/Chat";
 import { formatMessage } from "../utils/formatMessage";
+import { useAuth } from "../context/AuthContext";
 
 let isFirstUserMessageSet = false;
 let isFirstAssistantMessageSet = false;
@@ -9,6 +10,7 @@ let isFirstAssistantMessageSet = false;
 export const sendMessage = async (
   text: string,
   conversationKey: string,
+  userId: string,
   setMessages: React.Dispatch<React.SetStateAction<MessageItem[]>>,
   setConversations: React.Dispatch<React.SetStateAction<any[]>>
 ) => {
@@ -36,9 +38,9 @@ export const sendMessage = async (
 
   try {
     // Ensure the conversation exists before saving the message
-    const conversation = await axios.get(
-      `/api/conversations?key=${conversationKey}`
-    );
+    const conversation = await axios.get(`/api/conversations`, {
+      params: { key: conversationKey, user_id: userId },
+    });
     if (!conversation.data) {
       console.error("Conversation not found");
       return;
@@ -46,10 +48,11 @@ export const sendMessage = async (
 
     // Save message to the backend
     const response = await axios.post("/api/messages", {
+      user_id: userId,
       conversationKey: conversationKey,
       message: {
         key: newMessage.key,
-        conversationKey: newMessage.conversationKey,
+        conversationKey: conversationKey,
         text: newMessage.text,
         sender: newMessage.sender,
         content: newMessage.content,
@@ -71,7 +74,10 @@ export const sendMessage = async (
         title: newMessage.text.substring(0, 20),
       };
       await axios.put(
-        `api/conversations?key=${conversationKey}`,
+        `api/conversations/`,
+        {
+          params: { key: conversationKey, user_id: userId },
+        },
         updatedConversation
       );
       setConversations((prevConversations) =>
@@ -109,6 +115,7 @@ export const sendMessage = async (
     setMessages((prevMessages) => [...prevMessages, assistantMessage]);
 
     const response = await axios.post("/api/messages", {
+      user_id: userId,
       conversationKey,
       message: {
         key: assistantMessage.key,
@@ -136,7 +143,10 @@ export const sendMessage = async (
         desc: assistantMessage.text.substring(0, 30),
       };
       await axios.put(
-        `api/conversations?key=${conversationKey}`,
+        `api/conversations`,
+        {
+          params: { key: conversationKey, user_id: userId },
+        },
         updatedConversation
       );
       setConversations((prevConversations) =>

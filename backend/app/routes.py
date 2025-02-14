@@ -31,7 +31,7 @@ def register():
 
     user = {
         "email": email,
-        "password": password,  # You should hash the password before storing it
+        "password": password,  
     }
     mongo.db.users.insert_one(user)
 
@@ -221,11 +221,12 @@ def get_conversations():
 @routes.route("/api/conversations", methods=["DELETE"])
 def delete_user_conversations():
     user_id = request.args.get("user_id")
+    key = request.args.get("key") 
     if not user_id:
         return jsonify({"error": "user_id is required"})
     try:
-        mongo.db.conversations.delete_many({"user_id": user_id})
-        mongo.db.messages.delete_many({"user_id": user_id})
+        mongo.db.conversations.delete_many({"user_id": user_id, "key": key})
+        mongo.db.messages.delete_many({"user_id": user_id, "key": key})
         return jsonify({"message": "User conversations and messages deleted"}), 200
     except Exception as e:
         return (
@@ -305,7 +306,7 @@ def update_conversation(key):
 
 
 # * route to rate message
-@routes.route("/api/messages/rate", methods=["POST"])
+@routes.route("/api/message/rate", methods=["POST"])
 def rate_message():
     data = request.json
     if not data or "key" not in data or "rating" not in data:
