@@ -31,7 +31,7 @@ def register():
 
     user = {
         "email": email,
-        "password": password,  
+        "password": password,
     }
     mongo.db.users.insert_one(user)
 
@@ -175,7 +175,7 @@ def delete_document_route(doc_id):
 @routes.route("/api/conversations", methods=["POST"])
 def create_conversation():
     data = request.json
-    user_id = data.get('user_id')
+    user_id = data.get("user_id")
     if not user_id or not all(
         key in data
         for key in ("key", "title", "desc", "date", "isSelected", "isPinned")
@@ -190,7 +190,7 @@ def create_conversation():
             "date": datetime.datetime.fromisoformat(data["date"]),
             "isSelected": data["isSelected"],
             "isPinned": data["isPinned"],
-            "user_id": user_id
+            "user_id": user_id,
         }
         mongo.db.conversations.insert_one(conversation)
         return jsonify({"id": str(conversation["_id"])}), 201
@@ -201,27 +201,35 @@ def create_conversation():
 # * route to get all conversations
 @routes.route("/api/conversations", methods=["GET"])
 def get_conversations():
-    user_id = request.args.get('user_id')
-    if not user_id: 
-        return jsonify({ "error": "user_id is required"}), 400
-    conversations = mongo.db.conversations.find({"user_id": user_id})
-    return jsonify(
-        [
-            {
-                "id": str(conv["_id"]),
-                "title": conv["title"],
-                "date": conv["date"].isoformat(),
-            }
-            for conv in conversations
-        ]
-    )
+    user_id = request.args.get("user_id")
+    if not user_id:
+        return jsonify({"error": "user_id is required"}), 400
+    try:
+        user_object_id = ObjectId(user_id)
+        conversations = mongo.db.conversations.find({"user_id": user_object_id})
+        return jsonify(
+            [
+                {
+                    "id": str(conv["_id"]),
+                    "key": conv["key"],
+                    "title": conv["title"],
+                    "desc": conv.get("desc", ""),
+                    "date": conv["date"].isoformat(),
+                    "isSelected": conv.get("isSelected", False),
+                    "isPinned": conv.get("isPinned", False),
+                }
+                for conv in conversations
+            ]
+        )
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 # * route to delete conversations
 @routes.route("/api/conversations", methods=["DELETE"])
 def delete_user_conversations():
     user_id = request.args.get("user_id")
-    key = request.args.get("key") 
+    key = request.args.get("key")
     if not user_id:
         return jsonify({"error": "user_id is required"})
     try:
@@ -241,23 +249,27 @@ def delete_user_conversations():
 @routes.route("/api/messages", methods=["POST"])
 def new_message():
     data = request.json
-    if not data or not all(
-        key in data for key in ("conversationKey", "sender", "content")
+    message_data = data.get(
+        "message", data
+    )  # Use message field if present, otherwise use root data
+
+    if not message_data or not all(
+        key in message_data for key in ("conversationKey", "sender", "content")
     ):
         return jsonify({"error": "missing required fields"}), 400
+
     try:
-        # * create a new message object and save it to the database
         message = {
-            "conversationKey": data["conversationKey"],
-            "sender": data["sender"],
-            "content": data["content"],
+            "conversationKey": message_data["conversationKey"],
+            "sender": message_data["sender"],
+            "content": message_data["content"],
             "timestamp": datetime.datetime.utcnow(),
-            "rating": "good",
+            "rating": message_data.get("rating", "good"),
         }
         mongo.db.messages.insert_one(message)
-        return jsonify({"id": str(message["_id"])}), 201
+        return jsonify({"id": str(message["_id"]), "key": message_data.get("key")}), 201
     except Exception as e:
-        return jsonify({"error": "failed to save message", "message": str(e)}), 500
+        return jsonify({"error": "Failed to save message", "message": str(e)}), 500
 
 
 # * route to get messages for a specific conversation
@@ -284,16 +296,16 @@ def get_messages():
 # * route to update conversation
 @routes.route("/api/conversations/<string:key>", methods=["PUT"])
 def update_conversation(key):
-    user_id = request.json.get('user_id')
-    if not user_id: 
-        return jsonify({ "error": "user_id is required"}), 400
+    user_id = request.json.get("user_id")
+    if not user_id:
+        return jsonify({"error": "user_id is required"}), 400
     data = request.json
     if not data or "isPinned" not in data:
         return jsonify({"error": "missing required fields"}), 400
     try:
         # * find conversation by key and update pinned state
         result = mongo.db.conversations.update_one(
-                {"key": key, "user_id": user_id}, {"$set": {"isPinned": data["isPinned"]}}
+            {"key": key, "user_id": user_id}, {"$set": {"isPinned": data["isPinned"]}}
         )
         if result.matched_count == 0:
             return jsonify({"error": "conversation not found"}), 404

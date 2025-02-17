@@ -130,15 +130,12 @@ const ChatHistory: React.FC<Props> = ({
   const handleNewConversation = async () => {
     const newConversation = createNewConversation(userId);
     try {
-      const response = await fetch("/api/conversations", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newConversation),
+      const response = await axios.post("/api/conversations", {
+        ...newConversation,
+        user_id: userId,
       });
-      const data = await response.json();
-      const updatedConversation = { ...newConversation, user_id: userId };
+      const data = response.data;
+      const updatedConversation = { ...newConversation, key: data.key };
       setConversations((prevConversations = []) => [
         ...prevConversations.map((conv) => ({ ...conv, isSelected: false })),
         updatedConversation,

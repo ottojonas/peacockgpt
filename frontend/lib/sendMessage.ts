@@ -39,17 +39,21 @@ export const sendMessage = async (
   try {
     // Ensure the conversation exists before saving the message
     const conversation = await axios.get(`/api/conversations`, {
-      params: { key: conversationKey, user_id: userId },
+      params: { user_id: userId },
     });
-    if (!conversation.data) {
+    const conversationExists = conversation.data.some(
+      (conv: any) => conv.key === conversationKey
+    );
+    if (!conversationExists) {
       console.error("Conversation not found");
       return;
     }
 
     // Save message to the backend
     const response = await axios.post("/api/messages", {
-      user_id: userId,
       conversationKey: conversationKey,
+      sender: newMessage.sender,
+      content: newMessage.content,
       message: {
         key: newMessage.key,
         conversationKey: conversationKey,
@@ -111,14 +115,15 @@ export const sendMessage = async (
     setMessages((prevMessages) => [...prevMessages, assistantMessage]);
 
     const response = await axios.post("/api/messages", {
-      user_id: userId,
-      conversationKey,
+      conversationKey: conversationKey,
+      sender: assistantMessage.sender,
+      content: assistantMessage.content,
       message: {
         key: assistantMessage.key,
         conversationKey: assistantMessage.conversationKey,
         text: assistantMessage.text,
         sender: assistantMessage.sender,
-        content: assistantMessage.text,
+        content: assistantMessage.content,
         date: assistantMessage.date,
         rating: "good",
       },
