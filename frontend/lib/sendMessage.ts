@@ -73,13 +73,9 @@ export const sendMessage = async (
       const updatedConversation = {
         title: newMessage.text.substring(0, 20),
       };
-      await axios.put(
-        `api/conversations/`,
-        {
-          params: { key: conversationKey, user_id: userId },
-        },
-        updatedConversation
-      );
+      await axios.put(`api/conversations/`, updatedConversation, {
+        params: { key: conversationKey, user_id: userId },
+      });
       setConversations((prevConversations) =>
         prevConversations.map((conversation) =>
           conversation.key === conversationKey
@@ -142,13 +138,9 @@ export const sendMessage = async (
       const updatedConversation = {
         desc: assistantMessage.text.substring(0, 30),
       };
-      await axios.put(
-        `api/conversations`,
-        {
-          params: { key: conversationKey, user_id: userId },
-        },
-        updatedConversation
-      );
+      await axios.put(`api/conversations`, updatedConversation, {
+        params: { key: conversationKey, user_id: userId },
+      });
       setConversations((prevConversations) =>
         prevConversations.map((conversation) =>
           conversation.key === conversationKey
