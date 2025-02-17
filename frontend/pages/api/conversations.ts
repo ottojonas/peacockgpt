@@ -3,6 +3,7 @@ import connectToDatabase from "../../lib/mongoose";
 import Conversation from "../../models/Conversation";
 import Messages from "../../models/Messages";
 import { v4 as uuidv4 } from "uuid";
+import mongoose from "mongoose";
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -16,7 +17,8 @@ export default async function handler(
       if (!user_id) {
         return res.status(400).json({ error: "user_id is required" });
       }
-      const conversations = await Conversation.find({ user_id });
+      const objectId = new mongoose.Types.ObjectId(user_id as string);
+      const conversations = await Conversation.find({ user_id: objectId });
       res.status(200).json(conversations);
     } catch (error) {
       console.error("Error loading conversations:", error);
@@ -79,8 +81,8 @@ export default async function handler(
     }
   } else if (req.method === "PUT") {
     try {
-      const { key } = req.query;
-      const { isPinned, title, desc, user_id } = req.body;
+      const { key, user_id } = req.query;
+      const { isPinned, title, desc } = req.body;
       if (!user_id) {
         return res.status(400).json({ error: "user_id is required" });
       }
