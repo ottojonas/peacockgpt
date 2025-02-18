@@ -69,7 +69,7 @@ export default async function handler(
         return res.status(400).json({ error: "user_id is required" });
       }
       await Conversation.deleteMany({ user_id });
-      await Messages.deleteMany({ user_id });
+      await Messages.deleteMany({ conversationKey: key });
       res
         .status(200)
         .json({ message: "User conversations and messages deleted" });
