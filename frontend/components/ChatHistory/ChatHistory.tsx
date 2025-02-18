@@ -155,9 +155,21 @@ const ChatHistory: React.FC<Props> = ({
     }
 
     try {
+      // Get all conversation keys before deleting
+      const conversationKeys = conversations.map((conv) => conv.key);
+
+      // Delete all conversations
       await axios.delete("/api/conversations", {
         params: { user_id: userId },
       });
+
+      // Delete all messages for each conversation
+      for (const key of conversationKeys) {
+        await axios.delete("/api/messages", {
+          params: { conversationKey: key },
+        });
+      }
+
       setConversations([]);
       setSelectedConversation(null);
       setMessages([]);

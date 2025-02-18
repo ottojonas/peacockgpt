@@ -70,8 +70,20 @@ export default async function handler(
       console.error("error saving message:", error);
       res.status(500).json({ error: "failed to save message" });
     }
+  } else if (req.method === "DELETE") {
+    const { conversationKey } = req.query;
+    if (!conversationKey) {
+      return res.status(400).json({ error: "conversationKey is required" });
+    }
+    try {
+      await Messages.deleteMany({ conversationKey });
+      res.status(200).json({ message: "Messages deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting messages:", error);
+      res.status(500).json({ error: "Failed to delete messages" });
+    }
   } else {
-    res.setHeader("Allow", ["GET", "POST"]);
+    res.setHeader("Allow", ["GET", "POST", "DELETE"]);
     res.status(405).end(`Method ${req.method} not allowed`);
   }
 }
