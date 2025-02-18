@@ -231,10 +231,12 @@ def delete_user_conversations():
     user_id = request.args.get("user_id")
     key = request.args.get("key")
     if not user_id:
-        return jsonify({"error": "user_id is required"})
+        return jsonify({"error": "user_id is required"});
+    if not key:
+        return jsonify({"error": "key is required"}); 
     try:
         mongo.db.conversations.delete_many({"user_id": user_id, "key": key})
-        mongo.db.messages.delete_many({"user_id": user_id, "key": key})
+        mongo.db.messages.delete_many({ "key": key })
         return jsonify({"message": "User conversations and messages deleted"}), 200
     except Exception as e:
         return (
