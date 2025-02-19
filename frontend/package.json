@@ -17,6 +17,20 @@
     "package-linux": "electron-packager . PeacockGPT --platform=linux --arch=x64 --out=dist --overwrite",
     "pkg": "pkg ."
   },
+  "build": {
+    "appId": "com.peacockgpt.app",
+    "files": [
+      "build/**/*",
+      "index.js", 
+      "..backend/**/*"
+    ], 
+    "extraResources": [
+      {
+        "from": "../backend",
+        "to": "backend"
+      }
+    ]
+  },
   "jest": {
     "setupFilesAfterEnv": [
       "<rootDir>/config/jest.setup.js"
