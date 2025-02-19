@@ -1,27 +1,47 @@
-const { app, BrowserWindow, Menu } = require("electron");
+const { app, BrowserWindow } = require("electron");
 const path = require("path");
+const express = require("express");
+const { spawn } = require("child_process");
 
-function createWindow() {
-  const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
-    webPreferences: { preload: path.join(__dirname, "preload.js") },
+// Start Flask backend
+function startFlaskBackend() {
+  const flaskProcess = spawn("python", ["-m", "flask", "run"], {
+    cwd: path.join(__dirname, "../backend"),
+    env: { ...process.env, FLASK_APP: "app.main" },
   });
 
-  mainWindow.loadURL("http://192.168.16.147:3000");
-  Menu.setApplicationMenu(null);
+  flaskProcess.stdout.on("data", (data) => {
+    console.log(`Flask: ${data}`);
+  });
+
+  return flaskProcess;
 }
 
-app.on("ready", createWindow);
+function createWindow() {
+  const win = new BrowserWindow({
+    width: 1200,
+    height: 800,
+    webPreferences: {
+      nodeIntegration: true,
+    },
+  });
 
-app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
-    app.quit();
-  }
-});
+  // Start Next.js frontend
+  win.loadURL("http://localhost:3000");
+}
 
-app.on("activate", () => {
-  if (BrowserWindow.getAllWindows().length === 0) {
+app.whenReady().then(() => {
+  const flaskProcess = startFlaskBackend();
+
+  // Wait for Flask to start
+  setTimeout(() => {
     createWindow();
-  }
+  }, 2000);
+
+  app.on("window-all-closed", () => {
+    flaskProcess.kill();
+    if (process.platform !== "darwin") {
+      app.quit();
+    }
+  });
 });
