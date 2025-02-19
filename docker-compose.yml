@@ -17,8 +17,8 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - MONGODB_URI=your_mongodb_uri
-      - OPENAI_API_KEY=your_openai_key
+      - MONGODB_URI=${MONGODB_URI}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
 
   mongodb:
     image: mongo:latest
