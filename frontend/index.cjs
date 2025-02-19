@@ -1,6 +1,5 @@
 const { app, BrowserWindow } = require("electron");
 const path = require("path");
-const express = require("express");
 const { spawn } = require("child_process");
 
 // Start Flask backend
@@ -23,6 +22,7 @@ function createWindow() {
     height: 800,
     webPreferences: {
       nodeIntegration: true,
+      contextIsolation: false,
     },
   });
 
@@ -42,6 +42,12 @@ app.whenReady().then(() => {
     flaskProcess.kill();
     if (process.platform !== "darwin") {
       app.quit();
+    }
+  });
+
+  app.on("activate", () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow();
     }
   });
 });
