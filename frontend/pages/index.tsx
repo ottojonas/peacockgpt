@@ -16,7 +16,21 @@ import Info from "../components/Info";
 import io from "socket.io-client";
 
 // * initialise socket connection
-const socket = io("http://localhost:5000");
+const socket = io("http://localhost:5000", {
+  transports: ["websocket"],
+  withCredentials: true,
+  reconnection: true,
+  reconnectionAttempts: 5,
+  reconnectionDelay: 1000,
+});
+
+socket.on("connect_error", (error) => {
+  console.error("Socket connection error:", error);
+});
+
+socket.on("connect", () => {
+  console.log("Socket connected successfully");
+});
 
 export default function Home() {
   const [inputValue, setInputValue] = useState<string>("");
