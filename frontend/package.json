@@ -1,8 +1,10 @@
 {
   "name": "peacockgpt",
   "version": "0.1.0",
+  "description": "PeacockGPT",
+  "author": "Otto Jonas",
   "private": true,
-  "type": "module",
+  "main": "index.cjs",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -12,20 +14,55 @@
     "test": "jest --confitg config/jest.config.cjs",
     "watch-tests": "jest --watch --config config/jest.config.cjs",
     "electron": "electron .",
+    "electron-build": "electron-builder",
+    "electron-pack": "npm run build && npm run electron-build --dir",
+    "electron-dist": "next build && electron-builder",
     "package-win": "electron-packager . PeacockGPT --platform=win32 --arch=x64 --out=dist --overwrite",
     "package-mac": "electron-packager . PeacockGPT --platform=darwin --arch=x64 --out=dist --overwrite",
     "package-linux": "electron-packager . PeacockGPT --platform=linux --arch=x64 --out=dist --overwrite",
-    "pkg": "pkg ."
+    "pkg": "pkg .",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "build": {
+    "appId": "com.peacockgpt.app",
+    "productName": "PeacockGPT",
+    "files": [
+      "build/**/*",
+      "index.cjs",
+      "../backend/**/*",
+      "node_modules/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "../backend",
+        "to": "backend"
+      }
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "public/favicon.ico"
+    },
+    "nsis": {
+      "oneClick": true,
+      "installerIcon": "public/favicon.ico",
+      "uninstallerIcon": "public/favicon.ico"
+    },
+    "directories": {
+      "output": "dist",
+      "buildResources": "public"
+    }
   },
   "jest": {
     "setupFilesAfterEnv": [
       "<rootDir>/config/jest.setup.js"
     ]
   },
-  "bin": "index.js",
+  "bin": "index.cjs",
   "pkg": {
     "scripts": [
-      "index.js"
+      "index.cjs"
     ],
     "assets": [
       "public/**/*"
@@ -68,8 +105,6 @@
     "sharp": "^0.33.5",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
-    "sqlite": "^5.1.1",
-    "sqlite3": "^5.1.7",
     "tailwind": "^4.0.0",
     "tailwindcss": "3.3.1",
     "text-encoding": "^0.7.0",
@@ -99,6 +134,7 @@
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "electron-builder": "^24.12.0"
   }
 }

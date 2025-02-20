@@ -1,0 +1,28 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Install build dependencies using Alpine's package manager
+RUN apk add --no-cache \
+    python3 \
+    make \
+    g++ \
+    gcc \
+    libc-dev \
+    linux-headers
+
+COPY package*.json ./
+
+# Remove any existing node_modules and bcrypt
+RUN rm -rf node_modules
+RUN npm cache clean --force
+
+# Clean install dependencies
+RUN npm ci --build-from-source
+
+COPY . .
+
+RUN npm run build
+
+EXPOSE 3000
+CMD ["npm", "start"]

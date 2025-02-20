@@ -6,8 +6,26 @@ from flask_cors import CORS
 from flask_socketio import SocketIO, emit
 
 app = create_app()
-CORS(app)
-socketio = SocketIO(app, cors_allowed_origins="*")
+CORS(
+    app,
+    resources={
+        r"/api/*": {
+            "origins": ["http://localhost:3000"],
+            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            "allow_headers": ["Content-Type", "Authorization"],
+            "supports_credentials": True,
+        }
+    },
+)
+
+socketio = SocketIO(
+    app,
+    cors_allowed_origins=["http://localhost:3000"],
+    async_mode="gevent",
+    websocket=True,
+    ping_timeout=60,
+    ping_interval=25,
+)
 
 
 @app.route("/api/messages", methods=["GET"])
@@ -24,8 +42,8 @@ def send_message():
     if not conversation_key or not content:
         return jsonify({"error": "invalid data"}), 400
 
-    message = {"conversationKey": conversation_key, "content": "content"}
-    socketio.emir("new_message", message, broadcast=True)
+    message = {"conversationKey": conversation_key, "content": content}
+    socketio.emit("new_message", message, broadcast=True)
     return jsonify(message), 200
 
 
