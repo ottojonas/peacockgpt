@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import connectToDatabase from "../../lib/mongoose";
 import User from "../../models/User";
-import bcrypt from "bcrypt";
+import argon2 from "argon2";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 
@@ -19,7 +19,7 @@ export default async function handler(
     await connectToDatabase();
 
     const user = await User.findOne({ email });
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    if (!user || !(await argon2.verify(user.password, password))) {
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
@@ -38,7 +38,11 @@ export default async function handler(
     );
     return res
       .status(200)
-      .json({ message: "User signed in successfully", token, userId: user._id });
+      .json({
+        message: "User signed in successfully",
+        token,
+        userId: user._id,
+      });
   } else {
     res.setHeader("Allow", ["POST"]);
     res.status(405).end(`Method ${req.method} not allowed`);

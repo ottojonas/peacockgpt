@@ -16,13 +16,24 @@ const Login = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/api/login", { email, password });
-      localStorage.setItem("token", response.data.token);
-      alert(response.data.message);
-      login(response.data.userId);
-      router.push("/");
+      const response = await axios.post("/api/login", { 
+        email, 
+        password 
+      });
+      
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token);
+        login(response.data.userId);
+        router.push("/");
+      } else {
+        throw new Error("No token received");
+      }
     } catch (error) {
-      alert(error.response?.data.error || "An error occurred");
+      if (axios.isAxiosError(error)) {
+        alert(error.response?.data.error || "Login failed");
+      } else {
+        alert("An unexpected error occurred");
+      }
     }
   };
 

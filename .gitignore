@@ -19,3 +19,4 @@ frontend/.env.local
 nayra.txt
 /frontend/dist
 /env
+/backend/app/build

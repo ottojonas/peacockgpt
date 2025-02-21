@@ -1,0 +1,32 @@
+FROM node:18-bullseye-slim
+
+WORKDIR /frontend
+
+# Install build dependencies using Debian's package manager
+RUN apt-get update && apt-get install -y \
+    python3 \
+    make \
+    g++ \
+    gcc \
+    libc-dev \
+    linux-headers-amd64 \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY package*.json ./
+
+# Remove any existing node_modules and bcrypt 
+RUN rm -rf node_modules 
+RUN npm cache clean --force 
+
+# Clean install dependencies 
+RUN npm ci --build-from-source 
+
+# Rebuild bcrypt from source 
+RUN npm rebuild bcrypt --build-from-source
+
+COPY . .
+
+RUN npm run build
+
+EXPOSE 3000
+CMD ["npm", "start"]

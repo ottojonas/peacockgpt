@@ -1,11 +1,14 @@
 import datetime
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, current_app
 from bson.objectid import ObjectId
 from app import mongo
 from app.utils.file_utils import extract_content_from_file
 from app.utils.openai_utils import generate_response
 from flask_jwt_extended import jwt_required, unset_jwt_cookies
 from app.services.document_service import save_document
+import bcrypt
+import jwt
+from datetime import datetime, timedelta
 
 # * create a Blueprint for the routes
 routes = Blueprint("routes", __name__)
@@ -29,9 +32,12 @@ def register():
     if mongo.db.users.find_one({"email": email}):
         return jsonify({"error": "email already registered"}), 400
 
+    # Hash the password before storing
+    hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
+
     user = {
         "email": email,
-        "password": password,
+        "password": hashed_password.decode("utf-8"),  # Store as string
     }
     mongo.db.users.insert_one(user)
 
@@ -41,34 +47,58 @@ def register():
 # * route to handle user signing in
 @routes.route("/api/login", methods=["POST"])
 def login():
-    data = request.json
-    email = data.get("email")
-    password = data.get("password")
+    try:
+        data = request.json
+        email = data.get("email")
+        password = data.get("password")
 
-    if not email or not password:
-        return jsonify({"error": "email and password are required"}), 400
+        if not email or not password:
+            return jsonify({"error": "email and password are required"}), 400
 
-    user = mongo.db.users.find_one({"email": email})
-    if (
-        user is None or user["password"] != password
-    ):  # You should check the hashed password
-        return jsonify({"error": "invalid email or password"}), 401
+        user = mongo.db.users.find_one({"email": email})
+        if user is None:
+            return jsonify({"error": "invalid email or password"}), 401
 
-    conversations = mongo.db.conversations.find({"user_id": user["_id"]})
-    conversations_data = [
-        {
-            "key": str(conv["_id"]),
-            "title": conv["title"],
-            "date": conv["date"].isoformat(),
-        }
-        for conv in conversations
-    ]
+        # Use bcrypt to verify password
+        if not bcrypt.checkpw(
+            password.encode("utf-8"), user["password"].encode("utf-8")
+        ):
+            return jsonify({"error": "invalid email or password"}), 401
 
-    # TODO implement session or token generation here
-    return (
-        jsonify({"message": "login successful", "conversations": conversations_data}),
-        200,
-    )
+        # Generate JWT token
+        token = jwt.encode(
+            {
+                "user_id": str(user["_id"]),
+                "exp": datetime.utcnow() + timedelta(hours=1),
+            },
+            current_app.config["SECRET_KEY"],
+        )
+
+        conversations = mongo.db.conversations.find({"user_id": user["_id"]})
+        conversations_data = [
+            {
+                "key": str(conv["_id"]),
+                "title": conv["title"],
+                "date": conv["date"].isoformat(),
+            }
+            for conv in conversations
+        ]
+
+        return (
+            jsonify(
+                {
+                    "message": "login successful",
+                    "token": token,
+                    "userId": str(user["_id"]),
+                    "conversations": conversations_data,
+                }
+            ),
+            200,
+        )
+
+    except Exception as e:
+        print(f"Login error: {str(e)}")
+        return jsonify({"error": "Internal server error"}), 500
 
 
 # * routes to handle user signing out
@@ -231,12 +261,12 @@ def delete_user_conversations():
     user_id = request.args.get("user_id")
     key = request.args.get("key")
     if not user_id:
-        return jsonify({"error": "user_id is required"});
+        return jsonify({"error": "user_id is required"})
     if not key:
-        return jsonify({"error": "key is required"}); 
+        return jsonify({"error": "key is required"})
     try:
         mongo.db.conversations.delete_many({"user_id": user_id, "key": key})
-        mongo.db.messages.delete_many({ "key": key })
+        mongo.db.messages.delete_many({"key": key})
         return jsonify({"message": "User conversations and messages deleted"}), 200
     except Exception as e:
         return (

@@ -4,5 +4,5 @@ import os
 
 
 class Config:
-    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "sqlite:///data/peacockgpt.db")
+    MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://192.168.16.119:27017/peacockgpt")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
