@@ -13,12 +13,15 @@ RUN apk add --no-cache \
 
 COPY package*.json ./
 
-# Remove any existing node_modules and bcrypt
-RUN rm -rf node_modules
-RUN npm cache clean --force
+# Remove any existing node_modules and bcrypt 
+RUN rm -rf node_modules 
+RUN npm cache clean --force 
 
-# Clean install dependencies
-RUN npm ci --build-from-source
+# Clean install dependancies 
+RUN npm ci --build-from-source 
+
+# Rebuild bcrypt from source 
+RUN npm rebuild bcrypt --build-from-source
 
 COPY . .
 
