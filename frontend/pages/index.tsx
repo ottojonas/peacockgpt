@@ -16,7 +16,7 @@ import Info from "../components/Info";
 import io from "socket.io-client";
 
 // * initialise socket connection
-const socket = io("http://localhost:5000", {
+const socket = io("http://192.168.16.119:5000", {
   transports: ["websocket"],
   withCredentials: true,
   reconnection: true,

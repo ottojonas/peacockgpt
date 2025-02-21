@@ -29,7 +29,7 @@ function createWindow() {
   });
 
   // Start Next.js frontend
-  win.loadURL("http://localhost:3000");
+  win.loadURL("http://192.168.16.119:3000");
 }
 
 app.whenReady().then(() => {
