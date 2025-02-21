@@ -1,9 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import connectToDatabase from "../../lib/mongoose";
 import User from "../../models/User";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import crypto from "crypto";
+import argon2 from "argon2";
 
 export default async function handler(
   req: NextApiRequest,
@@ -16,41 +14,18 @@ export default async function handler(
       return res.status(400).json({ error: "Email and password are required" });
     }
 
-    if (!email.endsWith("@peacocksalt.co.uk")) {
-      return res
-        .status(400)
-        .json({ error: "Email must be a @peacocksalt.co.uk address" });
-    }
-
     await connectToDatabase();
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ error: "Email already registered" });
+      return res.status(400).json({ error: "User already exists" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await argon2.hash(password);
+    const user = new User({ email, password: hashedPassword });
+    await user.save();
 
-    const userSecretKey = crypto.randomBytes(64).toString("hex");
-
-    const newUser = new User({
-      email,
-      password: hashedPassword,
-      secretKey: userSecretKey,
-    });
-    await newUser.save();
-
-    const token = jwt.sign({ id: newUser._id }, userSecretKey, {
-      expiresIn: "1h",
-    });
-
-    res.setHeader(
-      "Set-Cookie",
-      `token=${token}; HttpOnly; Path=/; Max-Age=3600`
-    );
-    return res
-      .status(201)
-      .json({ message: "User registered successfully", token });
+    return res.status(201).json({ message: "User registered successfully" });
   } else {
     res.setHeader("Allow", ["POST"]);
     res.status(405).end(`Method ${req.method} not allowed`);

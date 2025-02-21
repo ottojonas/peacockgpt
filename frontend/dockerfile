@@ -1,15 +1,16 @@
-FROM node:18-alpine
+FROM node:18-bullseye-slim
 
-WORKDIR /app
+WORKDIR /frontend
 
-# Install build dependencies using Alpine's package manager
-RUN apk add --no-cache \
+# Install build dependencies using Debian's package manager
+RUN apt-get update && apt-get install -y \
     python3 \
     make \
     g++ \
     gcc \
     libc-dev \
-    linux-headers
+    linux-headers-amd64 \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY package*.json ./
 
@@ -17,7 +18,7 @@ COPY package*.json ./
 RUN rm -rf node_modules 
 RUN npm cache clean --force 
 
-# Clean install dependancies 
+# Clean install dependencies 
 RUN npm ci --build-from-source 
 
 # Rebuild bcrypt from source 

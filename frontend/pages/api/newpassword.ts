@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import connectToDatabase from "../../lib/mongoose";
 import User from "../../models/User";
-import bcrypt from "bcrypt";
+import argon2 from "argon2";
 
 export default async function handler(
   req: NextApiRequest,
@@ -20,7 +20,7 @@ export default async function handler(
       return res.status(404).json({ error: "Could not find user" });
     }
 
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const hashedPassword = await argon2.hash(newPassword);
     user.password = hashedPassword;
     await user.save();
     return res.status(200).json({ message: "password reset successful" });
