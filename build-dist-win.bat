@@ -1,12 +1,34 @@
 @echo off
 
-REM Build and start the backend 
-cd backend 
-echo Installing backend dependencies...
-call pip install -r requirements.txt
-echo Starting backend 
-call python -m app.main 
-cd .. 
+REM Check if running with admin privs 
+not session >nul 2>&1 
+if %errorLevel% == 0 (
+  echo Running with admin rights 
+) else (
+  echo Please run script with admin right 
+  echo Right click the batch file and select "Run as administrator"
+  pause 
+  exit /b 1
+)
+
+REM Check Docker services 
+echo Checking docker services
+sc query docker >nul 2>&1
+if %errorLevel% == 1060 (
+  echo Docker service not found. Please ensure that Docker Desktop is installed and running with admin rights 
+  pause 
+  exit /b 1
+)
+
+REM Start Docker services if its not already running 
+net start docker 2>nul 
+timeout /t 5 /nobreak 
+
+echo Starting Docker containers...
+docker-compose up -d 
+
+REM Wait for services to be ready 
+REM timeout /t 10 /nobreak 
 
 REM Build and start the frontend
 cd frontend
