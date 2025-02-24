@@ -14,7 +14,9 @@ type DocumentItem = {
 interface Props {
   documents: DocumentItem[];
   setDocuments: React.Dispatch<React.SetStateAction<DocumentItem[]>>;
+  setTitle: React.Dispatch<React.SetStateAction<string>>;
   setContent: React.Dispatch<React.SetStateAction<string>>;
+  setDocumentKey: (key: string) => void;
 }
 
 const createNewDocument = () => {
@@ -27,13 +29,18 @@ const createNewDocument = () => {
 };
 
 const DocumentHistory: React.FC<Props> = ({
+  setDocumentKey,
   documents = [],
   setDocuments,
+  setTitle,
   setContent,
 }) => {
   const [newDocumentTitle, setNewDocumentTitle] = useState<string>("");
   const [newDocumentContent, setNewDocumentContent] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedDocument, setSelectedDocument] = useState<DocumentItem | null>(
+    null
+  );
 
   useEffect(() => {
     fetchDocuments();
@@ -60,6 +67,31 @@ const DocumentHistory: React.FC<Props> = ({
       setNewDocumentContent("");
     } catch (error) {
       console.error("Error uploading new document: ", error);
+    }
+  };
+
+  const handleDocumentClick = async (key: string) => {
+    setDocuments((prevDocuments) =>
+      prevDocuments.map((document) =>
+        document.key === key
+          ? { ...document, isSelected: true }
+          : { ...document, isSelected: false }
+      )
+    );
+    const selectedDocument = documents.find((document) => document.key === key);
+    if (selectedDocument) {
+      setSelectedDocument(selectedDocument);
+      setDocumentKey(selectedDocument.key);
+      try {
+        const response = await axios.get("/api/documents", {
+          params: { documentKey: selectedDocument.key },
+        });
+        setDocuments(response.data);
+        setTitle(response.data.title);
+        setContent(response.data.content);
+      } catch (error) {
+        console.error("Error fetching document data: ", error);
+      }
     }
   };
 
@@ -113,7 +145,11 @@ const DocumentHistory: React.FC<Props> = ({
       </div>
       <div className="overflow-y-auto grow">
         {documents.map((document) => (
-          <DocumentHistoryItem key={document.key} document={document} />
+          <DocumentHistoryItem
+            key={document.key}
+            document={document}
+            onClick={handleDocumentClick}
+          />
         ))}
       </div>
       <input
@@ -126,13 +162,20 @@ const DocumentHistory: React.FC<Props> = ({
   );
 };
 
-function DocumentHistoryItem({ document }: { document: DocumentItem }) {
+function DocumentHistoryItem({
+  document,
+  onClick,
+}: {
+  document: DocumentItem;
+  onClick: (key: string) => void;
+}) {
   return (
     <div className="py-1">
       <div
         className={`px-3 py-2 test-sm w-full rounded-md ${
           document.isSelected ? "selected-document" : "bg-card"
         }`}
+        onClick={() => onClick(document.key)}
       >
         <div className="flex items-center justify-between">
           <h3 className="font-semibold grow line-clamp-1">{document.title}</h3>

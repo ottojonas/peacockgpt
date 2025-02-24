@@ -18,7 +18,8 @@ interface Props {
 const Documents: React.FC = () => {
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [content, setContent] = useState<string>("");
-
+  const [title, setTitle] = useState<string>("");
+  const [documentKey, setDocumentKey] = useState<string>("");
   return (
     <>
       <CustomHead title="Document Modification" />
@@ -27,6 +28,8 @@ const Documents: React.FC = () => {
         documents={documents}
         setDocuments={setDocuments}
         setContent={setContent}
+        setTitle={setTitle}
+        setDocumentKey={setDocumentKey}
       />
     </>
   );
