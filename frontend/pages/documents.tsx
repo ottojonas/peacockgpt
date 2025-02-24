@@ -24,7 +24,11 @@ const Documents: React.FC = () => {
     <>
       <CustomHead title="Document Modification" />
       <Sidebar />
-      <DocumentHistory documents={documents} setDocuments={setDocuments} />
+      <DocumentHistory
+        documents={documents}
+        setDocuments={setDocuments}
+        setContent={setContent}
+      />
     </>
   );
 };
