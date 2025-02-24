@@ -1,6 +1,8 @@
 import axios from "axios";
 import React, { useEffect } from "react";
 
+interface DocumentContentProps {}
+
 const DocumentContent: React.FC = () => {
   useEffect(() => {
     const fetchDocumentContent = async () => {

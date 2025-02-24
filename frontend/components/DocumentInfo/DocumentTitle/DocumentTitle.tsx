@@ -1,6 +1,8 @@
 import axios from "axios";
 import React, { useEffect } from "react";
 
+interface DocumentTitleProps {}
+
 const DocumentTitle: React.FC = () => {
   useEffect(() => {
     const fetchDocumentTitle = async () => {
