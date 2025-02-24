@@ -1,10 +1,22 @@
 import React, { useState } from "react";
 import Sidebar from "../components/Sidebar";
-import DocumentList from "../components/DocumentList/DocumentList";
 import CustomHead from "../components/common/CustomHead";
-import { DocumentProps } from "../components/DocumentList/DocumentList";
-const Documents = () => {
-  const [documents, setDocuments] = useState<DocumentProps[]>([]);
+import DocumentHistory from "../components/DocumentHistory/DocumentHistory";
+
+interface DocumentItem {
+  key: string;
+  title: string;
+  content: string;
+  isSelected: boolean;
+}
+
+interface Props {
+  setDocuments: React.Dispatch<React.SetStateAction<DocumentItem[]>>;
+  setDocumenttKey: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const Documents: React.FC = () => {
+  const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [documentKey, setDocumentKey] = useState<string>("");
   const [content, setContent] = useState<string>("");
 
@@ -12,12 +24,7 @@ const Documents = () => {
     <>
       <CustomHead title="Document Modification" />
       <Sidebar />
-      <DocumentList
-        setDocumentKey={setDocumentKey}
-        setContent={setContent}
-        documents={documents}
-        setDocuments={setDocuments}
-      />
+      <DocumentHistory documents={documents} setDocuments={setDocuments} />
     </>
   );
 };
