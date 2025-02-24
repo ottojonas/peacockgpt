@@ -17,14 +17,17 @@ interface Props {
 
 const Documents: React.FC = () => {
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
-  const [documentKey, setDocumentKey] = useState<string>("");
   const [content, setContent] = useState<string>("");
 
   return (
     <>
       <CustomHead title="Document Modification" />
       <Sidebar />
-      <DocumentHistory documents={documents} setDocuments={setDocuments} />
+      <DocumentHistory
+        documents={documents}
+        setDocuments={setDocuments}
+        setContent={setContent}
+      />
     </>
   );
 };

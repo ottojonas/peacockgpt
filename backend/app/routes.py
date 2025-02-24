@@ -8,7 +8,7 @@ from flask_jwt_extended import jwt_required, unset_jwt_cookies
 from app.services.document_service import save_document
 import bcrypt
 import jwt
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 # * create a Blueprint for the routes
 routes = Blueprint("routes", __name__)
@@ -34,13 +34,11 @@ def register():
 
     # Hash the password before storing
     hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
-
     user = {
         "email": email,
         "password": hashed_password.decode("utf-8"),  # Store as string
     }
     mongo.db.users.insert_one(user)
-
     return jsonify({"message": "user registered successfully"}), 201
 
 
