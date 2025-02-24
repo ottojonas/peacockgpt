@@ -14,7 +14,7 @@ type DocumentItem = {
 interface Props {
   documents: DocumentItem[];
   setDocuments: React.Dispatch<React.SetStateAction<DocumentItem[]>>;
-  setContent: (content: DocumentItem[]) => void;
+  setContent: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const createNewDocument = () => {
@@ -26,7 +26,11 @@ const createNewDocument = () => {
   };
 };
 
-const DocumentHistory: React.FC<Props> = ({ documents = [], setDocuments }) => {
+const DocumentHistory: React.FC<Props> = ({
+  documents = [],
+  setDocuments,
+  setContent,
+}) => {
   const [newDocumentTitle, setNewDocumentTitle] = useState<string>("");
   const [newDocumentContent, setNewDocumentContent] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -60,7 +64,7 @@ const DocumentHistory: React.FC<Props> = ({ documents = [], setDocuments }) => {
   };
 
   const handleFileChange = async (
-    event: React.ChangeEvent<HTMLInputElement>,
+    event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = event.target.files?.[0];
     if (file) {
