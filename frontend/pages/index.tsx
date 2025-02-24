@@ -11,7 +11,6 @@ import ChatHistory from "../components/ChatHistory";
 import ChatHeader from "../components/ChatHeader";
 import Chat from "../components/Chat";
 import ChatInput from "../components/ChatInput";
-import DocumentList from "../components/DocumentList/DocumentList";
 import Info from "../components/Info";
 import io from "socket.io-client";
 
