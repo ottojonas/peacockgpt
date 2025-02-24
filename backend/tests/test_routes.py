@@ -36,13 +36,13 @@ class RoutesTestCase(unittest.TestCase):
             os.makedirs(
                 "tests", exist_ok=True
             )  # create the tests directory if it doesn't exist
-            with open("backend/tests/test_document.txt", "wb") as test_file:
+            with open("tests/test_document.txt", "wb") as test_file:
                 test_file.write(b"test document content")  # write contents to test file
             response = self.client.post(
                 "/upload",
                 data={
                     "file": (
-                        open("backend/tests/test_document.txt", "rb"),
+                        open("tests/test_document.txt", "rb"),
                         "test_document.txt",
                     )
                 },
