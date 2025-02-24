@@ -34,13 +34,11 @@ def register():
 
     # Hash the password before storing
     hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
-
     user = {
         "email": email,
         "password": hashed_password.decode("utf-8"),  # Store as string
     }
     mongo.db.users.insert_one(user)
-
     return jsonify({"message": "user registered successfully"}), 201
 
 
