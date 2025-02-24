@@ -8,7 +8,7 @@ from flask_jwt_extended import jwt_required, unset_jwt_cookies
 from app.services.document_service import save_document
 import bcrypt
 import jwt
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 # * create a Blueprint for the routes
 routes = Blueprint("routes", __name__)
