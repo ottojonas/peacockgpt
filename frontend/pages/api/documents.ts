@@ -2,11 +2,16 @@ import { NextApiRequest, NextApiResponse } from "next";
 import connectToDatabase from "../../lib/mongoose";
 import { v4 as uuidv4 } from "uuid";
 import TrainingDocument from "../../models/TrainingDocument";
-
+import { getSession } from "next-auth/react";
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  const session = await getSession({ req });
+
+  if (!session || !session.user || !session.user.admin) {
+    return res.status(403).json({ error: "Admin permissions required" });
+  }
   await connectToDatabase();
   if (req.method === "GET") {
     try {

@@ -44,7 +44,7 @@ export default function Home() {
   useEffect(() => {
     if (!isAuthenticated) {
       router.push("/login");
-    } else {
+    } else if (userId) {
       axios
         .get("/api/conversations", {
           params: { user_id: userId },
@@ -53,15 +53,11 @@ export default function Home() {
           setConversations(response.data);
         });
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, router, userId]);
 
-  if (!isAuthenticated) {
-    return null;
-  }
   // * effect to fetch messages when the conversation key changes
   useEffect(() => {
     if (conversationKey) {
-      // console.log("fetching messages for:", conversationKey);
       const fetchMessages = async () => {
         try {
           const response = await axios.get("/api/messages", {
@@ -76,6 +72,10 @@ export default function Home() {
       fetchMessages();
     }
   }, [conversationKey]);
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   const handleDeleteConversation = (key: string) => {
     setConversations((prevConversations) =>

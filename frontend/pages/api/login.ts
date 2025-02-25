@@ -28,7 +28,7 @@ export default async function handler(
     user.secretKey = userSecretKey;
     await user.save();
 
-    const token = jwt.sign({ id: user._id }, userSecretKey, {
+    const token = jwt.sign({ id: user._id, admin: user.admin }, userSecretKey, {
       expiresIn: "1h",
     });
 
@@ -36,13 +36,16 @@ export default async function handler(
       "Set-Cookie",
       `token=${token}; HttpOnly; Path=/; Max-Age=3600`
     );
-    return res
-      .status(200)
-      .json({
-        message: "User signed in successfully",
-        token,
-        userId: user._id,
-      });
+    console.log(
+      "Set-Cookie header: ",
+      `token=${token}; HttpOnly; Path=/; Max-Age=3600`
+    );
+    return res.status(200).json({
+      message: "User signed in successfully",
+      token,
+      userId: user._id,
+      admin: user.admin,
+    });
   } else {
     res.setHeader("Allow", ["POST"]);
     res.status(405).end(`Method ${req.method} not allowed`);

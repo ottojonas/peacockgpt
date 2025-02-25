@@ -4,16 +4,27 @@ from bson.objectid import ObjectId
 from app import mongo
 from app.utils.file_utils import extract_content_from_file
 from app.utils.openai_utils import generate_response
-from flask_jwt_extended import jwt_required, unset_jwt_cookies
+from flask_jwt_extended import jwt_required, unset_jwt_cookies, get_jwt_identity, verify_jwt_in_request
 from app.services.document_service import save_document
 import bcrypt
 import jwt
 from datetime import timedelta
+from functools import wraps 
+
 
 # * create a Blueprint for the routes
 routes = Blueprint("routes", __name__)
 auth_bp = Blueprint("auth", __name__)
 
+def admin_required(fn): 
+    @wraps(fn)
+    def wrapper(*args, **kwargs): 
+        verify_jwt_in_request()
+        current_user = get_jwt_identity()
+        if not current_user.get("admin"): 
+            return jsonify({ "error": "admin access required"}), 401
+        return fn(*args, **kwargs) 
+    return wrapper 
 
 # * route to handle account creation and user registration
 @routes.route("/api/register", methods=["POST"])
@@ -99,6 +110,7 @@ def login():
         return jsonify({"error": "Internal server error"}), 500
 
 
+
 # * routes to handle user signing out
 @auth_bp.route("/api/logout", methods=["POST"])
 @jwt_required()
@@ -138,6 +150,7 @@ def health_check():
 
 # * route to handle document uploads
 @routes.route("/upload", methods=["POST"])
+@admin_required
 def upload_document():
     if "file" not in request.files:
         return jsonify({"error": "No file part"}), 400
@@ -167,7 +180,9 @@ def upload_document():
 
 
 # * route to list all documents
+
 @routes.route("/documents", methods=["GET"])
+@admin_required
 def list_documents():
     documents = mongo.db.documents.find()
     return jsonify(
@@ -177,6 +192,7 @@ def list_documents():
 
 # * route to get a specific document by its ID
 @routes.route("/documents/<string:doc_id>", methods=["GET"])
+@admin_required
 def get_document(doc_id):
     document = mongo.db.documents.find_one({"_id": ObjectId(doc_id)})
     if document:
@@ -191,7 +207,9 @@ def get_document(doc_id):
 
 
 # * route to delete a specific document by its ID
+
 @routes.route("/documents/<string:doc_id>", methods=["DELETE"])
+@admin_required
 def delete_document_route(doc_id):
     result = mongo.db.documents.delete_one({"_id": ObjectId(doc_id)})
     if result.deleted_count > 0:
@@ -199,7 +217,7 @@ def delete_document_route(doc_id):
     return jsonify({"error": "Document not found"}), 404
 
 
-# * route to create a new conversation
+# * route to create a new conversations
 @routes.route("/api/conversations", methods=["POST"])
 def create_conversation():
     data = request.json

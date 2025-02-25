@@ -3,19 +3,14 @@ import Sidebar from "../components/Sidebar";
 import CustomHead from "../components/common/CustomHead";
 import DocumentHistory from "../components/DocumentHistory/DocumentHistory";
 import DocumentInfo from "../components/DocumentInfo/DocumentInfo";
-import { DocumentInfoItem } from "../components/DocumentInfo/DocumentInfo";
 import axios from "axios";
+import withAdminAuth from "../middleware/withAdminAuth";
 
 interface DocumentItem {
   key: string;
   title: string;
   content: string;
   isSelected: boolean;
-}
-
-interface Props {
-  setDocuments: React.Dispatch<React.SetStateAction<DocumentItem[]>>;
-  setDocumentKey: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const Documents: React.FC = () => {
@@ -59,4 +54,4 @@ const Documents: React.FC = () => {
   );
 };
 
-export default Documents;
+export default withAdminAuth(Documents);
