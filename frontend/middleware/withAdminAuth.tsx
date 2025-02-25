@@ -3,8 +3,12 @@ import { getSession } from "next-auth/react";
 import { Session } from "next-auth";
 
 const withAdminAuth = (WrappedComponent: any) => {
-  return async (context: NextPageContext) => {
+  const Wrapper = (props: any) => <WrappedComponent {...props} />;
+
+  Wrapper.getInitialProps = async (context: NextPageContext) => {
     const session: Session | null = await getSession(context);
+
+    console.log("Session data: ", session);
 
     if (!session || !session.user || !session.user.admin) {
       if (context.res) {
@@ -16,8 +20,15 @@ const withAdminAuth = (WrappedComponent: any) => {
       return { props: {} };
     }
 
-    return { props: { session } };
+    let pageProps = {};
+    if (WrappedComponent.getInitialProps) {
+      pageProps = await WrappedComponent.getInitialProps(context);
+    }
+
+    return { ...pageProps, session };
   };
+
+  return Wrapper;
 };
 
 export default withAdminAuth;
