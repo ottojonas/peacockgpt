@@ -24,7 +24,7 @@ const nextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: "http://local192.168.16.119host:5000/:path*", // proxy to flask backend hopefully
+        destination: "http://192.168.16.119:5000/:path*", // proxy to flask backend hopefully
       },
     ];
   },

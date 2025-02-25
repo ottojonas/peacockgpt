@@ -10,7 +10,7 @@ CORS(
     app,
     resources={
         r"/api/*": {
-            "origins": ["http://localhost:3000", "http://192.168.16.119:3000"],
+            "origins": ["http://localhost:3000", "http://192.168.16.119:3000", "http://localhost:3001"],
             "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
             "allow_headers": ["Content-Type", "Authorization"],
             "supports_credentials": True,
@@ -20,7 +20,7 @@ CORS(
 
 socketio = SocketIO(
     app,
-    cors_allowed_origins=["http://localhost:3000", "http://192.168.16.119:3000"],
+    cors_allowed_origins=["http://localhost:3000", "http://192.168.16.119:3000", "http://localhost:3001"],
     async_mode="gevent",
     websocket=True,
     ping_timeout=60,
@@ -64,4 +64,4 @@ def get_documents():
 
 
 if __name__ == "__main__":
-    socketio.run(app, debug=True, host="192.168.16.119", port=5000)
+    socketio.run(app, debug=True, host="0.0.0.0", port=5000)
