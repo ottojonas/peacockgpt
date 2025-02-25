@@ -58,10 +58,10 @@ const DocumentInfo: React.FC<DocumentInfoProps> = ({
       style={{ marginLeft: "384px", marginRight: "320px" }}
     >
       <div className="px-4 pt-16 pb-48 mx-auto max-w-3x1 document-title">
-        <DocumentTitle title={documentTitle} />
+        <DocumentTitle title={documentTitle} setTitle = {setDocumentTitle} />
       </div>
       <div className="px-4 pt-16 pb-48 mx-auto max-w-3x1 document-content">
-        <DocumentContent content={documentContent} />
+        <DocumentContent content={documentContent} setContent={setDocumentContent}/>
       </div>
     </div>
   );
