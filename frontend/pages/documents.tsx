@@ -52,6 +52,7 @@ const Documents: React.FC = () => {
       <DocumentInfo
         documents={documents}
         setTitle={setTitle}
+        setContent={setContent}
         documentKey={documentKey}
       />
     </>

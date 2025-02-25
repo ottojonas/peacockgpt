@@ -13,15 +13,18 @@ export type DocumentInfoItem = {
 interface DocumentInfoProps {
   documents: DocumentInfoItem[];
   setTitle: React.Dispatch<React.SetStateAction<string>>;
+  setContent: React.Dispatch<React.SetStateAction<string>>;
   documentKey: string;
 }
 
 const DocumentInfo: React.FC<DocumentInfoProps> = ({
   documents,
   setTitle,
+  setContent,
   documentKey,
 }) => {
   const [documentTitle, setDocumentTitle] = useState<string>("");
+  const [documentContent, setDocumentContent] = useState<string>("");
 
   useEffect(() => {
     const fetchDocumentInfo = async (key: string) => {
@@ -37,6 +40,8 @@ const DocumentInfo: React.FC<DocumentInfoProps> = ({
         if (document) {
           setTitle(document.title);
           setDocumentTitle(document.title);
+          setContent(document.content);
+          setDocumentContent(document.content);
         }
       } catch (error) {
         console.error("Could not fetch document title or content: ", error);
@@ -45,7 +50,7 @@ const DocumentInfo: React.FC<DocumentInfoProps> = ({
     if (documentKey) {
       fetchDocumentInfo(documentKey);
     }
-  }, [documentKey, setTitle]);
+  }, [documentKey, setTitle, setContent]);
 
   return (
     <div
@@ -55,9 +60,9 @@ const DocumentInfo: React.FC<DocumentInfoProps> = ({
       <div className="px-4 pt-16 pb-48 mx-auto max-w-3x1 document-title">
         <DocumentTitle title={documentTitle} />
       </div>
-      {/* <div className="px-4 pt-16 pb-48 mx-auto max-w-3x1 document-content">
-        <DocumentContent />
-      </div> */}
+      <div className="px-4 pt-16 pb-48 mx-auto max-w-3x1 document-content">
+        <DocumentContent content={documentContent} />
+      </div>
     </div>
   );
 };
