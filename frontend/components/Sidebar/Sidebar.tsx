@@ -22,6 +22,10 @@ export default function Sidebar({}: Props) {
     document.body.setAttribute("data-theme", theme);
   }, [theme]);
 
+  const handleChatClick = () => {
+    router.push("/");
+  };
+
   const handleSettingsClick = () => {
     router.push("/documents");
   };
@@ -70,6 +74,7 @@ export default function Sidebar({}: Props) {
           className={`grid w-10 h-10 rounded-md place-items-center ${
             isActive("/") ? "text-black bg-brandWhite" : "text-brandGray"
           }`}
+          onClick={handleChatClick}
         >
           <ChatIcon className="w-5 h-5" />
         </button>
