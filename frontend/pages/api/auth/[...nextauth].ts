@@ -27,17 +27,23 @@ export default NextAuth({
   ],
   callbacks: {
     async session({ session, token }: { session: any; token: any }) {
-      session.user.admin = token.admin as string;
+      console.log("Session callback - token: ", token);
+      session.user.id = token.id;
+      session.user.admin = token.admin as boolean;
+      console.log("Session data: ", session);
       return session;
     },
     async jwt({ token, user }: { token: any; user: any }) {
       if (user) {
+        token.id = user.id;
         token.admin = user.admin;
       }
+      console.log("JWT callback - token: ", token);
       return token;
     },
   },
   pages: {
     signIn: "/login",
   },
+  secret: process.env.NEXTAUTH_SECRET,
 });

@@ -5,35 +5,29 @@ import styles from "../styles/auth.module.css";
 import loginStyles from "../styles/loginform.module.css";
 import { FaUser, FaLock } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
+import { signIn } from "next-auth/react";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
-  const { login } = useAuth();
+  //  const { login } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const response = await axios.post("/api/login", { 
-        email, 
-        password 
-      });
-      
-      if (response.data.token) {
-        localStorage.setItem("token", response.data.token);
-        login(response.data.userId);
-        router.push("/");
-      } else {
-        throw new Error("No token received");
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        alert(error.response?.data.error || "Login failed");
-      } else {
-        alert("An unexpected error occurred");
-      }
+    const result = await signIn("credentials", {
+      redirect: false,
+      email,
+      password,
+    });
+    if (result?.error) {
+      setError(result.error);
+      console.log("Login error: ", result.error);
+    } else {
+      console.log("Login  successful, redirecting...");
+      console.log("Calling router.push('/')");
+      router.push("/");
     }
   };
 
@@ -68,7 +62,7 @@ const Login = () => {
               <input type="checkbox" />
               Remember Details
             </label> */}
-            <a href="/forgotpassword">Forgot Password?</a>
+            {/* <a href="/forgotpassword">Forgot Password?</a> */}
           </div>
           <button type="submit">Login</button>
           <div className={loginStyles["register-link"]}>

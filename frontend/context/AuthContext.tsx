@@ -1,4 +1,11 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from "react";
+import { useSession } from "next-auth/react";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -10,8 +17,19 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const { data: session, status } = useSession();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      setIsAuthenticated(true);
+      setUserId(session.user.id);
+    } else {
+      setIsAuthenticated(false);
+      setUserId(null);
+    }
+  }, [session, status]);
 
   const login = (id: string) => {
     setIsAuthenticated(true);
