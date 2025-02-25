@@ -148,7 +148,7 @@ const DocumentHistory: React.FC<Props> = ({
           <DocumentHistoryItem
             key={document.key}
             document={document}
-            onClick={handleDocumentClick}
+            onClick={() => handleDocumentClick(document.key)}
           />
         ))}
       </div>

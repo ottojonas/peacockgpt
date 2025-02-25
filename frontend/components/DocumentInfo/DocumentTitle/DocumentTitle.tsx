@@ -1,19 +1,21 @@
 import axios from "axios";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { DocumentInfoItem } from "../DocumentInfo";
 
-interface DocumentTitleProps {}
+interface DocumentTitleProps {
+  title: string;
+}
 
-const DocumentTitle: React.FC = () => {
-  useEffect(() => {
-    const fetchDocumentTitle = async () => {
-      try {
-        const response = await axios.get("/api/documents", { params: {} });
-      } catch (error) {
-        console.error("Could not fetch document title: ", error);
-      }
-    };
-  }, []);
-  return <></>;
+const DocumentTitle: React.FC<DocumentTitleProps> = ({ title }) => {
+  return (
+    <div className="py-2" data-testid="document-title">
+      <div className="flex p-2 rounded-md bg-item">
+        <div className="w-12 shrink">
+          <div className="w-full">{title}</div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default DocumentTitle;
