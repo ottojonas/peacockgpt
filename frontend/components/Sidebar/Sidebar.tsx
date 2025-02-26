@@ -9,6 +9,7 @@ import { useTheme } from "../../context/ThemeContext";
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
+import { signOut } from "next-auth/react";
 
 type Props = {};
 
@@ -22,33 +23,17 @@ export default function Sidebar({}: Props) {
     document.body.setAttribute("data-theme", theme);
   }, [theme]);
 
+  const handleChatClick = () => {
+    router.push("/");
+  };
+
   const handleSettingsClick = () => {
     router.push("/documents");
   };
 
-  const handleLogout = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("No token found");
-      }
-      await axios.post(
-        "/api/logout",
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      localStorage.removeItem("token");
-      router.push("/login");
-    } catch (error) {
-      console.error("Failed to logout:", error);
-    }
+  const handleLogout = () => {
+    signOut({ callbackUrl: "/login" });
   };
-
   const isActive = (path: string) => router.pathname === path;
 
   return (
@@ -57,7 +42,7 @@ export default function Sidebar({}: Props) {
         <GPTLogo className="w-6 h-6 text-blue-900" />
       </div>
       <div className="flex flex-col pt-24 space-y-4 grow">
-        <button
+        {/* <button
           className={`grid w-10 h-10 rounded-md place-items-center ${
             isActive("/dashboard")
               ? "text-black bg-brandWhite"
@@ -65,21 +50,22 @@ export default function Sidebar({}: Props) {
           }`}
         >
           <DashboardIcon className="w-5 h-5" />
-        </button>
+        </button> */}
         <button
           className={`grid w-10 h-10 rounded-md place-items-center ${
             isActive("/") ? "text-black bg-brandWhite" : "text-brandGray"
           }`}
+          onClick={handleChatClick}
         >
           <ChatIcon className="w-5 h-5" />
         </button>
-        <button
+        {/* <button
           className={`grid w-10 h-10 rounded-md place-items-center ${
             isActive("/users") ? "text-black bg-brandWhite" : "text-brandGray"
           }`}
         >
           <UsersIcon className="w-5 h-5" />
-        </button>
+        </button> */}
         <button
           className={`grid w-10 h-10 rounded-md place-items-center ${
             isActive("/documents")
@@ -92,12 +78,12 @@ export default function Sidebar({}: Props) {
         </button>
       </div>
       <div className="flex flex-col pb-4 space-y-4 shrink-0">
-        <button
+        {/* <button
           className="grid w-10 h-10 text-white rounded-md place-items-center"
           onClick={toggleTheme}
         >
           <ThemeIcon className="w-5 h-5" />
-        </button>
+        </button> */}
         <button
           className="grid w-10 h-10 text-white rounded-md place-items-center bg-card"
           onClick={handleLogout}

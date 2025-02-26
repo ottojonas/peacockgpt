@@ -2,12 +2,25 @@ import { NextApiRequest, NextApiResponse } from "next";
 import connectToDatabase from "../../lib/mongoose";
 import { v4 as uuidv4 } from "uuid";
 import TrainingDocument from "../../models/TrainingDocument";
+import { getSession } from "next-auth/react";
+import jwt from "jsonwebtoken";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  // const session = await getSession();
+
+  // if (!session) {
+  //   return res.status(401).json({ error: "authentication required" });
+  // }
+
+  // if (!session.user || !session.user.admin) {
+  //   return res.status(403).json({ error: "Admin permissions required" });
+  // }
+
   await connectToDatabase();
+
   if (req.method === "GET") {
     try {
       const trainingDocuments = await TrainingDocument.find({});
@@ -15,21 +28,6 @@ export default async function handler(
     } catch (error) {
       console.error("Error loading documents:", error);
       res.status(500).json({ error: "Failed to load documents" });
-    }
-  } else if (req.method === "POST") {
-    try {
-      const { title, content } = req.body;
-      const key = uuidv4();
-      if (!title || !content) {
-        return res.status(400).json({ error: "Missing required fields" });
-      }
-
-      const newDocument = new TrainingDocument({ key, title, content });
-      await newDocument.save();
-      res.status(201).json({ if: newDocument._id, key: newDocument.key });
-    } catch (error) {
-      console.error("Error saving conversation:", error);
-      res.status(500).json({ error: "Failed to save conversation" });
     }
   } else if (req.method === "PUT") {
     try {
@@ -53,6 +51,21 @@ export default async function handler(
     } catch (error) {
       console.error("Error updating document");
       res.status(500).json({ error: "Failed to update document" });
+    }
+  } else if (req.method === "POST") {
+    try {
+      const { title, content } = req.body;
+      const key = uuidv4();
+      if (!title || !content) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+
+      const newDocument = new TrainingDocument({ key, title, content });
+      await newDocument.save();
+      res.status(201).json({ if: newDocument._id, key: newDocument.key });
+    } catch (error) {
+      console.error("Error saving conversation:", error);
+      res.status(500).json({ error: "Failed to save conversation" });
     }
   } else if (req.method === "DELETE") {
     try {

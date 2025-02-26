@@ -11,11 +11,10 @@ import ChatHistory from "../components/ChatHistory";
 import ChatHeader from "../components/ChatHeader";
 import Chat from "../components/Chat";
 import ChatInput from "../components/ChatInput";
-import Info from "../components/Info";
 import io from "socket.io-client";
 
 // * initialise socket connection
-const socket = io("http://192.168.16.119:5000", {
+const socket = io("http://localhost:5000", {
   transports: ["websocket"],
   withCredentials: true,
   reconnection: true,
@@ -44,7 +43,7 @@ export default function Home() {
   useEffect(() => {
     if (!isAuthenticated) {
       router.push("/login");
-    } else {
+    } else if (userId) {
       axios
         .get("/api/conversations", {
           params: { user_id: userId },
@@ -53,15 +52,11 @@ export default function Home() {
           setConversations(response.data);
         });
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, router, userId]);
 
-  if (!isAuthenticated) {
-    return null;
-  }
   // * effect to fetch messages when the conversation key changes
   useEffect(() => {
     if (conversationKey) {
-      // console.log("fetching messages for:", conversationKey);
       const fetchMessages = async () => {
         try {
           const response = await axios.get("/api/messages", {
@@ -76,6 +71,10 @@ export default function Home() {
       fetchMessages();
     }
   }, [conversationKey]);
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   const handleDeleteConversation = (key: string) => {
     setConversations((prevConversations) =>
@@ -132,7 +131,6 @@ export default function Home() {
         messages={messages}
         conversationKey={conversationKey}
       />
-      <Info />
       <div className="fixed z-50 bottom-4 right-4">
         {/*
         <button
