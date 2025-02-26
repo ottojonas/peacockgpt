@@ -8,10 +8,7 @@ const withAdminAuth = (WrappedComponent: any) => {
   Wrapper.getInitialProps = async (context: NextPageContext) => {
     const session: Session | null = await getSession(context);
 
-    console.log("Session data in middleware: ", session);
-
     if (!session || !session.user || !session.user.admin) {
-      console.log("Admin access required. Redirecting to login...");
       if (context.res) {
         context.res.writeHead(302, { Location: "/login" });
         context.res.end();
@@ -20,7 +17,6 @@ const withAdminAuth = (WrappedComponent: any) => {
       }
       return { props: {} };
     }
-    console.log("Access granted");
 
     let pageProps = {};
     if (WrappedComponent.getInitialProps) {
