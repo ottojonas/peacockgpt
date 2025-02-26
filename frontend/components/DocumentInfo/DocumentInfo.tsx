@@ -5,6 +5,7 @@ import DocumentContent from "./DocumentContent/DocumentContent";
 import SaveIcon from "../icons/SaveIcon";
 import { useSession } from "next-auth/react";
 import Cookies from "js-cookie";
+import TrashIcon from "../icons/TrashIcon";
 
 export type DocumentInfoItem = {
   key: string;
@@ -86,6 +87,14 @@ const DocumentInfo: React.FC<DocumentInfoProps> = ({
     }
   };
 
+  const handleDeleteDocument = async (key: string) => {
+    try {
+      await axios.delete(`/api/documents?key=${key}`);
+    } catch (error) {
+      console.error("Error deleting document: ", error);
+    }
+  };
+
   return (
     <div
       className="documentContainer"
@@ -109,6 +118,15 @@ const DocumentInfo: React.FC<DocumentInfoProps> = ({
         >
           <SaveIcon className="w-5 h-5" />
           <span className="ml-2">Save Changes</span>
+        </button>
+      </div>
+      <div className="px-2 py-2 shrink-0">
+        <button
+          className="flex items-center justify-center w-full py-2 text-sm font-semibold rounded-md bg-card"
+          onClick={() => handleDeleteDocument(documentKey)}
+        >
+          <TrashIcon className="w-5 h-5" />
+          <span className="ml-2">Delete Document</span>
         </button>
       </div>
     </div>
