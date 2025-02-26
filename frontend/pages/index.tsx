@@ -11,7 +11,6 @@ import ChatHistory from "../components/ChatHistory";
 import ChatHeader from "../components/ChatHeader";
 import Chat from "../components/Chat";
 import ChatInput from "../components/ChatInput";
-import Info from "../components/Info";
 import io from "socket.io-client";
 
 // * initialise socket connection
@@ -132,7 +131,6 @@ export default function Home() {
         messages={messages}
         conversationKey={conversationKey}
       />
-      <Info />
       <div className="fixed z-50 bottom-4 right-4">
         {/*
         <button
