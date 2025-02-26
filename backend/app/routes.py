@@ -207,7 +207,6 @@ def get_document(doc_id):
 
 
 # * route to delete a specific document by its ID
-
 @routes.route("/documents/<string:doc_id>", methods=["DELETE"])
 @admin_required
 def delete_document_route(doc_id):
@@ -215,6 +214,24 @@ def delete_document_route(doc_id):
     if result.deleted_count > 0:
         return jsonify({"message": "Document deleted successfully"}), 200
     return jsonify({"error": "Document not found"}), 404
+
+@routes.route("/api/documents", methods=["PUT"])
+@admin_required
+def update_document(): 
+    current_user = get_jwt_identity() 
+    if not current_user.get("admin"): 
+        return jsonify({"error": "Admin perms required"}), 403
+    data = request.json 
+    key = request.args.get("key")
+    title = data.get("title") 
+    content = data.get("content") 
+    if not key or not title or not content: 
+        return jsonify({"errro": "missing required fields"}), 400 
+    mongo.db.documents.update_one(
+        {"key": key}, 
+        {"$set": {"title": title, "content": content}}
+    )
+    return jsonify({"message": "document updated successfully"})
 
 
 # * route to create a new conversations

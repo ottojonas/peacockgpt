@@ -9,5 +9,6 @@ declare module "next-auth" {
       // image?: string;
       admin?: boolean;
     };
+    accessToken?: string;
   }
 }

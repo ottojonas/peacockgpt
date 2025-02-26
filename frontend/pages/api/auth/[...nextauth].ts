@@ -30,6 +30,7 @@ export default NextAuth({
       console.log("Session callback - token: ", token);
       session.user.id = token.id;
       session.user.admin = token.admin as boolean;
+      session.accessToken = token.accessToken;
       console.log("Session data: ", session);
       return session;
     },
@@ -37,6 +38,7 @@ export default NextAuth({
       if (user) {
         token.id = user.id;
         token.admin = user.admin;
+        token.accessToken = user.accessToken;
       }
       console.log("JWT callback - token: ", token);
       return token;

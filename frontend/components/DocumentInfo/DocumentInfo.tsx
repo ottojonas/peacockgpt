@@ -3,6 +3,7 @@ import axios from "axios";
 import DocumentTitle from "./DocumentTitle/DocumentTitle";
 import DocumentContent from "./DocumentContent/DocumentContent";
 import SaveIcon from "../icons/SaveIcon";
+import { useSession } from "next-auth/react";
 
 export type DocumentInfoItem = {
   key: string;
@@ -24,6 +25,7 @@ const DocumentInfo: React.FC<DocumentInfoProps> = ({
   setContent,
   documentKey,
 }) => {
+  const { data: session } = useSession();
   const [documentTitle, setDocumentTitle] = useState<string>("");
   const [documentContent, setDocumentContent] = useState<string>("");
 
@@ -51,12 +53,25 @@ const DocumentInfo: React.FC<DocumentInfoProps> = ({
     }
   }, [documentKey, setTitle, setContent]);
 
-  const handleInformationSave = async () => {
+  const handleDocumentUpdate = async (key: string) => {
     try {
-      const response = await axios.put(`/api/documents?key=${documentKey}`);
-      const updatedDocumentInformation = response.data;
+      const token = session?.accessToken;
+      console.log("Token:  ", token);
+      const response = await axios.put(
+        `/api/documents?key=${key}`,
+        {
+          title: documentTitle,
+          content: documentContent,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // FIXME
+          },
+        }
+      );
+      console.log("Document information updated successfully: ", response.data);
     } catch (error) {
-      console.error("Error updating document information: ", error);
+      console.error("Error updated document information: ", error);
     }
   };
 
@@ -77,7 +92,7 @@ const DocumentInfo: React.FC<DocumentInfoProps> = ({
       <div className="px-2 py-2 shrink-0">
         <button
           className="flex items-center justify-center w-full py-2 text-sm font-semibold rounded-md bg-card"
-          onClick={handleInformationSave}
+          onClick={() => handleDocumentUpdate(documentKey)}
         >
           <SaveIcon className="w-5 h-5" />
           <span className="ml-2">Save Changes</span>
