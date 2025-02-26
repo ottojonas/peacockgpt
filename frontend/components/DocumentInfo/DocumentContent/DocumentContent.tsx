@@ -22,8 +22,8 @@ const DocumentContent: React.FC<DocumentContentProps> = ({
         <textarea
           value={content}
           onChange={handleContentChange}
-          className="w-full p-2 text-black border rounded"
-          rows={10}
+          className="w-full p-2 text-white border-none rounded bg-card"
+          rows={30}
         />
       </div>
     </div>

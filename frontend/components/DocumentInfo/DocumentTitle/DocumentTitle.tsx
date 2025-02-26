@@ -18,7 +18,7 @@ const DocumentTitle: React.FC<DocumentTitleProps> = ({ title, setTitle }) => {
           type="text"
           value={title}
           onChange={handleTitleChange}
-          className="w-full p-2 text-black border rounded"
+          className="w-full p-2 text-white border-none rounded bg-card"
         />
       </div>
     </div>
