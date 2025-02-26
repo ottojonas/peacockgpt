@@ -9,6 +9,7 @@ import { useTheme } from "../../context/ThemeContext";
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
+import { signOut } from "next-auth/react";
 
 type Props = {};
 
@@ -30,29 +31,9 @@ export default function Sidebar({}: Props) {
     router.push("/documents");
   };
 
-  const handleLogout = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("No token found");
-      }
-      await axios.post(
-        "/api/logout",
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      localStorage.removeItem("token");
-      router.push("/login");
-    } catch (error) {
-      console.error("Failed to logout:", error);
-    }
+  const handleLogout = () => {
+    signOut({ callbackUrl: "/login" });
   };
-
   const isActive = (path: string) => router.pathname === path;
 
   return (
