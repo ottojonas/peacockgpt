@@ -65,21 +65,24 @@ const DocumentInfo: React.FC<DocumentInfoProps> = ({
       className="documentContainer"
       style={{ marginLeft: "384px", marginRight: "320px" }}
     >
-      <div className="px-4 pt-16 pb-48 mx-auto max-w-3x1 document-title">
+      <div className="px-4 pt-16 pb-24 mx-auto max-w-3x1 document-title">
         <DocumentTitle title={documentTitle} setTitle={setDocumentTitle} />
       </div>
-      <div className="px-4 pt-16 pb-48 mx-auto max-w-3x1 document-content">
+      <div className="px-4 pb-24 mx-auto max-w-3x1 document-content">
         <DocumentContent
           content={documentContent}
           setContent={setDocumentContent}
         />
       </div>
-      <button
-        className="grid rounded-md w-9 h-9 place-items-center bg-card"
-        onClick={handleInformationSave}
-      >
-        <SaveIcon className="w-5 h-5" />
-      </button>
+      <div className="px-2 py-2 shrink-0">
+        <button
+          className="flex items-center justify-center w-full py-2 text-sm font-semibold rounded-md bg-card"
+          onClick={handleInformationSave}
+        >
+          <SaveIcon className="w-5 h-5" />
+          <span className="ml-2">Save Changes</span>
+        </button>
+      </div>
     </div>
   );
 };
