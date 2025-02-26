@@ -4,27 +4,35 @@ from bson.objectid import ObjectId
 from app import mongo
 from app.utils.file_utils import extract_content_from_file
 from app.utils.openai_utils import generate_response
-from flask_jwt_extended import jwt_required, unset_jwt_cookies, get_jwt_identity, verify_jwt_in_request
+from flask_jwt_extended import (
+    jwt_required,
+    unset_jwt_cookies,
+    get_jwt_identity,
+    verify_jwt_in_request,
+)
 from app.services.document_service import save_document
 import bcrypt
 import jwt
 from datetime import timedelta
-from functools import wraps 
+from functools import wraps
 
 
 # * create a Blueprint for the routes
 routes = Blueprint("routes", __name__)
 auth_bp = Blueprint("auth", __name__)
 
-def admin_required(fn): 
+
+def admin_required(fn):
     @wraps(fn)
-    def wrapper(*args, **kwargs): 
+    def wrapper(*args, **kwargs):
         verify_jwt_in_request()
         current_user = get_jwt_identity()
-        if not current_user.get("admin"): 
-            return jsonify({ "error": "admin access required"}), 401
-        return fn(*args, **kwargs) 
-    return wrapper 
+        if not current_user.get("admin"):
+            return jsonify({"error": "admin access required"}), 401
+        return fn(*args, **kwargs)
+
+    return wrapper
+
 
 # * route to handle account creation and user registration
 @routes.route("/api/register", methods=["POST"])
@@ -78,6 +86,7 @@ def login():
         token = jwt.encode(
             {
                 "user_id": str(user["_id"]),
+                "admin": user["admin"],
                 "exp": datetime.utcnow() + timedelta(hours=1),
             },
             current_app.config["SECRET_KEY"],
@@ -108,7 +117,6 @@ def login():
     except Exception as e:
         print(f"Login error: {str(e)}")
         return jsonify({"error": "Internal server error"}), 500
-
 
 
 # * routes to handle user signing out
@@ -181,6 +189,7 @@ def upload_document():
 
 # * route to list all documents
 
+
 @routes.route("/documents", methods=["GET"])
 @admin_required
 def list_documents():
@@ -215,21 +224,22 @@ def delete_document_route(doc_id):
         return jsonify({"message": "Document deleted successfully"}), 200
     return jsonify({"error": "Document not found"}), 404
 
-@routes.route("/api/documents", methods=["PUT"])
+
+@routes.route("/api/documents/<string:key>", methods=["PUT"])
 @admin_required
-def update_document(): 
-    current_user = get_jwt_identity() 
-    if not current_user.get("admin"): 
-        return jsonify({"error": "Admin perms required"}), 403
-    data = request.json 
+def update_document():
+    verify_jwt_in_request()
+    current_user = get_jwt_identity()
+    if not current_user.get("admin"):
+        return jsonify({"error": "admin permissions required"})
+    data = request.json
     key = request.args.get("key")
-    title = data.get("title") 
-    content = data.get("content") 
-    if not key or not title or not content: 
-        return jsonify({"errro": "missing required fields"}), 400 
+    title = data.get("title")
+    content = data.get("content")
+    if not key or not title or not content:
+        return jsonify({"errro": "missing required fields"}), 400
     mongo.db.documents.update_one(
-        {"key": key}, 
-        {"$set": {"title": title, "content": content}}
+        {"key": key}, {"$set": {"title": title, "content": content}}
     )
     return jsonify({"message": "document updated successfully"})
 

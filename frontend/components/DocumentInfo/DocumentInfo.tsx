@@ -4,6 +4,7 @@ import DocumentTitle from "./DocumentTitle/DocumentTitle";
 import DocumentContent from "./DocumentContent/DocumentContent";
 import SaveIcon from "../icons/SaveIcon";
 import { useSession } from "next-auth/react";
+import Cookies from "js-cookie";
 
 export type DocumentInfoItem = {
   key: string;
@@ -53,25 +54,35 @@ const DocumentInfo: React.FC<DocumentInfoProps> = ({
     }
   }, [documentKey, setTitle, setContent]);
 
-  const handleDocumentUpdate = async (key: string) => {
+  const handleDocumentUpdate = async (
+    key: string,
+    title: string,
+    content: string
+  ) => {
+    // if (!session) {
+    //   console.error("User is not authenticated");
+    //   return;
+    // }
     try {
-      const token = session?.accessToken;
-      console.log("Token:  ", token);
+      const updatedDocument = {
+        title,
+        content,
+      };
+      // const token = session?.accessToken;
+      // console.log("Token: ", token);
       const response = await axios.put(
         `/api/documents?key=${key}`,
-        {
-          title: documentTitle,
-          content: documentContent,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, // FIXME
-          },
-        }
+        updatedDocument
+        // {
+        //   params: { token },
+        // }
       );
       console.log("Document information updated successfully: ", response.data);
     } catch (error) {
-      console.error("Error updated document information: ", error);
+      console.error(
+        "Error updated document information: ",
+        error.response?.data || error.message
+      );
     }
   };
 
@@ -92,7 +103,9 @@ const DocumentInfo: React.FC<DocumentInfoProps> = ({
       <div className="px-2 py-2 shrink-0">
         <button
           className="flex items-center justify-center w-full py-2 text-sm font-semibold rounded-md bg-card"
-          onClick={() => handleDocumentUpdate(documentKey)}
+          onClick={() =>
+            handleDocumentUpdate(documentKey, documentTitle, documentContent)
+          }
         >
           <SaveIcon className="w-5 h-5" />
           <span className="ml-2">Save Changes</span>

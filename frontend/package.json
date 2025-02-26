@@ -91,6 +91,7 @@
     "dotenv": "^16.4.7",
     "fs": "^0.0.1-security",
     "http-proxy-middleware": "^3.0.3",
+    "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.2",
     "marked": "^15.0.4",
     "mongoose": "^8.9.0",

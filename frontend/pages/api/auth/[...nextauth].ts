@@ -3,6 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import connectToDatabase from "../../../lib/mongoose";
 import User from "../../../models/User";
 import argon2 from "argon2";
+import jwt from "jsonwebtoken";
 
 export default NextAuth({
   providers: [
@@ -19,7 +20,17 @@ export default NextAuth({
           user &&
           (await argon2.verify(user.password, credentials.password))
         ) {
-          return { id: user._id, email: user.email, admin: user.admin };
+          const accessToken = jwt.sign(
+            { id: user._id, email: user.email, admin: user.admin },
+            process.env.JWT_SECRET,
+            { expiresIn: "1hr" }
+          );
+          return {
+            id: user._id,
+            email: user.email,
+            admin: user.admin,
+            accessToken,
+          };
         }
         return null;
       },
