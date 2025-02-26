@@ -60,23 +60,14 @@ const DocumentInfo: React.FC<DocumentInfoProps> = ({
     title: string,
     content: string
   ) => {
-    // if (!session) {
-    //   console.error("User is not authenticated");
-    //   return;
-    // }
     try {
       const updatedDocument = {
         title,
         content,
       };
-      // const token = session?.accessToken;
-      // console.log("Token: ", token);
       const response = await axios.put(
         `/api/documents?key=${key}`,
         updatedDocument
-        // {
-        //   params: { token },
-        // }
       );
       console.log("Document information updated successfully: ", response.data);
     } catch (error) {
