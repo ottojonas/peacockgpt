@@ -61,7 +61,7 @@ export default function Sidebar({}: Props) {
         <GPTLogo className="w-6 h-6 text-blue-900" />
       </div>
       <div className="flex flex-col pt-24 space-y-4 grow">
-        <button
+        {/* <button
           className={`grid w-10 h-10 rounded-md place-items-center ${
             isActive("/dashboard")
               ? "text-black bg-brandWhite"
@@ -69,7 +69,7 @@ export default function Sidebar({}: Props) {
           }`}
         >
           <DashboardIcon className="w-5 h-5" />
-        </button>
+        </button> */}
         <button
           className={`grid w-10 h-10 rounded-md place-items-center ${
             isActive("/") ? "text-black bg-brandWhite" : "text-brandGray"
@@ -78,13 +78,13 @@ export default function Sidebar({}: Props) {
         >
           <ChatIcon className="w-5 h-5" />
         </button>
-        <button
+        {/* <button
           className={`grid w-10 h-10 rounded-md place-items-center ${
             isActive("/users") ? "text-black bg-brandWhite" : "text-brandGray"
           }`}
         >
           <UsersIcon className="w-5 h-5" />
-        </button>
+        </button> */}
         <button
           className={`grid w-10 h-10 rounded-md place-items-center ${
             isActive("/documents")
@@ -97,12 +97,12 @@ export default function Sidebar({}: Props) {
         </button>
       </div>
       <div className="flex flex-col pb-4 space-y-4 shrink-0">
-        <button
+        {/* <button
           className="grid w-10 h-10 text-white rounded-md place-items-center"
           onClick={toggleTheme}
         >
           <ThemeIcon className="w-5 h-5" />
-        </button>
+        </button> */}
         <button
           className="grid w-10 h-10 text-white rounded-md place-items-center bg-card"
           onClick={handleLogout}
