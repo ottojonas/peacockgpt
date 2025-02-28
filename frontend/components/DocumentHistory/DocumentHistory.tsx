@@ -84,7 +84,7 @@ const DocumentHistory: React.FC<Props> = ({
             "Content-Type": "multipart/form-data",
           },
         });
-        const newDocument = response.data.document;
+        const newDocument = response.data;
         setDocuments((prevDocuments) => {
           const updatedDocuments = prevDocuments.map((doc) => ({
             ...doc,
@@ -93,9 +93,9 @@ const DocumentHistory: React.FC<Props> = ({
           return [...updatedDocuments, { ...newDocument, isSelected: true }];
         });
         setSelectedDocument(newDocument);
-        setDocumentKey(newDocument.key);
-        setTitle(newDocument.title);
-        setContent(newDocument.content);
+        setDocumentKey(response.data.key);
+        setTitle(response.data.title);
+        setContent(response.data.content);
         console.log(
           `Successfully uploaded new document: title: ${newDocument.title}`
         );
@@ -134,8 +134,8 @@ const DocumentHistory: React.FC<Props> = ({
       <div className="overflow-y-auto grow">
         {documents.map((document) => (
           <DocumentHistoryItem
-            key={document.key}
             document={document}
+            key={document.key}
             onClick={handleDocumentClick}
           />
         ))}

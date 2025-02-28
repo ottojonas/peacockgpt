@@ -66,7 +66,7 @@ apiRoute.post(
       await newDocument.save();
       res.status(201).json({
         message: "File uploaded successfully",
-        document: newDocument._id,
+        document: newDocument.key,
         title: newDocument.title,
         content: newDocument.content,
       });
