@@ -12,6 +12,7 @@ import ChatHeader from "../components/ChatHeader";
 import Chat from "../components/Chat";
 import ChatInput from "../components/ChatInput";
 import io from "socket.io-client";
+import Info from "../components/Info";
 
 // * initialise socket connection
 const socket = io("http://localhost:5000", {
@@ -131,15 +132,7 @@ export default function Home() {
         messages={messages}
         conversationKey={conversationKey}
       />
-      <div className="fixed z-50 bottom-4 right-4">
-        {/*
-        <button
-          className="px-4 py-2 text-black bg-white rounded"
-          onClick={checkHealth}>
-          backend connection check
-        </button>
-        */}
-      </div>
+      <Info />
     </>
   );
 }
