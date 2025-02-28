@@ -25,8 +25,26 @@ const Login = () => {
       setError(result.error);
       console.log("Login error: ", result.error);
     } else {
-      console.log("Login  successful, redirecting...");
-      console.log("Calling router.push('/')");
+      try {
+        const session = await axios.get("/api/auth/session");
+        const user = session.data.user;
+        const response = await axios.get("/api/conversations", {
+          params: { user_id: user.id },
+        });
+        const conversations = response.data;
+        if (conversations.length === 0) {
+          await axios.post("/api/conversations", {
+            title: "New Conversation",
+            desc: "Description",
+            date: new Date().toISOString(),
+            isSelected: true,
+            isPinned: false,
+            user_id: user.id,
+          });
+        }
+      } catch (error) {
+        console.log("Error fetching conversations: ", error);
+      }
       router.push("/");
     }
   };
