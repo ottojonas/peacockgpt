@@ -5,6 +5,7 @@ import trending from "./trending.json";
 import TrendingIcon from "../../components/icons/TrendingIcon";
 import StarIcon from "../../components/icons/StarIcon";
 import WarningIcon from "../../components/icons/WarningIcon";
+import DownloadIcon from "../icons/DownloadIcon/DownloadIcon";
 
 // TODO
 
@@ -22,13 +23,13 @@ export default function Info({}: Props) {
           <div className="grid rounded-full w-9 h-9 bg-brandWhite place-items-center">
             <StarIcon className="w-5 h-5 text-blue-900" />
           </div>
-          <p className="mt-4 text-sm">Capability 1</p>
+          <p className="mt-4 text-sm">Troubleshooting application issues</p>
         </div>
         <div className="w-1/2 p-2 rounded-md bg-card">
           <div className="w-9 h-9 rounded-full grid place-items-center bg-[#3a3a3c]">
             <StarIcon className="w-5 h-5 text-white" />
           </div>
-          <p className="mt-4 text-sm">Capability 2</p>
+          <p className="mt-4 text-sm">Explaining system processes</p>
         </div>
       </div>
       <Heading text="Limitations" />
@@ -37,20 +38,25 @@ export default function Info({}: Props) {
           <div className="grid rounded-full w-9 h-9 bg-brandWhite place-items-center">
             <WarningIcon className="w-5 h-5 text-blue-900" />
           </div>
-          <p className="mt-4 text-sm">Limitation 1</p>
+          <p className="mt-4 text-sm">Custom solution restraints</p>
         </div>
         <div className="w-1/2 p-2 rounded-md bg-card">
           <div className="w-9 h-9 rounded-full bg-[#3a3a3c] grid place-items-center">
             <WarningIcon className="w-5 h-5 text-white" />
           </div>
-          <p className="mt-4 text-sm">Limitation 2</p>
+          <p className="mt-4 text-sm">Geographical and Logistical Restraints</p>
         </div>
       </div>
-      <Heading text="Trending Topics" />
-      <div className="flex flex-wrap">
-        {trending.map((i) => (
-          <TrendingItem item={i} key={i.key} />
-        ))}
+      <Heading text="Download The User Guide" />
+      <div className="px-2 py-2 shrink-0">
+        <a
+          href="usage-documentation-download-link-here"
+          download
+          className="flex items-center justify-center w-full py-2 text-sm font-semibold text-white rounded-md bg-card"
+        >
+          <DownloadIcon className="w-5 h-5" />
+          <span className="ml-2">User Guide</span>
+        </a>
       </div>
     </div>
   );
@@ -63,28 +69,6 @@ function Heading({ text }: HeadingProps) {
   return (
     <div className="flex items-center justify-between mt-3 mb-1">
       <h3 className="text-md">{text}</h3>
-      <Options className="w-7 h-7" />
-    </div>
-  );
-}
-
-type TrendingItemProps = {
-  item: {
-    key: number;
-    text: string;
-    isSelected: boolean;
-  };
-};
-function TrendingItem({ item }: TrendingItemProps) {
-  return (
-    <div className="p-1">
-      <div
-        className={`rounded-md text-sm font-semibold py-1 px-2 flex items-center  ${
-          item.isSelected ? "bg-brandWhite text-blue-900" : "bg-card"
-        }`}>
-        {item.text}
-        <TrendingIcon className="w-4 h-4 ml-1" />
-      </div>
     </div>
   );
 }
