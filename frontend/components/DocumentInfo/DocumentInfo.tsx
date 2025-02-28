@@ -72,6 +72,11 @@ const DocumentInfo: React.FC<DocumentInfoProps> = ({
         `/api/documents?key=${key}`,
         updatedDocument
       );
+      setDocuments((prevDocuments) =>
+        prevDocuments.map((document) =>
+          document.key === key ? { ...document, title, content } : document
+        )
+      );
       console.log("Document information updated successfully: ", response.data);
     } catch (error) {
       console.error(
