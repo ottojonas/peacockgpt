@@ -45,13 +45,23 @@ export default function Home() {
     if (!isAuthenticated) {
       router.push("/login");
     } else if (userId) {
-      axios
-        .get("/api/conversations", {
-          params: { user_id: userId },
-        })
-        .then((response) => {
+      const fetchConversations = async () => {
+        try {
+          const response = await axios.get("/api/conversations", {
+            params: { user_id: userId },
+          });
           setConversations(response.data);
-        });
+        } catch (error) {
+          console.error("Error fetching conversations:", error);
+        }
+      };
+
+      // Check if conversations are passed in the query
+      if (router.query.conversations) {
+        setConversations(JSON.parse(router.query.conversations as string));
+      } else {
+        fetchConversations();
+      }
     }
   }, [isAuthenticated, router, userId]);
 
