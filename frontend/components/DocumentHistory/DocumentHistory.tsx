@@ -99,6 +99,7 @@ const DocumentHistory: React.FC<Props> = ({
         console.log(
           `Successfully uploaded new document: title: ${newDocument.title}`
         );
+        await fetchDocuments();
       } catch (error) {
         console.error("Error uploading file: ", error);
       }
