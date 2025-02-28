@@ -1,13 +1,10 @@
 import React from "react";
 import Options from "../../components/icons/Options";
 import Times from "../../components/icons/Times";
-import trending from "./trending.json";
 import TrendingIcon from "../../components/icons/TrendingIcon";
 import StarIcon from "../../components/icons/StarIcon";
 import WarningIcon from "../../components/icons/WarningIcon";
 import DownloadIcon from "../icons/DownloadIcon/DownloadIcon";
-
-// TODO
 
 type Props = {};
 
@@ -50,12 +47,16 @@ export default function Info({}: Props) {
       <Heading text="Download The User Guide" />
       <div className="px-2 py-2 shrink-0">
         <a
-          href="usage-documentation-download-link-here"
-          download
+          href="/downloads/general-usage-and-troubleshooting-tips.pdf"
+          download="PeacockGPT-UserGuide"
+          target="_blank"
+          rel="noreferror"
           className="flex items-center justify-center w-full py-2 text-sm font-semibold text-white rounded-md bg-card"
         >
-          <DownloadIcon className="w-5 h-5" />
-          <span className="ml-2">User Guide</span>
+          <button className="flex items-center justify-center w-full py-2 text-sm font-semibold text-white rounded-md bg-card">
+            <DownloadIcon className="w-5 h-5" />
+            <span className="ml-2">User Guide Download</span>
+          </button>
         </a>
       </div>
     </div>
