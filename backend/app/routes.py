@@ -15,6 +15,7 @@ import bcrypt
 import jwt
 from datetime import timedelta
 from functools import wraps
+import uuid
 
 
 # * create a Blueprint for the routes
@@ -101,6 +102,19 @@ def login():
             }
             for conv in conversations
         ]
+
+        if not conversations_data:
+            new_conversation = {
+                "key": str(uuid.uuuidv4()),
+                "title": "New Conversation",
+                "desc": "Description",
+                "date": datetime.utcnow(),
+                "isSelected": True,
+                "isPinned": False,
+                "user_id": user["_id"],
+            }
+            mongo.db.conversations.insert_one(new_conversation)
+            conversations_data.append(new_conversation)
 
         return (
             jsonify(
