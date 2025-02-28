@@ -2,21 +2,37 @@
 const { createProxyMiddleware } = require("http-proxy-middleware");
 const nextConfig = {
   webpack: (config) => {
-    config.module.rules.push({
-      test: /\.js$/,
-      exclude: /node_modules/,
-      use: {
-        loader: "babel-loader",
-        options: {
-          presets: [
-            "@babel/preset-env",
-            "@babel/preset-react",
-            "@babel/preset-typescript",
-          ],
-          plugins: ["@babel/plugin-transform-modules-commonjs"],
+    config.module.rules.push(
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: [
+              "@babel/preset-env",
+              "@babel/preset-react",
+              "@babel/preset-typescript",
+            ],
+            plugins: ["@babel/plugin-transform-modules-commonjs"],
+          },
         },
       },
-    });
+      {
+        test: /\.pdf$/,
+        use: [
+          {
+            loader: "file-loader",
+            options: {
+              name: "[name].[ext]",
+              outputPath: "static/pdf/",
+              publicPath: "/_next/static/pdf/",
+            },
+          },
+        ],
+      }
+    );
+    return config;
   },
   distDir: "build",
   reactStrictMode: true,
