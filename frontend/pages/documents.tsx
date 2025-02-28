@@ -23,7 +23,6 @@ const Documents: React.FC = () => {
     setDocuments((prevDocuments) =>
       prevDocuments.filter((document) => document.key !== key)
     );
-    setDocuments([]);
     setDocumentKey("");
   };
 
