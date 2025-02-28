@@ -4,7 +4,6 @@ import DocumentTitle from "./DocumentTitle/DocumentTitle";
 import DocumentContent from "./DocumentContent/DocumentContent";
 import SaveIcon from "../icons/SaveIcon";
 import { useSession } from "next-auth/react";
-import Cookies from "js-cookie";
 import TrashIcon from "../icons/TrashIcon";
 
 export type DocumentInfoItem = {
@@ -19,6 +18,8 @@ interface DocumentInfoProps {
   setTitle: React.Dispatch<React.SetStateAction<string>>;
   setContent: React.Dispatch<React.SetStateAction<string>>;
   documentKey: string;
+  setDocuments: React.Dispatch<React.SetStateAction<DocumentInfoItem[]>>;
+  onDeleteDocument: (documentKey: string) => void;
 }
 
 const DocumentInfo: React.FC<DocumentInfoProps> = ({
@@ -26,6 +27,8 @@ const DocumentInfo: React.FC<DocumentInfoProps> = ({
   setTitle,
   setContent,
   documentKey,
+  setDocuments,
+  onDeleteDocument,
 }) => {
   const { data: session } = useSession();
   const [documentTitle, setDocumentTitle] = useState<string>("");
@@ -69,6 +72,11 @@ const DocumentInfo: React.FC<DocumentInfoProps> = ({
         `/api/documents?key=${key}`,
         updatedDocument
       );
+      setDocuments((prevDocuments) =>
+        prevDocuments.map((document) =>
+          document.key === key ? { ...document, title, content } : document
+        )
+      );
       console.log("Document information updated successfully: ", response.data);
     } catch (error) {
       console.error(
@@ -81,6 +89,10 @@ const DocumentInfo: React.FC<DocumentInfoProps> = ({
   const handleDeleteDocument = async (key: string) => {
     try {
       await axios.delete(`/api/documents?key=${key}`);
+      setDocuments((prevDocuments) =>
+        prevDocuments.filter((document) => document.key !== documentKey)
+      );
+      onDeleteDocument(documentKey);
     } catch (error) {
       console.error("Error deleting document: ", error);
     }

@@ -19,18 +19,11 @@ const Documents: React.FC = () => {
   const [title, setTitle] = useState<string>("");
   const [documentKey, setDocumentKey] = useState<string>("");
 
-  const handleDocumentClick = async (key: string) => {
-    try {
-      const response = await axios.get("/api/documents", {
-        params: { documentKey: key },
-      });
-      const document = response.data;
-      setTitle(document.title);
-      setContent(document.content);
-      setDocumentKey(document.key);
-    } catch (error) {
-      console.error("Error fetching document data: ", error);
-    }
+  const handleDeleteDocument = (key: string) => {
+    setDocuments((prevDocuments) =>
+      prevDocuments.filter((document) => document.key !== key)
+    );
+    setDocumentKey("");
   };
 
   return (
@@ -49,6 +42,8 @@ const Documents: React.FC = () => {
         setTitle={setTitle}
         setContent={setContent}
         documentKey={documentKey}
+        setDocuments={setDocuments}
+        onDeleteDocument={handleDeleteDocument}
       />
     </>
   );
