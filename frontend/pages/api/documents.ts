@@ -9,16 +9,6 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  // const session = await getSession();
-
-  // if (!session) {
-  //   return res.status(401).json({ error: "authentication required" });
-  // }
-
-  // if (!session.user || !session.user.admin) {
-  //   return res.status(403).json({ error: "Admin permissions required" });
-  // }
-
   await connectToDatabase();
 
   if (req.method === "GET") {

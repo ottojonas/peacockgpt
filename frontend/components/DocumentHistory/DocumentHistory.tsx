@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import Options from "../icons/Options";
-import { v4 as uuidv4 } from "uuid";
-import PencilSquareIcon from "../icons/PencilSquareIcon";
+import UploadIcon from "../icons/UploadIcon/UploadIcon";
 
 type DocumentItem = {
   key: string;
@@ -18,15 +17,6 @@ interface Props {
   setContent: React.Dispatch<React.SetStateAction<string>>;
   setDocumentKey: (key: string) => void;
 }
-
-const createNewDocument = () => {
-  return {
-    key: uuidv4,
-    title: "New Document Title",
-    content: "New Document Content",
-    isSelected: true,
-  };
-};
 
 const DocumentHistory: React.FC<Props> = ({
   setDocumentKey,
@@ -45,6 +35,7 @@ const DocumentHistory: React.FC<Props> = ({
   useEffect(() => {
     fetchDocuments();
   }, []);
+
   const fetchDocuments = async () => {
     try {
       const response = await axios.get("/api/documents");
@@ -52,21 +43,6 @@ const DocumentHistory: React.FC<Props> = ({
       setDocuments(fetchedDocuments);
     } catch (error) {
       console.error("Error fetching documents: ", error);
-    }
-  };
-
-  const handleNewDocument = async () => {
-    try {
-      const response = await axios.post("/api/documents", {
-        title: newDocumentTitle,
-        content: newDocumentContent,
-      });
-      const newDocument = response.data;
-      setDocuments((prevDocuments) => [...prevDocuments, newDocument]);
-      setNewDocumentTitle("");
-      setNewDocumentContent("");
-    } catch (error) {
-      console.error("Error uploading new document: ", error);
     }
   };
 
@@ -86,7 +62,6 @@ const DocumentHistory: React.FC<Props> = ({
         const response = await axios.get("/api/documents", {
           params: { documentKey: selectedDocument.key },
         });
-        setDocuments(response.data);
         setTitle(response.data.title);
         setContent(response.data.content);
       } catch (error) {
@@ -109,8 +84,21 @@ const DocumentHistory: React.FC<Props> = ({
             "Content-Type": "multipart/form-data",
           },
         });
-        const newDocument = response.data;
-        setDocuments((prevDocuments) => [...prevDocuments, newDocument]);
+        const newDocument = response.data.document;
+        setDocuments((prevDocuments) => {
+          const updatedDocuments = prevDocuments.map((doc) => ({
+            ...doc,
+            isSelected: false,
+          }));
+          return [...updatedDocuments, { ...newDocument, isSelected: true }];
+        });
+        setSelectedDocument(newDocument);
+        setDocumentKey(newDocument.key);
+        setTitle(newDocument.title);
+        setContent(newDocument.content);
+        console.log(
+          `Successfully uploaded new document: title: ${newDocument.title}`
+        );
       } catch (error) {
         console.error("Error uploading file: ", error);
       }
@@ -141,14 +129,14 @@ const DocumentHistory: React.FC<Props> = ({
         className="grid w-10 h-10 rounded-md bg-brandWhite place-items-center shrink-0"
         onClick={handleIconClick}
       >
-        <PencilSquareIcon className="w-5 h-5 text-brandBlue" />
+        <UploadIcon className="w-5 h-5 text-brandBlue" />
       </div>
       <div className="overflow-y-auto grow">
         {documents.map((document) => (
           <DocumentHistoryItem
             key={document.key}
             document={document}
-            onClick={() => handleDocumentClick(document.key)}
+            onClick={handleDocumentClick}
           />
         ))}
       </div>

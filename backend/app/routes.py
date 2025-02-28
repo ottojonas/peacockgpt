@@ -157,7 +157,7 @@ def health_check():
 
 
 # * route to handle document uploads
-@routes.route("/upload", methods=["POST"])
+@routes.route("/api/upload", methods=["POST"])
 @admin_required
 def upload_document():
     if "file" not in request.files:
@@ -173,21 +173,21 @@ def upload_document():
             "title": file.filename,
             "content": content,
         }
-        mongo.db.documents.insert_one(document)
+        result = mongo.db.documents.insert_one(document)
         return (
             jsonify(
                 {
                     "message": "File uploaded successfully",
-                    "document": str(document["_id"]),
+                    "document": str(result.inserted_id),
+                    "title": document["title"],
+                    "content": document["content"],
                 }
             ),
             201,
         )
-    except ValueError as e:
-        return jsonify({"error": str(e)}), 400
-
-
-# * route to list all documents
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"error": "Failed to upload document"}), 500
 
 
 @routes.route("/documents", methods=["GET"])

@@ -11,17 +11,45 @@ const upload = multer({
 
 const apiRoute = createRouter<NextApiRequest, NextApiResponse>();
 
-apiRoute.use(upload.single("file"));
+// Create a middleware function that properly handles multer file upload
+const multerMiddleware = async (
+  req: NextApiRequest & { file?: Express.Multer.File },
+  res: NextApiResponse,
+  next: () => void
+) => {
+  try {
+    // Process the upload manually
+    const multerSingle = upload.single("file");
+    await new Promise<void>((resolve, reject) => {
+      multerSingle(req as any, res as any, (err: any) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
+    // Continue to the next middleware or route handler
+    next();
+  } catch (error) {
+    console.error("Multer error:", error);
+    res.status(500).json({ error: "File upload failed" });
+  }
+};
+
+// Apply the middleware
+apiRoute.use(multerMiddleware);
 
 apiRoute.post(
   async (
-    req: NextApiRequest & { file: Express.Multer.File },
+    req: NextApiRequest & { file?: Express.Multer.File },
     res: NextApiResponse
   ) => {
     await connectToDatabase();
 
     if (!req.file) {
-      return res.status(400).json({ error: "No file uploaded" });
+      res.status(400).json({ error: "No file uploaded" });
+      return;
     }
 
     const { originalname, buffer } = req.file;
@@ -39,6 +67,8 @@ apiRoute.post(
       res.status(201).json({
         message: "File uploaded successfully",
         document: newDocument._id,
+        title: newDocument.title,
+        content: newDocument.content,
       });
     } catch (error) {
       console.error("Error saving document:", error);
