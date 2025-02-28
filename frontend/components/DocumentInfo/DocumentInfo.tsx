@@ -114,7 +114,7 @@ const DocumentInfo: React.FC<DocumentInfoProps> = ({
       </div>
       <div className="px-2 py-2 shrink-0">
         <button
-          className="flex items-center justify-center w-full py-2 text-sm font-semibold rounded-md bg-card"
+          className="flex items-center justify-center w-full py-2 text-sm font-semibold text-black bg-green-500 rounded-md"
           onClick={() =>
             handleDocumentUpdate(documentKey, documentTitle, documentContent)
           }
@@ -125,7 +125,7 @@ const DocumentInfo: React.FC<DocumentInfoProps> = ({
       </div>
       <div className="px-2 py-2 shrink-0">
         <button
-          className="flex items-center justify-center w-full py-2 text-sm font-semibold rounded-md bg-card"
+          className="flex items-center justify-center w-full py-2 text-sm font-semibold text-black bg-red-600 rounded-md"
           onClick={() => handleDeleteDocument(documentKey)}
         >
           <TrashIcon className="w-5 h-5" />
