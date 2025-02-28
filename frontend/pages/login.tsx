@@ -25,8 +25,6 @@ const Login = () => {
       setError(result.error);
       console.log("Login error: ", result.error);
     } else {
-      console.log("Login  successful, redirecting...");
-      console.log("Calling router.push('/')");
       router.push("/");
     }
   };
