@@ -10,7 +10,12 @@ CORS(
     app,
     resources={
         r"/api/*": {
-            "origins": ["http://localhost:3000", "http://192.168.16.119:3000", "http://localhost:3001"],
+            "origins": [
+                "http://localhost:3000",
+                "http://192.168.16.119:3000",
+                "http://localhost:3001",
+                "https://https://peacockgpt-o9qkravfe-ottojonas-projects.vercel.app/",
+            ],
             "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
             "allow_headers": ["Content-Type", "Authorization"],
             "supports_credentials": True,
@@ -20,7 +25,12 @@ CORS(
 
 socketio = SocketIO(
     app,
-    cors_allowed_origins=["http://localhost:3000", "http://192.168.16.119:3000", "http://localhost:3001"],
+    cors_allowed_origins=[
+        "http://localhost:3000",
+        "http://192.168.16.119:3000",
+        "http://localhost:3001",
+        "https://https://peacockgpt-o9qkravfe-ottojonas-projects.vercel.app/",
+    ],
     async_mode="gevent",
     websocket=True,
     ping_timeout=60,
