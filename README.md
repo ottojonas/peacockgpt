@@ -188,7 +188,6 @@ If you have any questions, issues, or need further assistance, please contact ou
 
 Happy exploring and welcome to the team!
 
-```
+---
 
-This README provides an overview of PeacockGPT, detailed installation instructions, and practical examples of how to use the tool in your daily work. It’s designed to be a helpful resource for anyone new to our systems.
-```
+I don't have a license for this. Do what you like with it, just provide credit where credit is due :)
