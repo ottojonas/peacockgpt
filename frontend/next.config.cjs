@@ -40,7 +40,10 @@ const nextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: "http://localhost:5000/:path*", // proxy to flask backend hopefully
+        destination:
+          process.env.NODE_ENV === "production"
+            ? "https://peacockgpt-backend-a08e5bc3eefc.herokuapp.com/: path"
+            : "http://localhost:5000/:path*", // proxy to flask backend hopefully
       },
     ];
   },
