@@ -1,12 +1,12 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-interface ITrainingDocument extends Document {
+export interface ITrainingDocument extends Document {
   key: string;
   title: string;
   content: string;
 }
 
-const TrainingDocumentSchema = new mongoose.Schema({
+const TrainingDocumentSchema = new mongoose.Schema<ITrainingDocument>({
   key: {
     type: String,
     required: true,
@@ -20,15 +20,16 @@ const TrainingDocumentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  isSelected: {
-    type: Boolean,
-    required: true,
-    default: false,
-  },
+  // isSelected: {
+  //   type: Boolean,
+  //   required: true,
+  //   default: false,
+  // },
 });
 
-const TrainingDocument =
-  mongoose.models.TrainingDocument ||
-  mongoose.model<ITrainingDocument>("TrainingDocument", TrainingDocumentSchema);
+const TrainingDocument = mongoose.model<ITrainingDocument>(
+  "TrainingDocument",
+  TrainingDocumentSchema
+);
 
-export default TrainingDocument;
+export { TrainingDocument };

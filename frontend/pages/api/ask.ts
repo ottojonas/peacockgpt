@@ -1,7 +1,10 @@
 import "openai/shims/node";
 import { NextApiRequest, NextApiResponse } from "next";
 import connectToDatabase from "../../lib/mongoose";
-import TrainingDocument from "../../models/TrainingDocument";
+import {
+  TrainingDocument,
+  ITrainingDocument,
+} from "../../models/TrainingDocument";
 import { OpenAI } from "openai";
 
 const openai = new OpenAI({
@@ -9,20 +12,12 @@ const openai = new OpenAI({
   dangerouslyAllowBrowser: true,
 });
 
-interface TrainingDocumentType {
-  content: string;
-}
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   try {
     await connectToDatabase();
-
-    const { default: TrainingDocument } = await import(
-      "../../models/TrainingDocument"
-    );
 
     if (req.method === "POST") {
       const { question } = req.body;
@@ -32,17 +27,25 @@ export default async function handler(
       }
 
       try {
-        const documents: TrainingDocumentType[] = await TrainingDocument.find(
-          {}
-        );
-        let documentTexts = documents
-          .map((doc: TrainingDocumentType) => doc.content)
+        const documents: ITrainingDocument[] = await TrainingDocument.find({})
+          .lean()
+          .exec();
+
+        const filteredDocuments = documents.map((doc) => ({
+          key: doc.key,
+          title: doc.title,
+          content: doc.content,
+        }));
+
+        let documentTexts = filteredDocuments
+          .map((doc) => doc.content)
           .join("\n\n");
 
         const maxLength = 1000000;
         if (documentTexts.length > maxLength) {
           documentTexts = documentTexts.substring(0, maxLength);
         }
+
         const prompt = `Here are some documents: \n\n${documentTexts}\n\nBased on the above documents, answer the following question:\n\nQuestion: ${question}\nAnswer:`;
 
         const response = await openai.chat.completions.create({
