@@ -1,4 +1,11 @@
-import mongoose from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
+
+interface ITrainingDocument extends Document {
+  key: string;
+  title: string;
+  content: string;
+  isSelected: boolean;
+}
 
 const TrainingDocumentSchema = new mongoose.Schema({
   key: {
@@ -23,6 +30,6 @@ const TrainingDocumentSchema = new mongoose.Schema({
 
 const TrainingDocument =
   mongoose.models.TrainingDocument ||
-  mongoose.model("TrainingDocument", TrainingDocumentSchema);
+  mongoose.model<ITrainingDocument>("TrainingDocument", TrainingDocumentSchema);
 
 export default TrainingDocument;
