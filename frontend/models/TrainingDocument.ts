@@ -32,4 +32,4 @@ const TrainingDocument = mongoose.model<ITrainingDocument>(
   TrainingDocumentSchema
 );
 
-export { TrainingDocument };
+export default TrainingDocument;

@@ -1,6 +1,16 @@
-import mongoose from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 
-const ConversationSchema = new mongoose.Schema({
+export interface IConversation {
+  key: string;
+  title: string;
+  desc: string;
+  date: string;
+  isSelected: boolean;
+  isPinned: boolean;
+  user_id: mongoose.Schema.Types.ObjectId;
+}
+
+const ConversationSchema: Schema = new mongoose.Schema({
   key: {
     type: String,
     required: true,
@@ -28,10 +38,14 @@ const ConversationSchema = new mongoose.Schema({
     required: true,
     default: false,
   },
-	user_id: {
-		type: mongoose.Schema.ObjectId, ref: 'User', required: true, 
-	}
+  user_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
 });
 
-export default mongoose.models.Conversation ||
-  mongoose.model("Conversation", ConversationSchema);
+export default mongoose.model<IConversation>(
+  "Conversation",
+  ConversationSchema
+);

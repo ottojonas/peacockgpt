@@ -1,8 +1,7 @@
 import "openai/shims/node";
 import { NextApiRequest, NextApiResponse } from "next";
 import connectToDatabase from "../../lib/mongoose";
-import {
-  TrainingDocument,
+import TrainingDocument, {
   ITrainingDocument,
 } from "../../models/TrainingDocument";
 import { OpenAI } from "openai";
