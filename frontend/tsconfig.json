@@ -20,13 +20,15 @@
     "types": [
       "next",
       "node"
-    ]
+    ],
+    "target": "ES2017"
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx"
-, "NextAuth.js"  ],
+    "**/*.tsx",
+    "NextAuth.js"
+  ],
   "exclude": [
     "node_modules"
   ]
