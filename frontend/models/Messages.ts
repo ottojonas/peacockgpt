@@ -1,7 +1,17 @@
-import mongoose from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 import Conversation from "./Conversation";
 
-const MessageSchema = new mongoose.Schema({
+export interface IMessage extends Document {
+  key: string;
+  conversationKey: string;
+  sender: string;
+  content: string;
+  timestamp: Date;
+  images: string;
+  rating: string;
+}
+
+const MessageSchema: Schema = new mongoose.Schema({
   key: {
     type: String,
     required: true,
@@ -42,5 +52,4 @@ MessageSchema.virtual("conversation", {
   justOne: true,
 });
 
-export default mongoose.models.Message ||
-  mongoose.model("Message", MessageSchema);
+export default mongoose.model<IMessage>("Message", MessageSchema);

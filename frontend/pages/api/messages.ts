@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import connectToDatabase from "../../lib/mongoose";
-import Messages from "../../models/Messages";
+import Messages, { IMessage } from "../../models/Messages";
 import Conversation from "../../models/Conversation";
 import { v4 as uuidv4 } from "uuid";
 
@@ -18,7 +18,9 @@ export default async function handler(
       return res.status(400).json({ error: "conversationKey is required" });
     }
     try {
-      const messages = await Messages.find({ conversationKey });
+      const messages = await Messages.find<IMessage>({
+        conversationKey,
+      }).exec();
       res.status(200).json(messages);
     } catch (error) {
       if (error instanceof Error) {
