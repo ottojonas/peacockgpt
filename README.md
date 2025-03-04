@@ -4,7 +4,7 @@
 
 ## Screenshot
 
-![peacock_thumbnail](/assets/peacock_thumbnail.jpg)
+![peacock_thumbnail](/public/assets/peacock_thumbnail.jpg)
 
 ---
 
