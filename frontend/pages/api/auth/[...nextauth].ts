@@ -26,7 +26,7 @@ export default NextAuth({
             { expiresIn: "1hr" }
           );
           return {
-            id: user._id,
+            id: user._id as string,
             email: user.email,
             admin: user.admin,
             accessToken,
