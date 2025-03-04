@@ -96,11 +96,11 @@
     "marked": "^15.0.4",
     "mongoose": "^8.9.0",
     "multer": "^1.4.5-lts.1",
-    "next": "^13.5.8",
+    "next": "^15.2.0",
     "next-auth": "^4.24.11",
     "next-connect": "^1.0.0",
     "openai": "^4.77.0",
-    "postcss": "8.4.21",
+    "postcss": "^8.5.3",
     "punycode": "^2.3.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -111,7 +111,7 @@
     "tailwind": "^4.0.0",
     "tailwindcss": "3.3.1",
     "text-encoding": "^0.7.0",
-    "utils": "^0.3.1",
+    "utils": "^0.2.2",
     "uuid": "^11.0.3"
   },
   "devDependencies": {
