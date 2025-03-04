@@ -1,1 +1,1 @@
-web: python --port 5000 --host peacockgpt.vercel.app app.main --reload
+web: python app/main --port 5000 --host peacockgpt.vercel.app --reload
