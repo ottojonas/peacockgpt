@@ -4,7 +4,6 @@ interface ITrainingDocument extends Document {
   key: string;
   title: string;
   content: string;
-  isSelected: boolean;
 }
 
 const TrainingDocumentSchema = new mongoose.Schema({
