@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import connectToDatabase from "../../lib/mongoose";
-import Conversation from "../../models/Conversation";
+import Conversation, { IConversation } from "../../models/Conversation";
 import Messages from "../../models/Messages";
 import { v4 as uuidv4 } from "uuid";
 import mongoose from "mongoose";
@@ -19,7 +19,9 @@ export default async function handler(
         return res.status(400).json({ error: "user_id is required" });
       }
       const objectId = new mongoose.Types.ObjectId(user_id as string);
-      const conversations = await Conversation.find({ user_id: objectId });
+      const conversations = await Conversation.find<IConversation>({
+        user_id: objectId,
+      }).exec();
       res.status(200).json(conversations);
     } catch (error) {
       console.error("Error loading conversations:", error);
