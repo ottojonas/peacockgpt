@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios, { AxiosError } from "axios";
 import { useRouter } from "next/router";
 import styles from "../styles/auth.module.css";
@@ -6,6 +6,7 @@ import loginStyles from "../styles/loginform.module.css";
 import { FaUser, FaLock } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 import { signIn } from "next-auth/react";
+import { fetchAuthProviders } from "../utils/auth";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -13,6 +14,19 @@ const Login = () => {
   const [error, setError] = useState("");
   const router = useRouter();
   //  const { login } = useAuth();
+  const [providers, setProviders] = useState("");
+
+  useEffect(() => {
+    const loadProviders = async () => {
+      try {
+        const data = await fetchAuthProviders();
+        setProviders(data.providers);
+      } catch (error) {
+        console.error("Error fetching auth providers:", error);
+      }
+    };
+    loadProviders();
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,6 +42,9 @@ const Login = () => {
       try {
         const session = await axios.get("/api/auth/session");
         const user = session.data.user;
+        if (!user || !user.id) {
+          throw new Error("User ID is missing in the session data");
+        }
         const response = await axios.get("/api/conversations", {
           params: { user_id: user.id },
         });

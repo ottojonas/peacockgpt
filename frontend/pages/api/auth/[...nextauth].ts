@@ -37,6 +37,9 @@ export default NextAuth({
     }),
   ],
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      return process.env.NEXTAUTH_URL || baseUrl; 
+    }, 
     async session({ session, token }: { session: any; token: any }) {
       session.user.id = token.id;
       session.user.admin = token.admin as boolean;
