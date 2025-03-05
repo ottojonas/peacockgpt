@@ -15,7 +15,7 @@ import io from "socket.io-client";
 import Info from "../components/Info";
 
 // * initialise socket connection
-const socket = io("https://peacockgpt.vercel.app", {
+const socket = io("https://peacockgpt-backend-a08e5bc3eefc.herokuapp.com", {
   transports: ["websocket"],
   withCredentials: true,
   reconnection: true,

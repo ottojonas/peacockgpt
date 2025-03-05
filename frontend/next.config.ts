@@ -40,7 +40,7 @@ const nextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/:path*`, // proxy to flask backend hopefully
+        destination: `${process.env.NEXT_PUBLIC_BACKEND_URL}`, // proxy to flask backend hopefully
       },
     ];
   },
