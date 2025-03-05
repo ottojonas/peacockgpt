@@ -15,7 +15,7 @@ import io from "socket.io-client";
 import Info from "../components/Info";
 
 // * initialise socket connection
-const socket = io(process.env.NEXTAUTH_URL, {
+const socket = io("https://peacockgpt.vercel.app", {
   transports: ["websocket"],
   withCredentials: true,
   reconnection: true,
