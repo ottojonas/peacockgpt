@@ -35,6 +35,26 @@ def admin_required(fn):
     return wrapper
 
 
+@routes.route("/api/auth/providers", methods=["GET"])
+def auth_providers():
+    return jsonify({"providers": []}), 200
+
+
+@routes.route("/api/auth/session", methods=["GET"])
+def auth_sessio():
+    return jsonify({"session": ""}), 200
+
+
+@routes.route("/api/auth/error", methods=["GET"])
+def auth_error():
+    return jsonify({"error": ""}), 200
+
+
+@routes.route("/api/auth/_log", methods=["POST"])
+def auth_log():
+    return jsonify({"log": ""}), 200
+
+
 # * route to handle account creation and user registration
 @routes.route("/api/register", methods=["POST"])
 def register():
