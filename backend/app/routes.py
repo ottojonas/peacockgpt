@@ -11,6 +11,7 @@ from flask_jwt_extended import (
     verify_jwt_in_request,
 )
 from app.services.document_service import save_document
+from icecream import ic
 import bcrypt
 import jwt
 from datetime import timedelta
@@ -59,6 +60,7 @@ def auth_session():
         current_user = get_jwt_identity()
         if not current_user:
             return jsonify({"error": "user not logged in"})
+        ic(f"Current User: {current_user}")
         user = mongo.db.users.find_one({"_id": ObjectId(current_user["user_id"])})
         if user:
             session_info = {
