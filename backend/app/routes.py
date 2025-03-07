@@ -41,7 +41,12 @@ def admin_required(fn):
 
 @auth_bp.route("/api/auth/providers", methods=["GET"])
 def auth_providers():
-    return jsonify({"providers": []}), 200
+    providers = [
+        {
+            "id": "credentials", "name": "Credentials", "type": "credentials", "signinUrl": "/api/auth/signin/credentials", "callbackUrl": "/api/auth/callback/credentials"
+        }
+    ]
+    return jsonify({"providers": providers}),200
 
 @auth_bp.route("/api/auth/session", methods=["GET"])
 @jwt_required(optional=True)

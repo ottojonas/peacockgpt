@@ -40,8 +40,7 @@ socketio = SocketIO(
     engineio_logger=True,
 )
 
-
-@app.route("/", methods=["GET"])
+@app.route("/api", methods=["GET"])
 def index():
     return jsonify({"message": "Welcome to PeacockGPT backend - fuck off"}), 200
 
