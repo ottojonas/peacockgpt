@@ -30,43 +30,49 @@ const Login = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const result = await signIn("credentials", {
-      redirect: false,
-      email,
-      password,
-    });
-    if (result?.error) {
-      setError(result.error);
-      console.log("Login error: ", result.error);
-    } else {
-      try {
-        const session = await axios.get("/api/auth/session");
-        const user = session.data.user;
-        if (!user || !user.id) {
-          throw new Error("User ID is missing in the session data");
-        }
-        const response = await axios.get("/api/conversations", {
-          params: { user_id: user.id },
-        });
-        const conversations = response.data;
-        if (conversations.length === 0) {
-          await axios.post("/api/conversations", {
-            title: "New Conversation",
-            desc: "Description",
-            date: new Date().toISOString(),
-            isSelected: true,
-            isPinned: false,
-            user_id: user.id,
+    try{
+      const result = await signIn("credentials", {
+        redirect: false,
+        email,
+        password,
+      });
+      if (result?.error) {
+        setError(result.error);
+        console.log("Login error: ", result.error);
+      } else {
+        try {
+          const session = await axios.get("/api/auth/session");
+          const user = session.data.user;
+          if (!user || !user.id) {
+            throw new Error("User ID is missing in the session data");
+          }
+          const response = await axios.get("/api/conversations", {
+            params: { user_id: user.id },
           });
+          const conversations = response.data;
+          if (conversations.length === 0) {
+            await axios.post("/api/conversations", {
+              title: "New Conversation",
+              desc: "Description",
+              date: new Date().toISOString(),
+              isSelected: true,
+              isPinned: false,
+              user_id: user.id,
+            });
+          }
+          console.log("Credentials correct, redirecting to PeacockGPT");
+          router.push("/");
+          console.log("Successfully redirected to PeacockGPT");
+        } catch (error) {
+          console.log("Error fetching conversations: ", error);
+          setError("Failed to fetch conversations. Please try again later")
         }
-        console.log("Credentials correct, redirecting to PeacockGPT");
-        router.push("/");
-        console.log("Successfully redirected to PeacockGPT");
-      } catch (error) {
-        console.log("Error fetching conversations: ", error);
       }
+    } catch (error) {
+      console.log("Network error: ", error) 
+      setError("Network error. Please check your connection and try again.")
     }
-  };
+  }
 
   return (
     <div className={styles.authWrapper}>
