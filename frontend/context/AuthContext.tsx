@@ -6,6 +6,7 @@ import {
   useEffect,
 } from "react";
 import { useSession, signOut, signIn } from "next-auth/react";
+import { fetchAuthSession } from "../utils/auth";
 interface AuthContextType {
   isAuthenticated: boolean;
   userId: string | null;
@@ -19,16 +20,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { data: session, status } = useSession();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    if (status === "authenticated" && session?.user?.id) {
-      setIsAuthenticated(true);
-      setUserId(session.user.id);
-    } else {
-      setIsAuthenticated(false);
-      setUserId(null);
-    }
-  }, [session, status]);
+    const loadSession = async () => {
+      try {
+        const session = await fetchAuthSession();
+        if (session.user) {
+          setIsAuthenticated(true);
+          setUser(session.user);
+        }
+      } catch (error) {
+        setIsAuthenticated(false);
+        setUser(false);
+      }
+    };
+  }, []);
 
   const login = () => {
     setIsAuthenticated(true);
