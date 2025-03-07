@@ -5,7 +5,7 @@ import {
   ReactNode,
   useEffect,
 } from "react";
-import { useSession, signOut } from "next-auth/react";
+import { useSession, signOut, signIn } from "next-auth/react";
 interface AuthContextType {
   isAuthenticated: boolean;
   userId: string | null;
@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (status === "authenticated") {
+    if (status === "authenticated" && session?.user?.id) {
       setIsAuthenticated(true);
       setUserId(session.user.id);
     } else {
@@ -33,11 +33,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = () => {
     setIsAuthenticated(true);
     setUserId(null);
-    signOut();
+    signIn();
   };
   const logout = () => {
     setIsAuthenticated(false);
     setUserId(null);
+    signOut();
   };
 
   return (
