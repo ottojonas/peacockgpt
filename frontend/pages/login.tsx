@@ -59,7 +59,7 @@ const Login = () => {
             user_id: user.id,
           });
         }
-        router.push("/index");
+        router.push("/");
       } catch (error) {
         console.log("Error fetching conversations: ", error);
       }
