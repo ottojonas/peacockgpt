@@ -35,6 +35,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(false);
       }
     };
+    loadSession();
   }, []);
 
   const login = () => {

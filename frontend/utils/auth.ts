@@ -25,7 +25,7 @@ export const fetchAuthSession = async () => {
   }
 };
 
-export const fetchAuthError = async () => {
+export const fetchAuthError = async (error:string) => {
   try {
     const response = await axios.get("/api/auth/error", {
       params: {error}

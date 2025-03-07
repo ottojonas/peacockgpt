@@ -7,7 +7,7 @@ const AuthErrorComponent: React.FC = () => {
   useEffect(() => {
     const getError = async () => {
       try {
-        const errorData = await fetchAuthError();
+        const errorData = await fetchAuthError(error);
         setError(errorData.error);
       } catch (error) {
         console.error("Failed to fetch auth error: ", error);
