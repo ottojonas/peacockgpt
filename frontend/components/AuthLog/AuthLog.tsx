@@ -23,3 +23,5 @@ const AuthLogComponent: React.FC = () => {
     </div>
   );
 };
+
+export default AuthLogComponent; 
