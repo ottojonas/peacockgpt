@@ -4,6 +4,9 @@ from app.services.document_service import get_all_documents
 from flask import jsonify, request
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 app = create_app()
 CORS(
@@ -12,12 +15,8 @@ CORS(
         r"/api/*": {
             "origins": [
                 "http://localhost:3000",
-                "http://192.168.16.119:3000",
-                "http://localhost:3001",
-                "https://peacockgpt-o9qkravfe-ottojonas-projects.vercel.app",
                 "https://peacockgpt.vercel.app",
-                "http://172.18.97.102:51325",
-                "http://172.19.4.218:28148",
+                "https://peacockgpt-backend-a08e5bc3eefc.herokuapp.com/",
             ],
             "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
             "allow_headers": ["Content-Type", "Authorization"],
@@ -30,17 +29,26 @@ socketio = SocketIO(
     app,
     cors_allowed_origins=[
         "http://localhost:3000",
-        "http://192.168.16.119:3000",
-        "http://localhost:3001",
-        "https://peacockgpt-o9qkravfe-ottojonas-projects.vercel.app/",
         "https://peacockgpt.vercel.app",
-        "http://172.18.97.102:51325",
+        "https://peacockgpt-backend-a08e5bc3eefc.herokuapp.com/",
     ],
     async_mode="gevent",
     websocket=True,
     ping_timeout=60,
     ping_interval=25,
+    logger=True,
+    engineio_logger=True,
 )
+
+
+@app.route("/", methods=["GET"])
+def index():
+    return jsonify({"message": "Welcome to PeacockGPT backend - fuck off"}), 200
+
+
+@app.route("/favicon.ico", methods=["GET"])
+def favicon():
+    return "", 204
 
 
 @app.route("/api/messages", methods=["GET"])

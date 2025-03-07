@@ -1,1 +1,1 @@
-web: python -m flask run --host 0.0.0.0 --port $PORT
+web: gunicorn --worker-class geventwebsocket.gunicorn.workers.GeventWebSocketWorker -w 1 app.main:app
