@@ -43,7 +43,11 @@ def admin_required(fn):
 def auth_providers():
     providers = [
         {
-            "id": "credentials", "name": "Credentials", "type": "credentials", "signinUrl": "/api/auth/signin/credentials", "callbackUrl": "/api/auth/callback/credentials"
+            "id": "credentials", 
+            "name": "Credentials", 
+            "type": "credentials", 
+            "signinUrl": "/api/auth/signin/credentials", 
+            "callbackUrl": "/api/auth/callback/credentials"
         }
     ]
     return jsonify({"providers": providers}),200
