@@ -59,7 +59,9 @@ const Login = () => {
             user_id: user.id,
           });
         }
+        console.log("Credentials correct, redirecting to PeacockGPT");
         router.push("/");
+        console.log("Successfully redirected to PeacockGPT");
       } catch (error) {
         console.log("Error fetching conversations: ", error);
       }
