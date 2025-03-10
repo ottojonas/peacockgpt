@@ -16,7 +16,6 @@ CORS(
             "origins": [
                 "http://localhost:3000",
                 "https://peacockgpt.vercel.app",
-                "https://peacockgpt-backend-a08e5bc3eefc.herokuapp.com/",
             ],
             "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
             "allow_headers": ["Content-Type", "Authorization"],
@@ -30,7 +29,6 @@ socketio = SocketIO(
     cors_allowed_origins=[
         "http://localhost:3000",
         "https://peacockgpt.vercel.app",
-        "https://peacockgpt-backend-a08e5bc3eefc.herokuapp.com/",
     ],
     async_mode="gevent",
     websocket=True,

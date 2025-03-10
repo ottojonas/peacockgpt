@@ -22,13 +22,16 @@ import uuid
 routes = Blueprint("routes", __name__)
 auth_bp = Blueprint("auth", __name__)
 
+
 @routes.route("/api", methods=["GET"])
 def index():
     return jsonify({"message": "Welcome to PeacockGPT backend"}), 200
 
+
 @routes.route("/favicon.ico", methods=["GET"])
 def favicon():
     return "", 204
+
 
 def admin_required(fn):
     @wraps(fn)
@@ -38,20 +41,23 @@ def admin_required(fn):
         if not current_user.get("admin"):
             return jsonify({"error": "admin access required"}), 401
         return fn(*args, **kwargs)
+
     return wrapper
+
 
 @auth_bp.route("/api/auth/providers", methods=["GET"])
 def auth_providers():
     providers = [
         {
-            "id": "credentials", 
-            "name": "Credentials", 
-            "type": "credentials", 
-            "signinUrl": "/api/auth/signin/credentials", 
-            "callbackUrl": "/api/auth/callback/credentials"
+            "id": "credentials",
+            "name": "Credentials",
+            "type": "credentials",
+            "signinUrl": "/api/auth/signin/credentials",
+            "callbackUrl": "/api/auth/callback/credentials",
         }
     ]
-    return jsonify({"providers": providers}),200
+    return jsonify({"providers": providers}), 200
+
 
 @auth_bp.route("/api/auth/session", methods=["GET"])
 @jwt_required(optional=True)
@@ -59,7 +65,7 @@ def auth_session():
     try:
         current_user = get_jwt_identity()
         if not current_user:
-            return jsonify({"error": "user not logged in"})
+            return jsonify({"session": None}), 200
         ic(f"Current User: {current_user}")
         user = mongo.db.users.find_one({"_id": ObjectId(current_user["user_id"])})
         if user:
@@ -67,19 +73,21 @@ def auth_session():
                 "user": {
                     "id": str(user["_id"]),
                     "email": user["email"],
-                    "admin": user.get("admin", False),
+                    "admin": user["admin"],
                 }
             }
             return jsonify({"session": session_info}), 200
-        return jsonify({"error": "Session not found"}), 404
+        return jsonify({"session": None}), 200
     except Exception as e:
         print(f"Error in auth_session: {e}")
         return jsonify({"error": "Internal server error"}), 500
+
 
 @auth_bp.route("/api/auth/error", methods=["GET"])
 def auth_error():
     error_message = request.args.get("error", "Unknown error")
     return jsonify({"error": error_message}), 200
+
 
 @auth_bp.route("/api/auth/_log", methods=["POST"])
 def auth_log():
@@ -87,6 +95,7 @@ def auth_log():
     log_message = data.get("message", "No log message provided")
     print(f"Auth log: {log_message}")
     return jsonify({"log": "Log message received"}), 200
+
 
 # * route to handle account creation and user registration
 @routes.route("/api/register", methods=["POST"])
@@ -99,7 +108,7 @@ def register():
     if not email.endswith("@peacocksalt.co.uk"):
         return jsonify(
             {
-                "error": "email must be within the intranet, please try again or contact ottobjonas@outlook.com"
+                "error": "email must be within the intranet of Peaock Salt, please try again or contact ottobjonas@outlook.com"
             }
         )
     if mongo.db.users.find_one({"email": email}):
@@ -113,6 +122,7 @@ def register():
     }
     mongo.db.users.insert_one(user)
     return jsonify({"message": "user registered successfully"}), 201
+
 
 # * route to handle user signing in
 @routes.route("/api/login", methods=["POST"])
@@ -184,6 +194,7 @@ def login():
         print(f"Login error: {str(e)}")
         return jsonify({"error": "Internal server error"}), 500
 
+
 # * routes to handle user signing out
 @auth_bp.route("/api/logout", methods=["POST"])
 @jwt_required()
@@ -191,6 +202,7 @@ def logout():
     response = jsonify({"message": "logout successful"})
     unset_jwt_cookies(response)
     return response, 200
+
 
 # * route to handle asking a question to the AI
 @routes.route("/api/ask", methods=["POST"])
@@ -213,10 +225,12 @@ def ask_question():
     answer = generate_response(prompt)
     return jsonify({"answer": answer})
 
+
 # * route to check the health status of the application
 @routes.route("/health", methods=["GET"])
 def health_check():
     return {"status": "Healthy"}
+
 
 # * route to handle document uploads
 @routes.route("/api/upload", methods=["POST"])
@@ -251,6 +265,7 @@ def upload_document():
         print(f"Error: {e}")
         return jsonify({"error": "Failed to upload document"}), 500
 
+
 @routes.route("/documents", methods=["GET"])
 @admin_required
 def list_documents():
@@ -258,6 +273,7 @@ def list_documents():
     return jsonify(
         [{"id": str(doc["_id"]), "title": doc["title"]} for doc in documents]
     )
+
 
 # * route to get a specific document by its ID
 @routes.route("/documents/<string:doc_id>", methods=["GET"])
@@ -274,6 +290,7 @@ def get_document(doc_id):
         )
     return jsonify({"error": "Document not found"}), 404
 
+
 # * route to delete a specific document by its ID
 @routes.route("/documents/<string:doc_id>", methods=["DELETE"])
 @admin_required
@@ -282,6 +299,7 @@ def delete_document_route(doc_id):
     if result.deleted_count > 0:
         return jsonify({"message": "Document deleted successfully"}), 200
     return jsonify({"error": "Document not found"}), 404
+
 
 @routes.route("/api/documents/<string:key>", methods=["PUT"])
 @admin_required
@@ -300,6 +318,7 @@ def update_document():
         {"key": key}, {"$set": {"title": title, "content": content}}
     )
     return jsonify({"message": "document updated successfully"})
+
 
 # * route to create a new conversations
 @routes.route("/api/conversations", methods=["POST"])
@@ -327,6 +346,7 @@ def create_conversation():
     except Exception as e:
         return jsonify({"error": "Failed to save conversation", "message": str(e)}), 500
 
+
 # * route to get all conversations
 @routes.route("/api/conversations", methods=["GET"])
 def get_conversations():
@@ -353,6 +373,7 @@ def get_conversations():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
 # * route to delete conversations
 @routes.route("/api/conversations", methods=["DELETE"])
 def delete_user_conversations():
@@ -373,6 +394,7 @@ def delete_user_conversations():
             ),
             500,
         )
+
 
 # * route to create a new message
 @routes.route("/api/messages", methods=["POST"])
@@ -400,6 +422,7 @@ def new_message():
     except Exception as e:
         return jsonify({"error": "Failed to save message", "message": str(e)}), 500
 
+
 # * route to get messages for a specific conversation
 @routes.route("/api/messages", methods=["GET"])
 def get_messages():
@@ -419,6 +442,7 @@ def get_messages():
             for msg in messages
         ]
     )
+
 
 # * route to update conversation
 @routes.route("/api/conversations/<string:key>", methods=["PUT"])
@@ -442,6 +466,7 @@ def update_conversation(key):
             jsonify({"error": "failed to update conversation", "message": str(e)}),
             500,
         )
+
 
 # * route to rate message
 @routes.route("/api/message/rate", methods=["POST"])
