@@ -28,7 +28,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const session = await fetchAuthSession();
         if (session.user) {
           setIsAuthenticated(true);
-          setUser(session.user);
+          setUser(session.userId);
         }
       } catch (error) {
         setIsAuthenticated(false);
@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = () => {
     setIsAuthenticated(true);
-    setUserId(null);
+    setUserId(userId);
     signIn();
   };
   const logout = () => {

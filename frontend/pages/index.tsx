@@ -14,23 +14,6 @@ import ChatInput from "../components/ChatInput";
 import io from "socket.io-client";
 import Info from "../components/Info";
 
-// * initialise socket connection
-const socket = io("https://peacockgpt-backend-a08e5bc3eefc.herokuapp.com", {
-  transports: ["websocket"],
-  withCredentials: true,
-  reconnection: true,
-  reconnectionAttempts: 5,
-  reconnectionDelay: 1000,
-});
-
-socket.on("connect_error", (error) => {
-  console.error("Socket connection error:", error);
-});
-
-socket.on("connect", () => {
-  console.log("Socket connected successfully");
-});
-
 export default function Home() {
   const [inputValue, setInputValue] = useState<string>("");
   const [healthStatus, setHealthStatus] = useState("");
@@ -38,13 +21,37 @@ export default function Home() {
   const [conversationKey, setConversationKey] = useState<string>("");
   const [conversations, setConversations] = useState<any[]>([]);
   const [showDocuments, setShowDocuments] = useState(false);
+  const [socketConnected, setSocketConnected] = useState(false);
   const router = useRouter();
   const { isAuthenticated, userId } = useAuth();
 
   useEffect(() => {
+    // * initialise socket connection
+    const socket = io("https://peacockgpt-backend-a08e5bc3eefc.herokuapp.com", {
+      transports: ["websocket"],
+      withCredentials: true,
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+    });
+
+    socket.on("connect", () => {
+      console.log("Socket connected successfully");
+      setSocketConnected(true);
+    });
+
+    socket.on("connect_error", (error) => {
+      console.error("Socket connection error:", error);
+    });
+    return () => {
+      socket.disconnect()
+    }
+  }, []);
+
+  useEffect(() => {
     if (!isAuthenticated) {
       router.push("/login");
-    } else if (userId) {
+    } else if (userId && socketConnected) {
       const fetchConversations = async () => {
         try {
           const response = await axios.get("/api/conversations", {
@@ -56,22 +63,23 @@ export default function Home() {
         }
       };
 
-      // Check if conversations are passed in the query
+      // * Check if conversations are passed in the query
       if (router.query.conversations) {
         setConversations(JSON.parse(router.query.conversations as string));
       } else {
         fetchConversations();
       }
     }
-  }, [isAuthenticated, router, userId]);
+  }, [isAuthenticated, router, userId, socketConnected]);
 
   // * effect to fetch messages when the conversation key changes
   useEffect(() => {
-    if (conversationKey) {
+    if (conversationKey && socketConnected) {
       const fetchMessages = async () => {
         try {
+          const userId = localStorage.getItem("user_id");
           const response = await axios.get("/api/messages", {
-            params: { conversationKey },
+            params: { conversationKey, user_id: userId },
           });
           setMessages(response.data);
         } catch (error) {
@@ -81,11 +89,7 @@ export default function Home() {
 
       fetchMessages();
     }
-  }, [conversationKey]);
-
-  // if (!isAuthenticated) {
-  //   return null;
-  // }
+  }, [conversationKey, socketConnected]);
 
   const handleDeleteConversation = (key: string) => {
     setConversations((prevConversations) =>

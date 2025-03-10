@@ -10,10 +10,10 @@ export default NextAuth({
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "email" },
+        email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
       },
-      authorize: async (credentials) => {
+      async authorize(credentials, req) {
         await connectToDatabase();
         const user = await User.findOne({ email: credentials.email });
         if (
@@ -31,8 +31,9 @@ export default NextAuth({
             admin: user.admin,
             accessToken,
           };
+        } else {
+          return null;
         }
-        return null;
       },
     }),
   ],
@@ -65,7 +66,7 @@ export default NextAuth({
   },
   pages: {
     signIn: "/login",
-    newUser: '/register'
+    newUser: "/register",
   },
   secret: process.env.NEXTAUTH_SECRET,
 });

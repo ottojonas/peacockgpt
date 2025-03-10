@@ -13,15 +13,15 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, login } = useAuth();
   const [providers, setProviders] = useState("");
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (!isAuthenticated) {
       const loadProviders = async () => {
         try {
           const data = await fetchAuthProviders();
-          setProviders(data.providers);
+          setProviders(data.providers || {});
         } catch (error) {
           console.error("Error fetching auth providers:", error);
         }
@@ -37,6 +37,7 @@ const Login = () => {
       console.log("API Response: ", response.data);
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);
+        login(response.data.userId)
         console.log("Token stored in local storage");
         router.push("/");
         console.log("Redirecting to homepage");
@@ -59,7 +60,7 @@ const Login = () => {
           <h1>Login</h1>
           <div className={loginStyles["input-box"]}>
             <input
-              type="email"
+              type="text"
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
