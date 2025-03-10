@@ -47,16 +47,21 @@ def admin_required(fn):
 
 @auth_bp.route("/api/auth/providers", methods=["GET"])
 def auth_providers():
-    providers = [
-        {
-            "id": "credentials",
-            "name": "Credentials",
-            "type": "credentials",
-            "signinUrl": "/api/auth/signin/credentials",
-            "callbackUrl": "/api/auth/callback/credentials",
-        }
-    ]
-    return jsonify({"providers": providers}), 200
+    try:
+        providers = [
+            {
+                "id": "credentials",
+                "name": "Credentials",
+                "type": "credentials",
+                "signinUrl": "/api/login",
+                "callbackUrl": "/api/auth/callback/credentials",
+            }
+        ]
+        print(f"Providers: {providers}")
+        return jsonify({"providers": providers}), 200
+    except Exception as e: 
+        print(f"Error in auth_providers: {e}")
+        return jsonify({"error": "Internal server error"}), 500
 
 
 @auth_bp.route("/api/auth/session", methods=["GET"])
@@ -76,10 +81,11 @@ def auth_session():
                     "admin": user["admin"],
                 }
             }
+            ic(f"Session: {session_info}")
             return jsonify({"session": session_info}), 200
         return jsonify({"session": None}), 200
     except Exception as e:
-        print(f"Error in auth_session: {e}")
+        ic(f"Error in auth_session: {e}")
         return jsonify({"error": "Internal server error"}), 500
 
 
@@ -96,6 +102,9 @@ def auth_log():
     print(f"Auth log: {log_message}")
     return jsonify({"log": "Log message received"}), 200
 
+@auth_bp.route("/api/auth/callback/credentials", methods=["GET"])
+def callback_credentials(): 
+    return jsonify({"message": "Callback successful"}), 200
 
 # * route to handle account creation and user registration
 @routes.route("/api/register", methods=["POST"])

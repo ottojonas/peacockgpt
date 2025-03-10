@@ -13,10 +13,7 @@ CORS(
     app,
     resources={
         r"/api/*": {
-            "origins": [
-                "http://localhost:3000",
-                "https://peacockgpt.vercel.app",
-            ],
+            "origins": "https://peacockgpt.vercel.app",
             "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
             "allow_headers": ["Content-Type", "Authorization"],
             "supports_credentials": True,
@@ -26,10 +23,7 @@ CORS(
 
 socketio = SocketIO(
     app,
-    cors_allowed_origins=[
-        "http://localhost:3000",
-        "https://peacockgpt.vercel.app",
-    ],
+    cors_allowed_origins=["https://peacockgpt.vercel.app"],
     async_mode="gevent",
     websocket=True,
     ping_timeout=60,
@@ -37,6 +31,7 @@ socketio = SocketIO(
     logger=True,
     engineio_logger=True,
 )
+
 
 @app.route("/api", methods=["GET"])
 def index():
