@@ -41,9 +41,17 @@ export default NextAuth({
     //   return baseUrl;
     // },
     async session({ session, token }: { session: any; token: any }) {
-      session.user.id = token.id;
-      session.user.admin = token.admin as boolean;
-      session.accessToken = token.accessToken;
+      if (token) {
+        session.user = {
+          id: token.id,
+          admin: token.admin as boolean,
+          email: token.email,
+        };
+        session.accessToken = token.accessToken;
+      } else {
+        console.warn("Token is null, returning empty session object");
+        return {};
+      }
       return session;
     },
     async jwt({ token, user }: { token: any; user: any }) {
@@ -57,6 +65,7 @@ export default NextAuth({
   },
   pages: {
     signIn: "/login",
+    newUser: '/register'
   },
   secret: process.env.NEXTAUTH_SECRET,
 });

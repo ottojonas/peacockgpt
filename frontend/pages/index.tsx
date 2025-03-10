@@ -83,9 +83,9 @@ export default function Home() {
     }
   }, [conversationKey]);
 
-  if (!isAuthenticated) {
-    return null;
-  }
+  // if (!isAuthenticated) {
+  //   return null;
+  // }
 
   const handleDeleteConversation = (key: string) => {
     setConversations((prevConversations) =>

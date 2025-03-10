@@ -8,27 +8,37 @@ export const fetchAuthProviders = async () => {
         Authorization: `Bearer ${token}`,
       },
     });
-    return response.data;
+    if (response.data) {
+      return response.data;
+    } else {
+      console.warn("Providers data is null, returning empty object");
+      return {};
+    }
   } catch (error) {
     console.error("Error fetching auth providers: ", error);
-    throw error;
+    return {};
   }
 };
 
 export const fetchAuthSession = async () => {
   try {
     const response = await axios.get("/api/auth/session");
-    return response.data;
+    if (response.data && response.data.session) {
+      return response.data.session;
+    } else {
+      console.warn("Session data is null, returning empty object");
+      return {};
+    }
   } catch (error) {
     console.error("Error fetching auth session: ", error);
-    throw error;
+    return {};
   }
 };
 
-export const fetchAuthError = async (error:string) => {
+export const fetchAuthError = async (error: string) => {
   try {
     const response = await axios.get("/api/auth/error", {
-      params: {error}
+      params: { error },
     });
     return response.data;
   } catch (error) {
@@ -39,7 +49,7 @@ export const fetchAuthError = async (error:string) => {
 
 export const authLog = async (message: string) => {
   try {
-    const response = await axios.post("/api/auth/_log", {message});
+    const response = await axios.post("/api/auth/_log", { message });
     return response.data;
   } catch (error) {
     console.error("Error sending log: ", error);

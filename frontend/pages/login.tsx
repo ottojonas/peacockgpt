@@ -13,66 +13,44 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
-  //  const { login } = useAuth();
+  const { isAuthenticated } = useAuth();
   const [providers, setProviders] = useState("");
 
   useEffect(() => {
-    const loadProviders = async () => {
-      try {
-        const data = await fetchAuthProviders();
-        setProviders(data.providers);
-      } catch (error) {
-        console.error("Error fetching auth providers:", error);
-      }
-    };
-    loadProviders();
-  }, []);
+    if (isAuthenticated) {
+      const loadProviders = async () => {
+        try {
+          const data = await fetchAuthProviders();
+          setProviders(data.providers);
+        } catch (error) {
+          console.error("Error fetching auth providers:", error);
+        }
+      };
+      loadProviders();
+    }
+  }, [isAuthenticated]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    try{
-      const result = await signIn("credentials", {
-        redirect: false,
-        email,
-        password,
-      });
-      if (result?.error) {
-        setError(result.error);
-        console.log("Login error: ", result.error);
+    try {
+      const response = await axios.post("/api/login", { email, password });
+      console.log("API Response: ", response.data);
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token);
+        console.log("Token stored in local storage");
+        router.push("/");
+        console.log("Redirecting to homepage");
       } else {
-        try {
-          const session = await axios.get("/api/auth/session");
-          const user = session.data.user;
-          if (!user || !user.id) {
-            throw new Error("User ID is missing in the session data");
-          }
-          const response = await axios.get("/api/conversations", {
-            params: { user_id: user.id },
-          });
-          const conversations = response.data;
-          if (conversations.length === 0) {
-            await axios.post("/api/conversations", {
-              title: "New Conversation",
-              desc: "Description",
-              date: new Date().toISOString(),
-              isSelected: true,
-              isPinned: false,
-              user_id: user.id,
-            });
-          }
-          console.log("Credentials correct, redirecting to PeacockGPT");
-          router.push("/");
-          console.log("Successfully redirected to PeacockGPT");
-        } catch (error) {
-          console.log("Error fetching conversations: ", error);
-          setError("Failed to fetch conversations. Please try again later")
-        }
+        setError("Login failed");
       }
     } catch (error) {
-      console.log("Network error: ", error) 
-      setError("Network error. Please check your connection and try again.")
+      if (axios.isAxiosError(error)) {
+        setError(error.response?.data.error || "An error occured");
+      } else {
+        setError("An unexpected error occured");
+      }
     }
-  }
+  };
 
   return (
     <div className={styles.authWrapper}>
