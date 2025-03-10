@@ -23,24 +23,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const loadSession = async () => {
-      try {
-        const session = await fetchAuthSession();
-        if (session.user) {
-          setIsAuthenticated(true);
-          setUser(session.userId);
-        }
-      } catch (error) {
-        setIsAuthenticated(false);
-        setUser(false);
-      }
-    };
-    loadSession();
-  }, []);
+    if (session) {
+      setIsAuthenticated(true);
+      setUserId(session.user.id);
+    } else {
+      setIsAuthenticated(false);
+      setUserId(null);
+    }
+  }, [session]);
 
-  const login = () => {
+  const login = (id: string) => {
     setIsAuthenticated(true);
-    setUserId(userId);
+    setUserId(id);
     signIn();
   };
   const logout = () => {

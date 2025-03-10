@@ -8,12 +8,13 @@ import jwt from "jsonwebtoken";
 export default NextAuth({
   providers: [
     CredentialsProvider({
+      id: "credentials",
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "text" },
+        email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         await connectToDatabase();
         const user = await User.findOne({ email: credentials.email });
         if (
@@ -23,7 +24,7 @@ export default NextAuth({
           const accessToken = jwt.sign(
             { id: user._id, email: user.email, admin: user.admin },
             process.env.JWT_SECRET,
-            { expiresIn: "1hr" }
+            { expiresIn: "1h" }
           );
           return {
             id: user._id as string,
@@ -38,9 +39,6 @@ export default NextAuth({
     }),
   ],
   callbacks: {
-    // async redirect({ url, baseUrl }) {
-    //   return baseUrl;
-    // },
     async session({ session, token }: { session: any; token: any }) {
       if (token) {
         session.user = {
@@ -65,7 +63,7 @@ export default NextAuth({
     },
   },
   pages: {
-    signIn: "/login",
+    signIn: "/",
     newUser: "/register",
   },
   secret: process.env.NEXTAUTH_SECRET,

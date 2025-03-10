@@ -1,22 +1,19 @@
 import axios from "axios";
+import { getProviders } from "next-auth/react";
 
 export const fetchAuthProviders = async () => {
   try {
-    const token = localStorage.getItem("token");
-    const response = await axios.get("/api/auth/providers", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    if (response.data) {
-      return response.data;
+    const providers = await getProviders(); 
+    if (providers) {
+      console.log("Providers: ", providers)
+      return providers
     } else {
-      console.warn("Providers data is null, returning empty object");
-      return {};
+      console.warn("Providers data is null, returning an empty object")
+      return {}
     }
   } catch (error) {
-    console.error("Error fetching auth providers: ", error);
-    return {};
+    console.error("Error fetching auth providers: ", error)
+    return {}
   }
 };
 
