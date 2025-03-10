@@ -1,152 +1,128 @@
-import React, { useState, useEffect } from "react";
-import { MessageItem } from "../components/Chat/Chat";
-import { v4 as uuidv4 } from "uuid";
-import { sendMessage } from "../lib/sendMessage";
+import React, { useEffect, useState } from "react";
+import axios, { AxiosError } from "axios";
 import { useRouter } from "next/router";
+import styles from "../styles/auth.module.css";
+import loginStyles from "../styles/loginform.module.css";
+import { FaUser, FaLock } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
-import axios from "axios";
-import Sidebar from "../components/Sidebar";
-import CustomHead from "../components/common/CustomHead";
-import ChatHistory from "../components/ChatHistory";
-import ChatHeader from "../components/ChatHeader";
-import Chat from "../components/Chat";
-import ChatInput from "../components/ChatInput";
-import io from "socket.io-client";
-import Info from "../components/Info";
+import { signIn } from "next-auth/react";
+import { fetchAuthProviders } from "../utils/auth";
+import io from 'socket.io-client'
 
-export default function Home() {
-  const [inputValue, setInputValue] = useState<string>("");
-  const [healthStatus, setHealthStatus] = useState("");
-  const [messages, setMessages] = useState<MessageItem[]>([]);
-  const [conversationKey, setConversationKey] = useState<string>("");
-  const [conversations, setConversations] = useState<any[]>([]);
-  const [showDocuments, setShowDocuments] = useState(false);
-  const [socketConnected, setSocketConnected] = useState(false);
+const socket = io("https://peacockgpt-backend-a08e5bc3eefc.herokuapp.com", {
+  transports: ["websocket"], 
+  withCredentials: true, 
+  reconnection: true, 
+  reconnectionAttempts: 5, 
+  reconnectionDelay: 1000,
+})
+
+socket.on("connect", () => {
+  console.log("Scoket connected successfully") 
+})
+
+socket.on("connect_error", (error) => {
+  console.error("Socket connection error: ", error)
+})
+
+const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const router = useRouter();
-  const { isAuthenticated, userId } = useAuth();
-
-  useEffect(() => {
-    // * initialise socket connection
-    const socket = io("https://peacockgpt-backend-a08e5bc3eefc.herokuapp.com", {
-      transports: ["websocket"],
-      withCredentials: true,
-      reconnection: true,
-      reconnectionAttempts: 5,
-      reconnectionDelay: 1000,
-    });
-
-    socket.on("connect", () => {
-      console.log("Socket connected successfully");
-      setSocketConnected(true);
-    });
-
-    socket.on("connect_error", (error) => {
-      console.error("Socket connection error:", error);
-    });
-    return () => {
-      socket.disconnect()
-    }
-  }, []);
+  const { isAuthenticated } = useAuth();
+  const [providers, setProviders] = useState<any>({});
 
   useEffect(() => {
     if (!isAuthenticated) {
-      router.push("/login");
-    } else if (userId && socketConnected) {
-      const fetchConversations = async () => {
+      const loadProviders = async () => {
         try {
-          const response = await axios.get("/api/conversations", {
-            params: { user_id: userId },
-          });
-          setConversations(response.data);
+          const data = await fetchAuthProviders();
+          if (data) {
+            setProviders(data);
+          } else {
+            console.warn ("providers data is null, returning an empty object")
+            setProviders({})
+          }
         } catch (error) {
-          console.error("Error fetching conversations:", error);
+          console.error("Error fetching auth providers:", error);
         }
       };
+      loadProviders();
+    }
+  }, [isAuthenticated]);
 
-      // * Check if conversations are passed in the query
-      if (router.query.conversations) {
-        setConversations(JSON.parse(router.query.conversations as string));
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const result = await signIn("credentials", {
+        redirect: false, 
+        email, 
+        password
+      }); 
+      if(result?.error) {
+        setError(result.error); 
       } else {
-        fetchConversations();
+        router.push("/peacockgpt")
       }
+    } catch (error) {
+      setError("An unexpected error has occured")
     }
-  }, [isAuthenticated, router, userId, socketConnected]);
-
-  // * effect to fetch messages when the conversation key changes
-  useEffect(() => {
-    if (conversationKey && socketConnected) {
-      const fetchMessages = async () => {
-        try {
-          const userId = localStorage.getItem("user_id");
-          const response = await axios.get("/api/messages", {
-            params: { conversationKey, user_id: userId },
-          });
-          setMessages(response.data);
-        } catch (error) {
-          console.error("error fetching messages:", error);
-        }
-      };
-
-      fetchMessages();
-    }
-  }, [conversationKey, socketConnected]);
-
-  const handleDeleteConversation = (key: string) => {
-    setConversations((prevConversations) =>
-      prevConversations.filter((conversation) => conversation.key !== key)
-    );
-    setMessages([]);
-    setConversationKey("");
   };
 
   return (
-    <>
-      <CustomHead title="PeacockGPT" />
-      <Sidebar />
-      <ChatHistory
-        setConversationKey={setConversationKey}
-        setMessages={setMessages}
-        conversations={conversations}
-        setConversations={setConversations}
-      />
-      <ChatHeader
-        conversationKey={conversationKey}
-        setConversations={setConversations}
-        setMessages={setMessages}
-        onDeleteConversation={handleDeleteConversation}
-        userId={userId}
-      />
-      <Chat
-        messages={messages}
-        setMessages={setMessages}
-        conversationKey={conversationKey}
-        sendMessage={(text) =>
-          sendMessage(
-            text,
-            conversationKey,
-            userId,
-            setMessages,
-            setConversations
-          )
-        }
-      />
-      <ChatInput
-        setMessages={setMessages}
-        sendMessage={(text) =>
-          sendMessage(
-            text,
-            conversationKey,
-            userId,
-            setMessages,
-            setConversations
-          )
-        }
-        inputValue={inputValue}
-        setInputValue={setInputValue}
-        messages={messages}
-        conversationKey={conversationKey}
-      />
-      <Info />
-    </>
+    <div className={styles.authWrapper}>
+      <div className={loginStyles.wrapper}>
+        <form onSubmit={handleLogin}>
+          <h1>Login</h1>
+          <div className={loginStyles["input-box"]}>
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <FaUser className={loginStyles.icon} />
+          </div>
+          <div className={loginStyles["input-box"]}>
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <FaLock className={loginStyles.icon} />
+          </div>
+          {error && <p>{error}</p> }
+
+          <div className={loginStyles["remember-forget"]}>
+            {/* <label>
+              <input type="checkbox" />
+              Remember Details
+            </label> */}
+            {/* <a href="/forgotpassword">Forgot Password?</a> */}
+          </div>
+          <button type="submit">Login</button>
+          <div className={loginStyles["register-link"]}>
+            <p>
+              Don't have an account? <a href="/register">Register</a>
+            </p>
+          </div>
+        </form>
+        <div>
+          {Object.values(providers).map((provider:any) => (
+            <div key={provider.name}>
+              <button onClick={() => signIn(provider.id)}>
+                Sign in with {provider.name}
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
   );
-}
+};
+
+export default Login;

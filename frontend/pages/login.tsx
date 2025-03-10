@@ -7,21 +7,43 @@ import { FaUser, FaLock } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 import { signIn } from "next-auth/react";
 import { fetchAuthProviders } from "../utils/auth";
+import io from 'socket.io-client'
+
+const socket = io("https://peacockgpt-backend-a08e5bc3eefc.herokuapp.com", {
+  transports: ["websocket"], 
+  withCredentials: true, 
+  reconnection: true, 
+  reconnectionAttempts: 5, 
+  reconnectionDelay: 1000,
+})
+
+socket.on("connect", () => {
+  console.log("Scoket connected successfully") 
+})
+
+socket.on("connect_error", (error) => {
+  console.error("Socket connection error: ", error)
+})
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
-  const { isAuthenticated, login } = useAuth();
-  const [providers, setProviders] = useState("");
+  const { isAuthenticated } = useAuth();
+  const [providers, setProviders] = useState<any>({});
 
   useEffect(() => {
     if (!isAuthenticated) {
       const loadProviders = async () => {
         try {
           const data = await fetchAuthProviders();
-          setProviders(data.providers || {});
+          if (data) {
+            setProviders(data);
+          } else {
+            console.warn ("providers data is null, returning an empty object")
+            setProviders({})
+          }
         } catch (error) {
           console.error("Error fetching auth providers:", error);
         }
@@ -33,34 +55,29 @@ const Login = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/api/login", { email, password });
-      console.log("API Response: ", response.data);
-      if (response.data.token) {
-        localStorage.setItem("token", response.data.token);
-        login(response.data.userId)
-        console.log("Token stored in local storage");
-        router.push("/");
-        console.log("Redirecting to homepage");
+      const result = await signIn("credentials", {
+        redirect: false, 
+        email, 
+        password
+      }); 
+      if(result?.error) {
+        setError(result.error); 
       } else {
-        setError("Login failed");
+        router.push("/")
       }
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        setError(error.response?.data.error || "An error occured");
-      } else {
-        setError("An unexpected error occured");
-      }
+      setError("An unexpected error has occured")
     }
   };
 
   return (
     <div className={styles.authWrapper}>
       <div className={loginStyles.wrapper}>
-        <form onSubmit={handleLogin} action="">
+        <form onSubmit={handleLogin}>
           <h1>Login</h1>
           <div className={loginStyles["input-box"]}>
             <input
-              type="text"
+              type="email"
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -78,6 +95,7 @@ const Login = () => {
             />
             <FaLock className={loginStyles.icon} />
           </div>
+          {error && <p>{error}</p> }
 
           <div className={loginStyles["remember-forget"]}>
             {/* <label>
@@ -93,6 +111,15 @@ const Login = () => {
             </p>
           </div>
         </form>
+        <div>
+          {Object.values(providers).map((provider:any) => (
+            <div key={provider.name}>
+              <button onClick={() => signIn(provider.id)}>
+                Sign in with {provider.name}
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
