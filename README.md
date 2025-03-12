@@ -60,16 +60,11 @@ Whether you’re trying to locate documentation, learn how to use a particular s
 
 2. **Create and Activate a Virtual Environment:**
 
-   ```bash
-   python -m venv env
-   source env/bin/activate  # On Windows: env\Scripts\activate
-   ```
+- Modifications waiting
 
 3. **Install Python Dependencies:**
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+- Modifications waiting
 
 4. **Configure Environment Variables:**
 
