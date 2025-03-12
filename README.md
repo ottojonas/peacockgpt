@@ -45,6 +45,7 @@ Whether you’re trying to locate documentation, learn how to use a particular s
 ### Prerequisites
 
 - **Python 3.8+**: Ensure Python is installed on your system.
+   - **Python 3.10** is recommended
 - (Optional) **Node.js**: Required if you prefer using the web-based interface.
 - **API Key for GPT Services**: If your installation requires a GPT API key, please have it ready.
 
