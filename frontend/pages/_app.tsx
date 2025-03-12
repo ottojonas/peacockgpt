@@ -5,15 +5,16 @@ import { SessionProvider } from "next-auth/react";
 import { AuthProvider } from "../context/AuthContext";
 
 import type { AppProps } from "next/app";
+import ErrorBoundary from "../components/ErrorBoundary/ErrorBoundary";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <SessionProvider
-      session={pageProps.session}
-    >
+    <SessionProvider session={pageProps.session}>
       <AuthProvider>
         <ThemeProvider>
-          <Component {...pageProps} />
+          <ErrorBoundary>
+            <Component {...pageProps} />
+          </ErrorBoundary>
         </ThemeProvider>
       </AuthProvider>
     </SessionProvider>

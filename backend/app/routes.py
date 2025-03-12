@@ -20,7 +20,7 @@ import uuid
 
 # * create a Blueprint for the routes
 routes = Blueprint("routes", __name__)
-auth_bp = Blueprint("auth", __name__)
+auth_bp = Blueprint("auth_bp", __name__)
 
 
 @routes.route("/api", methods=["GET"])
@@ -54,12 +54,12 @@ def auth_providers():
                 "name": "Credentials",
                 "type": "credentials",
                 "signinUrl": "/api/login",
-                "callbackUrl": "/api/auth/callback/credentials",
+                "callbackUrl": "/api/auth/callback",
             }
         ]
         print(f"Providers: {providers}")
         return jsonify({"providers": providers}), 200
-    except Exception as e: 
+    except Exception as e:
         print(f"Error in auth_providers: {e}")
         return jsonify({"error": "Internal server error"}), 500
 
@@ -102,9 +102,59 @@ def auth_log():
     print(f"Auth log: {log_message}")
     return jsonify({"log": "Log message received"}), 200
 
+
+@auth_bp.route("/api/auth/callback", methods=["POST"])
+def auth_callback():
+    data = request.json
+    if not data or "token" not in data:
+        return jsonify({"error": "token is required"}), 400
+    try:
+        decoded_token = jwt.decode(
+            data["token"], current_app.config["SECRET_KEY"], algorithms=["HS256"]
+        )
+        user_id = decoded_token.get("user_id")
+        if not user_id:
+            return jsonify({"error": "invalid token"}), 400
+        user = mongo.db.users.find_one({"_id": ObjectId(user_id)})
+        if not user:
+            return jsonify({"error": "user not found"}), 404
+        return (
+            jsonify(
+                {
+                    "message": "Callback successful",
+                    "user": {"id": str(user["_id"]), "email": user["email"]},
+                }
+            ),
+            200,
+        )
+    except jwt.ExpiredSignatureError:
+        return jsonify({"error": "token has expired"}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({"error": "invalid token"}), 401
+    except Exception as e:
+        return jsonify({"error": "internal server error", "message": str(e)}), 500
+
+
 @auth_bp.route("/api/auth/callback/credentials", methods=["GET"])
-def callback_credentials(): 
+def callback_credentials():
     return jsonify({"message": "Callback successful"}), 200
+
+
+@routes.route("dns-query", methods=["POST"])
+def dns_query():
+    data = request.json
+    domain = data.get("domain")
+    if not domain:
+        return jsonify({"error": "domain is required"}), 400
+    try:
+        import dns.resolver
+
+        result = dns.resolver.resolve(domain, "A")
+        ip_address = [ip.to_text() for ip in result]
+        return jsonify({"ip_addresses": ip_address}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 # * route to handle account creation and user registration
 @routes.route("/api/register", methods=["POST"])

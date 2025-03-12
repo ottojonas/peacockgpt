@@ -13,7 +13,7 @@ CORS(
     app,
     resources={
         r"/api/*": {
-            "origins": "https://peacockgpt.vercel.app",
+            "origins": ["https://peacockgpt.vercel.app", "https://peacockgpt-pf8oeb14d-ottojonas-vercel-projects.vercel.app"],
             "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
             "allow_headers": ["Content-Type", "Authorization"],
             "supports_credentials": True,
@@ -23,7 +23,7 @@ CORS(
 
 socketio = SocketIO(
     app,
-    cors_allowed_origins=["https://peacockgpt.vercel.app"],
+    cors_allowed_origins=["https://peacockgpt.vercel.app", "https://peacockgpt-pf8oeb14d-ottojonas-projects.vercel.app"],
     async_mode="gevent",
     websocket=True,
     ping_timeout=60,

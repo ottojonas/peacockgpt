@@ -5,9 +5,10 @@ import styles from "../styles/auth.module.css";
 import loginStyles from "../styles/loginform.module.css";
 import { FaUser, FaLock } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
-import { signIn } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 import { fetchAuthProviders } from "../utils/auth";
 import io from 'socket.io-client'
+
 
 const socket = io("https://peacockgpt-backend-a08e5bc3eefc.herokuapp.com", {
   transports: ["websocket"], 
@@ -62,11 +63,17 @@ const Login = () => {
       }); 
       if(result?.error) {
         setError(result.error); 
+        router.push(`/api/auth/error?error=${encodeURIComponent(result.error)}`)
       } else {
-        router.push("/peacockgpt")
+        const session = await getSession(); 
+        if (session && session.user){
+          localStorage.setItem("user_id", session.user.id)
+          router.push("https://peacockgpt.vercel.app/peacockgpt")
+        }
       }
     } catch (error) {
       setError("An unexpected error has occured")
+      router.push(`/api/auth/error?error=${encodeURIComponent(error.message)}`)
     }
   };
 

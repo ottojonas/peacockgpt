@@ -2,6 +2,7 @@ import axios from "axios";
 import { getProviders } from "next-auth/react";
 
 export const fetchAuthProviders = async () => {
+  console.log("fetching auth providers...")
   try {
     const providers = await getProviders(); 
     if (providers) {

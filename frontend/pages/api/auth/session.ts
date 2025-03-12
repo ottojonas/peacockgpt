@@ -6,5 +6,9 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const session = await getSession({ req });
-  res.status(200).json(session);
+  if (session) {
+    res.status(200).json({session})
+  } else {
+    res.status(200).json({session:null})
+  }
 }

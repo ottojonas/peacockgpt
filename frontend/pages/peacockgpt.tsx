@@ -14,6 +14,18 @@ import ChatInput from "../components/ChatInput";
 import io from "socket.io-client";
 import Info from "../components/Info";
 
+const socket = io("https://peacockgpt-backened-a08e5bc3eefc.herokuapp.com", {
+  transports: ["websocket"], withCredentials: true, reconnection: true, reconnectionAttempts: 5, reconnectionDelay: 1000,  
+})
+
+socket.on("connect", () => {
+  console.log("Socket connected successfully") 
+})
+
+socket.on("connect_error", (error) => {
+  console.error("Socket connection error: ", error)
+})
+
 const PeacockGPT = () => {
   const [inputValue, setInputValue] = useState<string>("");
   const [healthStatus, setHealthStatus] = useState("");
@@ -26,25 +38,27 @@ const PeacockGPT = () => {
   const { isAuthenticated, userId } = useAuth();
 
   useEffect(() => {
-      const fetchConversations = async () => {
-        try {
-          const response = await axios.get("/api/conversations", {
-            params: { user_id: userId },
-          });
-          setConversations(response.data);
-        } catch (error) {
-          console.error("Error fetching conversations:", error);
-        }
-      };
-
-      // * Check if conversations are passed in the query
-      if (router.query.conversations) {
-        setConversations(JSON.parse(router.query.conversations as string));
-      } else {
-        fetchConversations();
-      }, [isAuthenticated, router, userId, socketConnected]);
+    const fetchConversations = async() => {
+      const userId = localStorage.getItem("user_id")
+      if (!userId) {
+        console.error("User ID is not available")
+        return
+      }
+      try {
+        const response = await axios.get("/api/conversations", {
+          params: { user_id: userId}
+        }) 
+        setConversations(response.data)
+      } catch (error) {
+        console.error("Error fetching conversations: ", error) 
+      }
     }
-
+    if (router.query.conversations) {
+      setConversations(JSON.parse(router.query.conversations as string))
+    } else {
+      fetchConversations()
+    }
+  }, [router]) 
   // * effect to fetch messages when the conversation key changes
   useEffect(() => {
     if (conversationKey && socketConnected) {

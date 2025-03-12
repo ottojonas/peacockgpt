@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    if (session) {
+    if (session && session.user) {
       setIsAuthenticated(true);
       setUserId(session.user.id);
     } else {

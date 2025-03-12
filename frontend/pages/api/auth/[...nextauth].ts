@@ -33,14 +33,14 @@ export default NextAuth({
             accessToken,
           };
         } else {
-          return null;
+          throw new Error("Invalid credentials")
         }
       },
     }),
   ],
   callbacks: {
     async session({ session, token }: { session: any; token: any }) {
-      if (token) {
+      if (token && token.id) {
         session.user = {
           id: token.id,
           admin: token.admin as boolean,
@@ -49,7 +49,8 @@ export default NextAuth({
         session.accessToken = token.accessToken;
       } else {
         console.warn("Token is null, returning empty session object");
-        return {};
+        session.user = null; 
+        session.accessToken = null
       }
       return session;
     },
