@@ -59,6 +59,7 @@ const PeacockGPT = () => {
       fetchConversations()
     }
   }, [router]) 
+  
   // * effect to fetch messages when the conversation key changes
   useEffect(() => {
     if (conversationKey && socketConnected) {

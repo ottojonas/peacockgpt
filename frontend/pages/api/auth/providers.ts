@@ -12,6 +12,7 @@ export default async function handler(
     if (providers) {
       res.status(200).json(providers)
     } else {
+      console.warn("No providers found, returning empty object")
       res.status(200).json({})
     }
   } catch (error) {

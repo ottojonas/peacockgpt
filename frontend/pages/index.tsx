@@ -5,7 +5,7 @@ import styles from "../styles/auth.module.css";
 import loginStyles from "../styles/loginform.module.css";
 import { FaUser, FaLock } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
-import { signIn, getSession } from "next-auth/react";
+import { signIn, getSession, getProviders } from "next-auth/react";
 import { fetchAuthProviders } from "../utils/auth";
 import io from 'socket.io-client'
 
@@ -38,7 +38,7 @@ const Login = () => {
     if (!isAuthenticated) {
       const loadProviders = async () => {
         try {
-          const data = await fetchAuthProviders();
+          const data = await getProviders();
           if (data) {
             setProviders(data);
           } else {
@@ -68,7 +68,7 @@ const Login = () => {
         const session = await getSession(); 
         if (session && session.user){
           localStorage.setItem("user_id", session.user.id)
-          router.push("https://peacockgpt.vercel.app/peacockgpt")
+        router.push("https://peacockgpt.vercel.app/peacockgpt")
         }
       }
     } catch (error) {
@@ -120,11 +120,13 @@ const Login = () => {
         </form>
         <div>
           {Object.values(providers).map((provider:any) => (
+              provider.id !== "credentials" && (
             <div key={provider.name}>
               <button onClick={() => signIn(provider.id)}>
                 Sign in with {provider.name}
               </button>
             </div>
+              )
           ))}
         </div>
       </div>
